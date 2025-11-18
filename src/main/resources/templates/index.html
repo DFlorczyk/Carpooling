@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Carpooling Map</title>
+    <style>
+        .map-container {
+            height: 500px;
+            width: 100%;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>Map</h1>
+<div id="map" class="map-container"></div>
+
+<script>
+    function initMap() {
+        const mapElement = document.getElementById("map");
+        const myMap = new google.maps.Map(mapElement, {
+            center: { lat: 52.2297, lng: 21.0122 },
+            zoom: 12,
+            styles: [
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "labels",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": [{ "visibility": "off" }]
+                }
+            ]
+        });
+
+        const centerMarker = new google.maps.Marker({
+            position: { lat: 52.2297, lng: 21.0122 },
+            map: myMap,
+            title: "City Center"
+        });
+
+        showRoute(myMap, 53.13333, 23.16433, 52.22977, 21.01178);
+    }
+
+    function showRoute(map, startLat, startLng, endLat, endLng) {
+        const routeService = new google.maps.DirectionsService();
+        const routeDisplay = new google.maps.DirectionsRenderer();
+
+        routeDisplay.setMap(map);
+
+        const routeRequest = {
+            origin: { lat: startLat, lng: startLng },
+            destination: { lat: endLat, lng: endLng },
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+
+        routeService.route(routeRequest, function(response, status) {
+            if (status === "OK") routeDisplay.setDirections(response);
+            else console.log("Error: " + status);
+        });
+    }
+</script>
+
+<script th:src="'https://maps.googleapis.com/maps/api/js?key='+${mapsApiKey}+'&callback=initMap'"
+        async
+        defer>
+</script>
+</body>
+</html>
