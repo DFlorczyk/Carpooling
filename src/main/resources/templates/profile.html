@@ -3,7 +3,22 @@
 <body>
 <div th:fragment="content">
     <h1 style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">Profile Page</h1>
-    <p style="color: #666; font-size: 1.2rem;"></p>
+
+    <p style="color: #666; font-size: 1.2rem;">
+        <strong>Name:</strong> <span th:text="${user.name}"></span> <span th:text="${user.surname}"></span>
+    </p>
+    <p style="color: #666; font-size: 1.2rem;">
+        <strong>Email:</strong> <span th:text="${user.email}"></span>
+    </p>
+    <p style="color: #666; font-size: 1.2rem;">
+        <strong>Phone:</strong> <span th:text="${user.phoneNumber}"></span>
+    </p>
+    <p style="color: #666; font-size: 1.2rem;">
+        <strong>Driver:</strong> <span th:text="${user.is_driver}"></span>
+    </p>
+    <p style="color: #666; font-size: 1.2rem;">
+        <strong>City:</strong> <span th:text="${user.city != null ? user.city.name : 'N/A'}"></span>
+    </p>
 </div>
 </body>
 </html>
