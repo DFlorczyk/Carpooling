@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f3f3f3;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg, #5a63f1, #9c48f0);
+            color: white;
+            padding: 20px 40px;
+            font-size: 26px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .container {
+            margin: 60px auto;
+            width: 420px;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #444;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #6b5df6;
+            outline: none;
+            box-shadow: 0 0 5px rgba(107,93,246,0.4);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #6b5df6, #a43ef6);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.88;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #6b5df6;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="topbar">Carpooling - Rejestracja</div>
+
+    <div class="container">
+        <h2>Utwórz konto</h2>
+
+        <form>
+            <div class="input-group">
+                <label>Nazwa użytkownika</label>
+                <input type="text" placeholder="Wpisz nazwę użytkownika">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" placeholder="Podaj email">
+            </div>
+
+            <div class="input-group">
+                <label>Hasło</label>
+                <input type="password" placeholder="Wpisz hasło">
+            </div>
+
+            <div class="input-group">
+                <label>Powtórz hasło</label>
+                <input type="password" placeholder="Powtórz hasło">
+            </div>
+
+            <button class="btn">Zarejestruj się</button>
+
+            <div class="login-link">
+                Masz już konto? <a href="#">Zaloguj się</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
