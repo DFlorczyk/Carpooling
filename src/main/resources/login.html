@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+
+    <style>
+        .login-container {
+            max-width: 420px;
+            margin: 2rem auto;
+            padding: 3rem 2.5rem;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        h2 {
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 1.2rem;
+            color: #a0aec0;
+            user-select: none;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 2px solid #edf2f7;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #2d3748;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #f7fafc;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(118, 75, 162, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .links-area {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .link-text {
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .link-text:hover {
+            color: #4a5568;
+        }
+
+        .link-highlight {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .link-highlight:hover {
+            text-decoration: underline;
+        }
+
+        .alert-box {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .alert-error {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+
+        .alert-success {
+            background-color: #f0fff4;
+            color: #2f855a;
+            border: 1px solid #c6f6d5;
+        }
+    </style>
+
+    <div class="login-container">
+        
+        <h2>Welcome back</h2>
+        <p class="subtitle">Please enter your details to sign in</p>
+
+        <div th:if="${param.error}" class="alert-box alert-error">
+            <span>⚠️</span> Invalid username or password
+        </div>
+
+        <div th:if="${param.logout}" class="alert-box alert-success">
+            <span>👋</span> You have been logged out
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" name="username" class="form-input" placeholder="Enter your email" required autofocus/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="password" class="form-input" placeholder="Enter your password" required/>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Login
+            </button>
+
+        </form>
+
+        <div class="links-area">
+            <a href="#" class="link-text">Forgot your password?</a>
+            <a href="/register" class="link-highlight">Sign up</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
