@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <a href="/profile/edit" class="nav-link">✏️ Edit Profile</a>
+        <h1 style="color: #667eea; font-size: 2rem; margin: 0;">Profile Page</h1>
+        <a th:href="${user.is_driver} ? '/driver/profile' : '/driver/register'"
+           th:text="${user.is_driver} ? '🚗 Driver Profile' : '🚗 Become a Driver'"
+           class="nav-link">
+        </a>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 2rem; background: #fff;
+            border-radius: 12px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+
+        <img th:if="${user.is_woman}"
+             th:src="@{/images/fem_pic.png}"
+             alt="User avatar"
+             style="width:120px; height:120px; border-radius:50%; object-fit:contain;">
+
+        <img th:unless="${user.is_woman}"
+             th:src="@{/images/male_pic.png}"
+             alt="User avatar"
+             style="width:120px; height:120px; border-radius:50%; object-fit:contain;">
+
+        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="color: #333; font-size: 2rem; margin-bottom: 0.5rem;"
+                    th:text="${user.name} + ' ' + ${user.surname}"></h2>
+                <p style="color: #666; font-size: 1.1rem;">👤 User</p>
+            </div>
+
+            <a href="/rides/history"
+               class="nav-link"
+               style="padding: 0.6rem 1.2rem; font-size: 1rem;">
+                📜 Ride History
+            </a>
+        </div>
+    </div>
+
+    <div style="margin: 2rem 0; text-align: center;">
+        <span style="font-size: 2rem; color: #ccc;">☆</span>
+        <span style="font-size: 2rem; color: #ccc;">☆</span>
+        <span style="font-size: 2rem; color: #ccc;">☆</span>
+        <span style="font-size: 2rem; color: #ccc;">☆</span>
+        <span style="font-size: 2rem; color: #ccc;">☆</span>
+    </div>
+
+    <div style="margin-top: 2rem; background: #fafafa; border-radius: 8px; padding: 1.5rem;">
+        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
+            <strong>Email:</strong> <span th:text="${user.email}"></span>
+        </p>
+        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
+            <strong>Phone:</strong> <span th:text="${user.phoneNumber}"></span>
+        </p>
+        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
+            <strong>City:</strong> <span th:text="${user.city != null ? user.city.name : 'N/A'}"></span>
+        </p>
+<!--        placeholder-->
+        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
+            <strong>Ride Count:</strong> <span>0</span>
+        </p>
+    </div>
+
+
+</div>
+</body>
+</html>
