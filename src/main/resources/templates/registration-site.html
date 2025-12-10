@@ -93,43 +93,74 @@
             text-decoration: underline;
         }
 
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <div class="topbar">Carpooling - Rejestracja</div>
+<div class="topbar">Carpooling</div>
 
-    <div class="container">
-        <h2>Utwórz konto</h2>
+<div class="container">
+    <h2>Utwórz konto</h2>
 
-        <form>
-            <div class="input-group">
-                <label>Nazwa użytkownika</label>
-                <input type="text" placeholder="Wpisz nazwę użytkownika">
-            </div>
+    <form id="registrationForm">
+        <div class="input-group">
+            <label>Imię</label>
+            <input id="name" type="text" placeholder="Wpisz imię" required>
+        </div>
 
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" placeholder="Podaj email">
-            </div>
+        <div class="input-group">
+            <label>Email</label>
+            <input id="email" type="email" placeholder="Podaj email" required>
+        </div>
 
-            <div class="input-group">
-                <label>Hasło</label>
-                <input type="password" placeholder="Wpisz hasło">
-            </div>
+        <div class="input-group">
+            <label>Hasło</label>
+            <input id="password" type="password" placeholder="Wpisz hasło" required>
+        </div>
 
-            <div class="input-group">
-                <label>Powtórz hasło</label>
-                <input type="password" placeholder="Powtórz hasło">
-            </div>
+        <div class="input-group">
+            <label>Powtórz hasło</label>
+            <input id="confirmPassword" type="password" placeholder="Powtórz hasło" required>
+        </div>
 
-            <button class="btn">Zarejestruj się</button>
+        <button class="btn" type="submit">Zarejestruj się</button>
 
-            <div class="login-link">
-                Masz już konto? <a href="#">Zaloguj się</a>
-            </div>
-        </form>
-    </div>
+        <div class="login-link">
+            Masz już konto? <a href="#">Zaloguj się</a>
+        </div>
+    </form>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    document.getElementById("registrationForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            confirmPassword: document.getElementById("confirmPassword").value
+        };
+
+        const response = await fetch("http://localhost:8080/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const message = document.getElementById("message");
+        message.style.color = response.ok ? "green" : "red";
+        message.textContent = await response.text();
+    });
+</script>
 
 </body>
 </html>
