@@ -16,6 +16,7 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile(Model model) {
+        //nie pobiera zalogowanego a 1 więc do poprawy kiedy to już będzie działało
         User user = userRepository.findById(1L).orElse(null);
         model.addAttribute("pageTitle", "Profile");
         model.addAttribute("view", "profile");

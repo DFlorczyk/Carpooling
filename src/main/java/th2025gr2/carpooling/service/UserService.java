@@ -1,8 +1,10 @@
-package th2025gr2.carpooling.model;
+package th2025gr2.carpooling.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import th2025gr2.carpooling.model.RegisterRequest;
+import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.repository.UserRepository;
 
 @Service
