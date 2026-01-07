@@ -1,10 +1,12 @@
 package th2025gr2.carpooling.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.security.UserDetailsWithId;
 
 @Controller
 public class ProfileController {
@@ -15,12 +17,14 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model) {
-        //nie pobiera zalogowanego a 1 więc do poprawy kiedy to już będzie działało
-        User user = userRepository.findById(1L).orElse(null);
+    public String profile(@AuthenticationPrincipal UserDetailsWithId userDetails, Model model
+    ) {
+        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+
         model.addAttribute("pageTitle", "Profile");
         model.addAttribute("view", "profile");
         model.addAttribute("user", user);
+
         return "layout";
     }
 }

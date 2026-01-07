@@ -3,13 +3,9 @@ package th2025gr2.carpooling.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import th2025gr2.carpooling.model.City;
 import th2025gr2.carpooling.model.RegisterRequest;
 import th2025gr2.carpooling.model.User;
-import th2025gr2.carpooling.repository.CityRepository;
 import th2025gr2.carpooling.repository.UserRepository;
-
-import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +13,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CityRepository cityRepository;
 
     public User register(RegisterRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
