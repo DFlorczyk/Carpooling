@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import th2025gr2.carpooling.dto.RegisterRequest;
 import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.security.UserDetailsWithId;
 
 import java.util.List;
 
@@ -26,20 +27,12 @@ public class UserService implements UserDetailsService {
         User u = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Nie znaleziono użytkownika: " + email));
 
-
-        return new org.springframework.security.core.userdetails.User(
-                u.getEmail(),
-                u.getHashedPassword(),
-                true,  // enabled
-                true,  // accountNonExpired
-                true,  // credentialsNonExpired
-                true,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        return new UserDetailsWithId(u);
     }
 
     @Transactional
     public void register(RegisterRequest request) {
+        System.out.println("XD");
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email jest wymagany");
         }
