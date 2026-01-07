@@ -1,13 +1,12 @@
 package th2025gr2.carpooling.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class RegisterRequest {
-    private String name;
     private String email;
     private String password;
-    private String confirmPassword;
+    private String name;
+    private String surname;
+    private String phoneNumber;
 }

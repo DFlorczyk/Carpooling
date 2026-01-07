@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import th2025gr2.carpooling.dto.RegisterRequest;
+import th2025gr2.carpooling.model.RegisterRequest;
 import th2025gr2.carpooling.model.City;
 import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.repository.CityRepository;
