@@ -2,7 +2,7 @@ package th2025gr2.carpooling.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import th2025gr2.carpooling.dto.RegisterRequest;
+import th2025gr2.carpooling.model.RegisterRequest;
 import th2025gr2.carpooling.service.UserService;
 
 @RestController
