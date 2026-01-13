@@ -1,7 +1,12 @@
 package th2025gr2.carpooling.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Entity
-@Table(name = "RideParticipants")
+@Table(name = "ride_participants")
 public class RideParticipant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

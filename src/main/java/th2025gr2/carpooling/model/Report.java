@@ -2,9 +2,13 @@ package th2025gr2.carpooling.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "Reports")
+@Table(name = "reports")
 public class Report {
 
     @Id

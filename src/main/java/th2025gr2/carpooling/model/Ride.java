@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "Rides")
+@Table(name = "rides")
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
