@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+
+    <h1 style="color:#667eea; text-align:center; margin-bottom:2rem;">
+        Edit Profile
+    </h1>
+
+    <form th:action="@{/profile/edit}" th:object="${user}" method="post"
+          style="max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem;">
+
+        <input type="hidden" th:field="*{id}"/>
+
+        <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">
+                Name
+            </label>
+            <input type="text" th:field="*{name}" required
+                   style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;"/>
+        </div>
+
+        <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">
+                Surname
+            </label>
+            <input type="text" th:field="*{surname}" required
+                   style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;"/>
+        </div>
+
+        <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">
+                Email
+            </label>
+            <input type="email" th:field="*{email}" required
+                   style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;"/>
+        </div>
+
+        <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">
+                Phone number
+            </label>
+            <input type="text" th:field="*{phoneNumber}"
+                   style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;"/>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+            <a href="/profile" class="nav-link">Cancel</a>
+            <button type="submit" class="nav-link">Save changes</button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
