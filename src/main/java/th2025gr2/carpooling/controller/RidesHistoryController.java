@@ -32,7 +32,7 @@ public class RidesHistoryController {
         var rides = rideRepository.findFinishedRidesByUserId(userId);
 
         model.addAttribute("pageTitle", "RideHistory");
-        model.addAttribute("view", "rideshistory");
+        model.addAttribute("view", "ride-history");
         model.addAttribute("userId", userId);
         model.addAttribute("rides", rides);
 
