@@ -1,0 +1,78 @@
+<!-- templates/fragments/rides-list.html -->
+<!-- Fragment widoku listy aktywnych przejazdów -->
+<div th:fragment="content">
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Dostępne przejazdy</h2>
+            <a href="/rides/create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Dodaj przejazd
+            </a>
+        </div>
+
+        <!-- Brak przejazdów -->
+        <div th:if="${#lists.isEmpty(rides)}" class="text-center py-5">
+            <i class="bi bi-car-front" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="text-muted mt-3">Brak dostępnych przejazdów.</p>
+            <a href="/rides/create" class="btn btn-outline-primary">Dodaj pierwszy przejazd</a>
+        </div>
+
+        <!-- Lista przejazdów -->
+        <div class="row" th:unless="${#lists.isEmpty(rides)}">
+            <div class="col-md-6 col-lg-4 mb-3" th:each="ride : ${rides}">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <!-- Trasa -->
+                        <div class="mb-2">
+                            <div class="d-flex align-items-start mb-1">
+                                <i class="bi bi-geo-alt-fill text-success me-2 mt-1"></i>
+                                <span th:text="${ride.startAddress}" class="small">Start</span>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-geo-alt-fill text-danger me-2 mt-1"></i>
+                                <span th:text="${ride.endAddress}" class="small">Cel</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-2"/>
+
+                        <!-- Szczegóły -->
+                        <div class="row small text-muted">
+                            <div class="col-6">
+                                <i class="bi bi-calendar-event"></i>
+                                <span th:text="${#temporals.format(ride.departureDate, 'dd.MM.yyyy HH:mm')}"></span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <i class="bi bi-cash"></i>
+                                <span th:text="${ride.cost + ' PLN'}"></span>
+                            </div>
+                        </div>
+                        <div class="row small text-muted mt-1">
+                            <div class="col-6">
+                                <i class="bi bi-signpost-2"></i>
+                                <span th:text="${ride.distanceKm != null ? ride.distanceKm + ' km' : '-'}"></span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <i class="bi bi-people-fill"></i>
+                                <span th:text="${ride.availableSeats + ' miejsc'}"></span>
+                            </div>
+                        </div>
+
+                        <!-- Kierowca -->
+                        <div class="mt-2 small">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${ride.driverName}">Kierowca</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white border-top-0 text-center">
+                        <a th:href="@{'/rides/' + ${ride.id}}" class="btn btn-outline-primary btn-sm w-100">
+                            Szczegóły
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

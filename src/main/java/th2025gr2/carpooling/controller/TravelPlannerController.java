@@ -21,7 +21,7 @@ public class TravelPlannerController {
     @PostMapping("/travelPlanner")
     public String submitForm(@ModelAttribute DateEventForm eventForm, Model model) {
         model.addAttribute("ev", eventForm);
-        model.addAttribute("view", "TravelPlanner");
+        model.addAttribute("view", "create-ride");
         System.out.println("Wybrana data i czas: " + eventForm.getDateStartTime() + " " + eventForm.getDateStartEnd());
         return "layout";
     }
