@@ -39,4 +39,25 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         WHERE r.state.name = :stateName
         """)
     List<RideDTO> findDTOsByStateName(@Param("stateName") String stateName);
+
+    /**
+     * Pobiera aktywne przejazdy (state.name = 'ACTIVE'), posortowane od najnowszych.
+     */
+    @Query("""
+        SELECT r FROM Ride r
+        JOIN FETCH r.state
+        LEFT JOIN FETCH r.participants rp
+        LEFT JOIN FETCH rp.user
+        LEFT JOIN FETCH rp.role
+        WHERE UPPER(r.state.name) = 'ACTIVE'
+          AND r.date > CURRENT_TIMESTAMP
+        ORDER BY r.date ASC
+    """)
+    List<Ride> findActiveRides();
+
+    /**
+     * Wyszukiwanie przejazdów wg przybliżonej lokalizacji (bounding box) i daty.
+     */
+
+
 }

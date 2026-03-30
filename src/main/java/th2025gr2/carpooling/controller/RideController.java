@@ -111,13 +111,13 @@ public class RideController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
-    /**
-     * Zwraca listę aktywnych przejazdów w formacie JSON.
-     */
-    @GetMapping("/api/rides/active")
-    @ResponseBody
-    public ResponseEntity<List<RideResponse>> getActiveRides() {
-        return ResponseEntity.ok(rideService.getActiveRides());
-    }
+//
+//    /**
+//     * Zwraca listę aktywnych przejazdów w formacie JSON.
+//     */
+//    @GetMapping("/api/rides/active")
+//    @ResponseBody
+//    public ResponseEntity<List<RideResponse>> getActiveRides() {
+//        return ResponseEntity.ok(rideService.getActiveRides());
+//    }
 }

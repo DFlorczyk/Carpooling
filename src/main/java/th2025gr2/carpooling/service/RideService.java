@@ -66,7 +66,7 @@ public class RideService {
         }
 
         // Stan "ACTIVE" (id = 2) – przejazd oczekuje na pasażerów
-        RideState activeState = rideStateRepository.findByNameIgnoreCase("ACTIVE")
+        RideState activeState = rideStateRepository.findByNameIgnoreCase("not started")
                 .orElseGet(() -> rideStateRepository.findById(2L)
                         .orElseThrow(() -> new RuntimeException(
                                 "Brak stanu 'ACTIVE' w tabeli ride_states")));

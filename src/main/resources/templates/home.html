@@ -44,7 +44,7 @@
         }
 
         function loadRides() {
-            fetch("/api/rides/not-started")
+            fetch("/api/r/rides/not-started")
                 .then(res => res.json())
                 .then(data => renderRides(data))
                 .catch(err => console.error("ERROR:", err));
