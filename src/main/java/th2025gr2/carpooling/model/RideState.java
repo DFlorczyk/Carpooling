@@ -1,6 +1,7 @@
 package th2025gr2.carpooling.model;
-import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +11,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "ride_states")
 public class RideState {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "state", fetch = FetchType.LAZY)
     private List<Ride> rides;
 }
