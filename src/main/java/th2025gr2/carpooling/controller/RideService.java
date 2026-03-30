@@ -1,4 +1,4 @@
-package th2025gr2.carpooling.service;
+package th2025gr2.carpooling.controller;
 
 import org.springframework.stereotype.Service;
 import th2025gr2.carpooling.model.Ride;
