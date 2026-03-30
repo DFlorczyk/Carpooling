@@ -51,4 +51,9 @@ public class Ride {
     @JsonIgnore
     @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RideParticipant> participants;
+
+    public void addParticipant(RideParticipant participant) {
+        participants.add(participant);
+        participant.setRide(this); // IMPORTANT
+    }
 }

@@ -26,6 +26,7 @@ public class SecurityConfig {
                                 "/error",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
+                        // Endpointy przejazdów wymagają autentykacji (obsługiwane domyślnie)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
