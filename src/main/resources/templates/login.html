@@ -22,7 +22,7 @@
             font-weight: 700;
             text-align: center;
         }
-        
+
         .subtitle {
             text-align: center;
             color: #718096;
@@ -115,7 +115,7 @@
             text-decoration: none;
             transition: color 0.2s;
         }
-        
+
         .link-text:hover {
             color: #4a5568;
         }
@@ -125,7 +125,7 @@
             font-weight: 600;
             text-decoration: none;
         }
-        
+
         .link-highlight:hover {
             text-decoration: underline;
         }
@@ -141,7 +141,7 @@
             justify-content: center;
             gap: 8px;
         }
-        
+
         .alert-error {
             background-color: #fff5f5;
             color: #c53030;
@@ -156,7 +156,7 @@
     </style>
 
     <div class="login-container">
-        
+
         <h2>Welcome back</h2>
         <p class="subtitle">Please enter your details to sign in</p>
 
@@ -169,7 +169,7 @@
         </div>
 
         <form th:action="@{/login}" method="post">
-            
+
             <div class="form-group">
                 <label class="form-label">Username</label>
                 <div class="input-wrapper">
@@ -194,7 +194,7 @@
 
         <div class="links-area">
             <a href="#" class="link-text">Forgot your password?</a>
-            <a href="/register" class="link-highlight">Sign up</a>
+            <a href="auth/register" class="link-highlight">Sign up</a>
         </div>
 
     </div>
