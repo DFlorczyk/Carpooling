@@ -1,0 +1,11 @@
+package th2025gr2.carpooling.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import th2025gr2.carpooling.model.RideState;
+
+import java.util.Optional;
+
+public interface RideStateRepository extends JpaRepository<RideState, Long> {
+
+    Optional<RideState> findByNameIgnoreCase(String name);
+}
