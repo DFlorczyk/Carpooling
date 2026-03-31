@@ -19,5 +19,5 @@ public class RideParticipant {
     private Ride ride;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private RideRole role;
 }

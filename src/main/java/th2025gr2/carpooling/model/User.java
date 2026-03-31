@@ -17,8 +17,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private boolean is_driver;
+    @Column(name = "is_driver", nullable = false)
+    private boolean driver;
     @Column(nullable = false, name = "hashed_password")
     private String hashedPassword;
     @Column(nullable = false)
@@ -29,10 +29,10 @@ public class User {
     private String phoneNumber;
     @Column(unique = true)
     private String email;
-    @Column(nullable = false)
-    private boolean is_woman;
-    @Column(nullable = false)
-    private boolean is_blocked;
+    @Column(name = "is_woman", nullable = false)
+    private boolean woman;
+    @Column(name="is_blocked", nullable = false)
+    private boolean blocked;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
