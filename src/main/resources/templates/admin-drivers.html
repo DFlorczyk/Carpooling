@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">Driver Verification</h1>
+    <p style="color: #888; margin-bottom: 2rem;">
+        Review and approve driver license submissions.
+    </p>
+
+    <div th:if="${#lists.isEmpty(pending)}"
+         style="text-align: center; padding: 3rem; color: #aaa;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+        <p style="font-size: 1.1rem;">No pending submissions.</p>
+    </div>
+
+    <div th:each="ticket : ${pending}" style="margin-bottom: 1rem;">
+
+        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px;
+                    padding: 1.2rem 1.5rem; display: flex; align-items: center;
+                    justify-content: space-between; cursor: pointer;"
+             th:onclick="|toggleTicket(${ticket.user.id})|">
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 42px; height: 42px; border-radius: 50%;
+                            background: linear-gradient(135deg, #667eea, #764ba2);
+                            display: flex; align-items: center; justify-content: center;
+                            color: white; font-weight: bold; font-size: 1.1rem;"
+                     th:text="${#strings.substring(ticket.user.name, 0, 1)}">
+                </div>
+                <div>
+                    <p style="margin: 0; font-weight: 600; color: #333; font-size: 1rem;"
+                       th:text="${ticket.user.name} + ' ' + ${ticket.user.surname}"></p>
+                    <p style="margin: 0; color: #888; font-size: 0.9rem;"
+                       th:text="${ticket.user.email}"></p>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="background: #fff3cd; color: #856404; padding: 0.3rem 0.8rem;
+                             border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                    ⏳ Pending
+                </span>
+                <span style="color: #888; font-size: 1.2rem;"
+                      th:id="|arrow-${ticket.user.id}|">▼</span>
+            </div>
+        </div>
+
+        <div th:id="|panel-${ticket.user.id}|"
+             style="display: none; border: 1px solid #e9ecef; border-top: none;
+                    border-radius: 0 0 10px 10px; padding: 1.5rem;
+                    background: white;">
+
+            <div style="display: flex; gap: 2rem; align-items: flex-start;">
+
+                <div style="flex-shrink: 0;">
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem;
+                               font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Driver's License
+                    </p>
+                    <img th:src="@{/admin/drivers/license/{id}(id=${ticket.user.id})}"
+                         alt="Driver's License"
+                         style="max-width: 320px; max-height: 220px; border-radius: 8px;
+                                border: 2px solid #e9ecef; object-fit: contain;"/>
+                </div>
+
+                <div style="flex: 1;">
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.8rem;
+                               font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        User Details
+                    </p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 0.4rem 0; color: #888; width: 100px;">Name</td>
+                            <td style="padding: 0.4rem 0; color: #333; font-weight: 500;"
+                                th:text="${ticket.user.name} + ' ' + ${ticket.user.surname}"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.4rem 0; color: #888;">Email</td>
+                            <td style="padding: 0.4rem 0; color: #333;"
+                                th:text="${ticket.user.email}"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.4rem 0; color: #888;">Phone</td>
+                            <td style="padding: 0.4rem 0; color: #333;"
+                                th:text="${ticket.user.phoneNumber} ?: 'N/A'"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.4rem 0; color: #888;">City</td>
+                            <td style="padding: 0.4rem 0; color: #333;"
+                                th:text="${ticket.user.city != null ? ticket.user.city.name : 'N/A'}"></td>
+                        </tr>
+                    </table>
+
+                    <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem;">
+                        <form th:action="@{/admin/drivers/approve/{id}(id=${ticket.user.id})}"
+                              method="post">
+                            <button type="submit"
+                                    style="padding: 0.7rem 1.5rem; background: #28a745;
+                                           color: white; border: none; border-radius: 8px;
+                                           font-size: 0.95rem; font-weight: 600;
+                                           cursor: pointer; transition: background 0.2s;"
+                                    onmouseover="this.style.background='#218838'"
+                                    onmouseout="this.style.background='#28a745'">
+                                ✅ Approve
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/drivers/reject/{id}(id=${ticket.user.id})}"
+                              method="post">
+                            <button type="submit"
+                                    style="padding: 0.7rem 1.5rem; background: #dc3545;
+                                           color: white; border: none; border-radius: 8px;
+                                           font-size: 0.95rem; font-weight: 600;
+                                           cursor: pointer; transition: background 0.2s;"
+                                    onmouseover="this.style.background='#c82333'"
+                                    onmouseout="this.style.background='#dc3545'">
+                                ❌ Reject
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

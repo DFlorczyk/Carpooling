@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final CityRepository cityRepository;
 
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User u = userRepository.findByEmail(email)
@@ -49,9 +50,9 @@ public class UserService implements UserDetailsService {
         user.setName(request.getName() == null ? "" : request.getName());
         user.setSurname(request.getSurname() == null ? "" : request.getSurname());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.set_driver(false);
-        user.set_woman(false);
-        user.set_blocked(false);
+        user.setDriver(false);
+        user.setWoman(false);
+        user.setBlocked(false);
         user.setCity(null);
         user.setCarDetails(null);
         user.setDriverTickets(null);
