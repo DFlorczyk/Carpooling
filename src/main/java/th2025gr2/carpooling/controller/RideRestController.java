@@ -3,15 +3,13 @@ package th2025gr2.carpooling.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import th2025gr2.carpooling.model.Ride;
-import th2025gr2.carpooling.controller.RideController;
 import th2025gr2.carpooling.dto.RideDTO;
 import th2025gr2.carpooling.service.RideRestService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/r/rides")
+@RequestMapping("/api/rides")
 public class RideRestController {
 
     private final RideRestService rideService;

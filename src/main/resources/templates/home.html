@@ -5,27 +5,172 @@
 <div th:fragment="content">
 
     <div class="container">
+
+        <!-- LEFT: filters + ride list -->
         <div class="sidebar">
             <h2>Available Rides</h2>
+
+            <!-- FILTERS -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Date from</label>
+                    <input type="datetime-local" id="filterDateFrom"/>
+                </div>
+                <div class="filter-group">
+                    <label>Date to</label>
+                    <input type="datetime-local" id="filterDateTo"/>
+                </div>
+                <div class="filter-group">
+                    <label>Max price (zł)</label>
+                    <input type="number" id="filterPrice" placeholder="e.g. 50" min="0" step="0.01"/>
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn-search" onclick="loadRides()">🔍 Search</button>
+                    <button class="btn-clear" onclick="clearFilters()">✕ Clear</button>
+                </div>
+            </div>
+
             <div id="ridesList"></div>
         </div>
+
+        <!-- RIGHT: map -->
         <div class="map-section">
-            <input id="citySearch" placeholder="Search city..." />
             <div id="map"></div>
         </div>
+
     </div>
 
     <style>
         .container { display: flex; width: 100%; height: 100%; }
-        .sidebar { width: 30%; background: #f4f6fb; padding: 1rem; overflow-y: auto; }
+
+        .sidebar {
+            width: 360px;
+            min-width: 360px;
+            background: #f4f6fb;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        /* filters */
+        .filters {
+            background: #fff;
+            border: 1px solid #dde1f0;
+            border-radius: 10px;
+            padding: 0.875rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .filter-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #888;
+        }
+
+        .filter-group input {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #dde1f0;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            color: #333;
+            background: #f9f9fb;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group input:focus { border-color: #667eea; }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-search, .btn-clear {
+            flex: 1;
+            padding: 0.45rem 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .btn-search { background: #667eea; color: #fff; }
+        .btn-clear  { background: #e9edf7; color: #555; }
+        .btn-search:hover, .btn-clear:hover { opacity: 0.85; }
+
+        /* ride list */
+        #ridesList { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .ride-card {
+            background: #fff;
+            border: 1px solid #dde1f0;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .ride-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-color: #667eea; }
+
+        .ride-route { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; color: #222; }
+
+        .ride-meta {
+            font-size: 0.78rem;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 6px;
+        }
+
+        .details-btn {
+            border: 1px solid #dde1f0;
+            background: #f4f6fb;
+            border-radius: 6px;
+            padding: 3px 10px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .details-btn:hover { background: #667eea; color: #fff; border-color: #667eea; }
+
+        .ride-details {
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: #555;
+            background: #f4f6fb;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        /* map */
         .map-section { flex: 1; display: flex; flex-direction: column; }
         #map { flex: 1; width: 100%; }
-        #citySearch { padding: 0.5rem; margin: 10px; width: 300px; }
-        .ride-card { background: #e9edf7; padding: 10px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; }
-        .ride-route { font-weight: 600; margin-bottom: 4px; }
-        .ride-meta { font-size: 0.82rem; color: #555; display: flex; gap: 1rem; margin-bottom: 6px; }
-        .details-btn { border: 1px solid #ccc; background: #fff; border-radius: 6px; padding: 3px 10px; cursor: pointer; font-size: 0.78rem; }
-        .ride-details { margin-top: 8px; font-size: 0.82rem; color: #444; }
     </style>
 
     <script th:inline="javascript">
@@ -33,6 +178,8 @@
 
         const backendCity = [[${backendCity}]];
         let map;
+        let directionsService;
+        let directionsRenderer;
 
         function initMap() {
             const defaultLoc = { lat: 52.2297, lng: 21.0122 };
@@ -40,16 +187,41 @@
                 center: defaultLoc,
                 zoom: 12
             });
+
+            directionsService  = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                polylineOptions: { strokeColor: "#667eea", strokeWeight: 5 }
+            });
+            directionsRenderer.setMap(map);
+
             loadRides();
         }
 
+        // ── FILTERS ───────────────────────────────────────────
         function loadRides() {
-            fetch("/api/r/rides/not-started")
+            const dateFrom = document.getElementById("filterDateFrom").value;
+            const dateTo   = document.getElementById("filterDateTo").value;
+            const price    = document.getElementById("filterPrice").value;
+
+            const params = new URLSearchParams();
+            if (dateFrom) params.append("dateFrom", dateFrom + ":00");
+            if (dateTo)   params.append("dateTo",   dateTo   + ":00");
+            if (price)    params.append("maxPrice", price);
+
+            fetch("/api/r/rides/not-started?" + params.toString())
                 .then(res => res.json())
                 .then(data => renderRides(data))
                 .catch(err => console.error("ERROR:", err));
         }
 
+        function clearFilters() {
+            document.getElementById("filterDateFrom").value = "";
+            document.getElementById("filterDateTo").value   = "";
+            document.getElementById("filterPrice").value    = "";
+            loadRides();
+        }
+
+        // ── GEOCODING ─────────────────────────────────────────
         function reverseGeocodeLatLng(lat, lng) {
             return new Promise((resolve) => {
                 const geocoder = new google.maps.Geocoder();
@@ -67,12 +239,13 @@
             });
         }
 
+        // ── RENDER ────────────────────────────────────────────
         function renderRides(rides) {
             const container = document.getElementById("ridesList");
             container.innerHTML = "";
 
             if (!rides || !Array.isArray(rides) || rides.length === 0) {
-                container.innerHTML = "<p>No rides found</p>";
+                container.innerHTML = "<p style='color:#888;font-size:0.85rem'>No rides found</p>";
                 return;
             }
 
@@ -81,28 +254,29 @@
                 el.className = "ride-card";
 
                 const date = new Date(r.date);
-                const formattedDate = date.toLocaleDateString("pl-PL") + " " + date.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+                const formattedDate = date.toLocaleDateString("pl-PL") + " " +
+                    date.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
 
                 el.innerHTML = `
                     <div class="ride-route">Loading...</div>
                     <div class="ride-meta">
-                        <span>${r.driverName ?? 'No driver'}</span>
-                        <span>${r.cost} zł</span>
-                        <span>${formattedDate}</span>
+                        <span>👤 ${r.driverName ?? 'No driver'}</span>
+                        <span>💰 ${r.cost} zł</span>
+                        <span>📅 ${formattedDate}</span>
                     </div>
                     <button class="details-btn" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
                     <div class="ride-details" style="display:none">
-                        <div>${r.carModel ?? 'Unknown'} — ${r.carColor ?? ''}</div>
-                        <div>Seats: ${r.carSeats ?? '?'}</div>
-                        <div>Mileage: ${r.carMileage ?? '?'} km</div>
-                        <div>State: ${r.stateName ?? 'unknown'}</div>
+                        <div>🚗 ${r.carModel ?? 'Unknown'} — ${r.carColor ?? ''}</div>
+                        <div>💺 Seats: ${r.carSeats ?? '?'}</div>
+                        <div>📏 Mileage: ${r.carMileage ?? '?'} km</div>
+                        <div>📌 State: ${r.stateName ?? 'unknown'}</div>
                     </div>
                 `;
 
                 el.addEventListener("click", () => {
                     showRoute(
                         { lat: r.startLatitude, lng: r.startLongitude },
-                        { lat: r.endLatitude, lng: r.endLongitude }
+                        { lat: r.endLatitude,   lng: r.endLongitude }
                     );
                 });
 
@@ -110,24 +284,21 @@
 
                 const [startName, endName] = await Promise.all([
                     reverseGeocodeLatLng(r.startLatitude, r.startLongitude),
-                    reverseGeocodeLatLng(r.endLatitude, r.endLongitude)
+                    reverseGeocodeLatLng(r.endLatitude,   r.endLongitude)
                 ]);
 
                 el.querySelector(".ride-route").textContent = `${startName} → ${endName}`;
             });
         }
 
+        // ── ROUTE ─────────────────────────────────────────────
         function showRoute(startLatLng, endLatLng) {
-            if (!map) return;
-            const directionsService = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer({
-                polylineOptions: { strokeColor: "#4f46e5", strokeWeight: 5 }
-            });
-            directionsRenderer.setMap(map);
+            if (!map || !directionsService || !directionsRenderer) return;
             directionsService.route(
                 { origin: startLatLng, destination: endLatLng, travelMode: google.maps.TravelMode.DRIVING },
                 (result, status) => {
                     if (status === "OK") directionsRenderer.setDirections(result);
+                    else console.warn("Route failed:", status);
                 }
             );
         }

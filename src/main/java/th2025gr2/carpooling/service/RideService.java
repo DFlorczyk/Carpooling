@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import th2025gr2.carpooling.dto.CreateRideForm;
+import th2025gr2.carpooling.dto.RideDTO;
 import th2025gr2.carpooling.dto.RideResponse;
 import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.RideRepository;
@@ -11,15 +12,10 @@ import th2025gr2.carpooling.repository.RideStateRepository;
 import th2025gr2.carpooling.repository.RoleRepository;
 import th2025gr2.carpooling.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Serwis odpowiedzialny za logikę biznesową przejazdów.
- * - Tworzenie nowego przejazdu (z opcjonalnym obliczeniem trasy przez Google Maps)
- * - Pobieranie listy aktywnych przejazdów
- * - Pobieranie szczegółów przejazdu
- */
 @Service
 @RequiredArgsConstructor
 public class RideService {
@@ -30,19 +26,9 @@ public class RideService {
     private final GoogleMapsService googleMapsService;
     private final UserRepository userRepository;
 
-    // ── Tworzenie przejazdu ─────────────────────────────────────────────
-
-    /**
-     * Tworzy nowy przejazd na podstawie danych z formularza.
-     * Jeśli frontend nie przesłał danych trasy (dystans, czas),
-     * serwis sam odpytuje Google Directions API.
-     *
-     * Kierowca jest automatycznie dodawany jako uczestnik przejazdu z rolą "driver".
-     */
     @Transactional
     public Ride createRide(CreateRideForm form, User driver) {
 
-        // Uzupełnienie adresów z reverse-geocodingu, jeśli frontend ich nie podał
         if (form.getStartAddress() == null || form.getStartAddress().isBlank()) {
             form.setStartAddress(googleMapsService.reverseGeocode(
                     form.getStartLatitude(), form.getStartLongitude()));
@@ -52,7 +38,6 @@ public class RideService {
                     form.getEndLatitude(), form.getEndLongitude()));
         }
 
-        // Obliczenie trasy, jeśli brak danych z frontu
         if (form.getDistanceKm() == null || form.getDurationMinutes() == null) {
             GoogleMapsService.RouteInfo route = googleMapsService.getDirections(
                     form.getStartLatitude(), form.getStartLongitude(),
@@ -65,7 +50,6 @@ public class RideService {
             }
         }
 
-        // Stan "ACTIVE" (id = 2) – przejazd oczekuje na pasażerów
         RideState activeState = rideStateRepository.findByNameIgnoreCase("not started")
                 .orElseGet(() -> rideStateRepository.findById(2L)
                         .orElseThrow(() -> new RuntimeException(
@@ -79,51 +63,41 @@ public class RideService {
         ride.setDate(form.getDepartureDate());
         ride.setCost(form.getCost() != null ? form.getCost() : 0.0);
         ride.setIsPayed(false);
-        //ride.setAvailableSeats(form.getAvailableSeats() != null ? form.getAvailableSeats() : 3);
-        //ride.setDistanceKm(form.getDistanceKm());
-        //ride.setDurationMinutes(form.getDurationMinutes());
-        //ride.setEncodedPolyline(form.getEncodedPolyline());
         ride.setState(activeState);
 
         RideParticipant participant = new RideParticipant();
-        Optional<Role> role = roleRepository.findByNameIgnoreCase("RIDE-DRIVER");
+        Optional<Role> role = roleRepository.findByNameIgnoreCase("driver");
         participant.setRole(role.get());
         participant.setRide(ride);
         participant.setUser(driver);
 
         ride.setParticipants(List.of(participant));
-        //ride.addParticipant(participant);
-
 
         ride = rideRepository.save(ride);
-
-        //ride = rideRepository.save(ride);
 
         return ride;
     }
 
-    // ── Pobieranie aktywnych przejazdów ─────────────────────────────────
-
-    /**
-     * Zwraca listę aktywnych przejazdów (stan ACTIVE), zamapowanych na DTO.
-     */
     public List<RideResponse> getActiveRides() {
         List<Ride> rides = rideRepository.findActiveRides();
         return rides.stream().map(this::toResponse).toList();
     }
 
-    // ── Szczegóły przejazdu ─────────────────────────────────────────────
-
-    /**
-     * Pobiera przejazd po ID i zwraca DTO.
-     */
     public RideResponse getRideById(Long id) {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono przejazdu o id: " + id));
         return toResponse(ride);
     }
 
-    // ── Mapowanie na DTO ────────────────────────────────────────────────
+    public List<RideDTO> getFilteredRides(LocalDateTime dateFrom, LocalDateTime dateTo, Double maxPrice) {
+        if (dateFrom == null && dateTo == null && maxPrice == null) {
+            return rideRepository.findDTOsByStateName("not started");
+        }
+        if (dateFrom == null) dateFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+        if (dateTo == null)   dateTo   = LocalDateTime.of(2100, 1, 1, 0, 0);
+        if (maxPrice == null) maxPrice = Double.MAX_VALUE;
+        return rideRepository.findFilteredRidesWithAllParams(dateFrom, dateTo, maxPrice);
+    }
 
     private RideResponse toResponse(Ride ride) {
         String driverName = "Nieznany";
@@ -142,17 +116,12 @@ public class RideService {
 
         return RideResponse.builder()
                 .id(ride.getId())
-                //.startAddress(ride.getStartAddress())
                 .startLatitude(ride.getStartLatitude())
                 .startLongitude(ride.getStartLongitude())
-                //.endAddress(ride.getEndAddress())
                 .endLatitude(ride.getEndLatitude())
                 .endLongitude(ride.getEndLongitude())
                 .departureDate(ride.getDate())
                 .cost(ride.getCost())
-                //.availableSeats(ride.getAvailableSeats())
-                //.distanceKm(ride.getDistanceKm())
-                //.durationMinutes(ride.getDurationMinutes())
                 .driverName(driverName)
                 .driverId(driverId)
                 .stateName(ride.getState().getName())
