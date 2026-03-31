@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface UserDriverTicketsRepository extends JpaRepository<UserDriverTickets, Long> {
     Optional<UserDriverTickets> findByUser(User user);
     List<UserDriverTickets> findByUserDriverFalse();
+    void deleteByUser(User user);
 }

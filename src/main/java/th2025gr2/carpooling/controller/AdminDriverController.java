@@ -1,5 +1,6 @@
 package th2025gr2.carpooling.controller;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,19 +40,22 @@ public class AdminDriverController {
                 .body(ticket.getDriverLicense());
     }
 
+    @Transactional
     @PostMapping("/approve/{userId}")
     public String approve(@PathVariable Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setDriver(true);
+        user.setDriverTickets(null); // Hibernate usunie ticket przez CascadeType.ALL + orphanRemoval
         userRepository.save(user);
-        ticketsRepository.findByUser(user).ifPresent(ticketsRepository::delete);
         return "redirect:/admin/drivers";
     }
 
+    @Transactional
     @PostMapping("/reject/{userId}")
     public String reject(@PathVariable Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
-        ticketsRepository.findByUser(user).ifPresent(ticketsRepository::delete);
+        user.setDriverTickets(null);
+        userRepository.save(user);
         return "redirect:/admin/drivers";
     }
 }
