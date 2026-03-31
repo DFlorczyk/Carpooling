@@ -45,7 +45,7 @@ public class AdminDriverController {
     public String approve(@PathVariable Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setDriver(true);
-        user.setDriverTickets(null); // Hibernate usunie ticket przez CascadeType.ALL + orphanRemoval
+        user.setDriverTickets(null);
         userRepository.save(user);
         return "redirect:/admin/drivers";
     }
