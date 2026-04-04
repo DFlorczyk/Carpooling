@@ -121,11 +121,10 @@
 
     <div class="login-container">
 
-        <h2>🔒 Admin Panel</h2>
-        <p class="subtitle">Restricted access only</p>
+        <h2>Admin Panel</h2>
 
         <div th:if="${param.error}" class="alert-box alert-error">
-            <span>⚠️</span> Invalid login or password
+            Invalid login or password
         </div>
 
         <form th:action="@{/admin/login}" method="post">
@@ -133,7 +132,6 @@
             <div class="form-group">
                 <label class="form-label">Login</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
                     <input type="text" name="username" class="form-input"
                            placeholder="Enter your login" required autofocus/>
                 </div>
@@ -142,7 +140,6 @@
             <div class="form-group">
                 <label class="form-label">Password</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
                     <input type="password" name="password" class="form-input"
                            placeholder="Enter your password" required/>
                 </div>

@@ -66,7 +66,7 @@ public class RideService {
         ride.setState(activeState);
 
         RideParticipant participant = new RideParticipant();
-        Optional<Role> role = roleRepository.findByNameIgnoreCase("driver");
+        Optional<RideRole> role = roleRepository.findByNameIgnoreCase("driver");
         participant.setRole(role.get());
         participant.setRide(ride);
         participant.setUser(driver);

@@ -3,10 +3,10 @@
 <body>
 <div th:fragment="content" style="max-width: 600px; margin: 0 auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        <a href="/profile/edit" class="nav-link">✏️ Edit Profile</a>
+        <a href="/profile/edit" class="nav-link">Edit Profile</a>
         <h1 style="color: #667eea; font-size: 2rem; margin: 0;">Profile Page</h1>
         <a th:href="${user.driver} ? '/driver/car' : '/driver/register'"
-           th:text="${user.driver} ? '🚗 Edit Car Details' : '🚗 Become a Driver'"
+           th:text="${user.driver} ? 'Edit Car Details' : 'Become a Driver'"
            class="nav-link">
         </a>
     </div>
@@ -39,7 +39,7 @@
             <a th:href="@{/ridehistory/{id}(id=${user.id})}"
                class="nav-link"
                style="padding: 0.6rem 1.2rem; font-size: 1rem;">
-                📜 Ride History
+                Ride History
             </a>
         </div>
     </div>

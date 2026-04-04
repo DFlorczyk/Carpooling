@@ -260,16 +260,16 @@
                 el.innerHTML = `
                     <div class="ride-route">Loading...</div>
                     <div class="ride-meta">
-                        <span>👤 ${r.driverName ?? 'No driver'}</span>
-                        <span>💰 ${r.cost} zł</span>
-                        <span>📅 ${formattedDate}</span>
+                        <span>${r.driverName ?? 'No driver'}</span>
+                        <span>${r.cost} zł</span>
+                        <span>${formattedDate}</span>
                     </div>
                     <button class="details-btn" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
                     <div class="ride-details" style="display:none">
-                        <div>🚗 ${r.carModel ?? 'Unknown'} — ${r.carColor ?? ''}</div>
-                        <div>💺 Seats: ${r.carSeats ?? '?'}</div>
-                        <div>📏 Mileage: ${r.carMileage ?? '?'} km</div>
-                        <div>📌 State: ${r.stateName ?? 'unknown'}</div>
+                        <div>${r.carModel ?? 'Unknown'} — ${r.carColor ?? ''}</div>
+                        <div>Seats: ${r.carSeats ?? '?'}</div>
+                        <div>Mileage: ${r.carMileage ?? '?'} km</div>
+                        <div>State: ${r.stateName ?? 'unknown'}</div>
                     </div>
                 `;
 
