@@ -23,5 +23,17 @@ public class RideRequest {
 
     @Column(name = "is_accepted", nullable = false)
     private Boolean isAccepted;
+
+    @Column(name = "pickup_latitude", nullable = false)
+    private Double pickupLatitude;
+
+    @Column(name = "pickup_longitude", nullable = false)
+    private Double pickupLongitude;
+
+    @Column(name = "dropoff_latitude", nullable = false)
+    private Double dropoffLatitude;
+
+    @Column(name = "dropoff_longitude", nullable = false)
+    private Double dropoffLongitude;
 }
 

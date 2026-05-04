@@ -6,9 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import th2025gr2.carpooling.dto.CreateRideForm;
 import th2025gr2.carpooling.dto.RideDTO;
 import th2025gr2.carpooling.dto.RideResponse;
+import th2025gr2.carpooling.dto.WaypointDTO;
 import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.RideRepository;
 import th2025gr2.carpooling.repository.RideStateRepository;
+import th2025gr2.carpooling.repository.RideWaypointRepository;
 import th2025gr2.carpooling.repository.RoleRepository;
 import th2025gr2.carpooling.repository.UserRepository;
 
@@ -25,6 +27,7 @@ public class RideService {
     private final RoleRepository roleRepository;
     private final GoogleMapsService googleMapsService;
     private final UserRepository userRepository;
+    private final RideWaypointRepository rideWaypointRepository;
 
     @Transactional
     public Ride createRide(CreateRideForm form, User driver) {
@@ -87,6 +90,13 @@ public class RideService {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono przejazdu o id: " + id));
         return toResponse(ride);
+    }
+
+    public List<WaypointDTO> getWaypointsForRide(Long rideId) {
+        return rideWaypointRepository.findByRideIdOrderBySequenceOrderAsc(rideId)
+                .stream()
+                .map(w -> new WaypointDTO(w.getLatitude(), w.getLongitude(), w.getType().name(), w.getSequenceOrder()))
+                .toList();
     }
 
     public List<RideDTO> getFilteredRides(LocalDateTime dateFrom, LocalDateTime dateTo, Double maxPrice) {

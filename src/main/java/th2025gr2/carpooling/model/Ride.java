@@ -52,6 +52,11 @@ public class Ride {
     @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RideParticipant> participants;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sequenceOrder ASC")
+    private List<RideWaypoint> waypoints;
+
     public void addParticipant(RideParticipant participant) {
         participants.add(participant);
         participant.setRide(this); // IMPORTANT

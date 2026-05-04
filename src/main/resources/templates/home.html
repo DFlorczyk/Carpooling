@@ -6,11 +6,9 @@
 
     <div class="container">
 
-        <!-- LEFT: filters + ride list -->
         <div class="sidebar">
             <h2>Available Rides</h2>
 
-            <!-- FILTERS -->
             <div class="filters">
                 <div class="filter-group">
                     <label>Date from</label>
@@ -33,7 +31,6 @@
             <div id="ridesList"></div>
         </div>
 
-        <!-- RIGHT: map -->
         <div class="map-section">
             <div id="map"></div>
         </div>
@@ -61,7 +58,6 @@
             margin: 0;
         }
 
-        /* filters */
         .filters {
             background: #fff;
             border: 1px solid #dde1f0;
@@ -120,7 +116,6 @@
         .btn-clear  { background: #e9edf7; color: #555; }
         .btn-search:hover, .btn-clear:hover { opacity: 0.85; }
 
-        /* ride list */
         #ridesList { display: flex; flex-direction: column; gap: 0.5rem; }
 
         .ride-card {
@@ -168,7 +163,11 @@
             gap: 3px;
         }
 
-        /* map */
+        .wp-list { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+        .wp-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: #444; }
+        .wp-dot { flex-shrink: 0; width: 9px; height: 9px; border-radius: 50%; }
+        .wp-loading { font-size: 0.75rem; color: #aaa; font-style: italic; }
+
         .map-section { flex: 1; display: flex; flex-direction: column; }
         #map { flex: 1; width: 100%; }
     </style>
@@ -197,7 +196,6 @@
             loadRides();
         }
 
-        // ── FILTERS ───────────────────────────────────────────
         function loadRides() {
             const dateFrom = document.getElementById("filterDateFrom").value;
             const dateTo   = document.getElementById("filterDateTo").value;
@@ -221,7 +219,7 @@
             loadRides();
         }
 
-        // ── GEOCODING ─────────────────────────────────────────
+
         function reverseGeocodeLatLng(lat, lng) {
             return new Promise((resolve) => {
                 const geocoder = new google.maps.Geocoder();
@@ -239,7 +237,6 @@
             });
         }
 
-        // ── RENDER ────────────────────────────────────────────
         function renderRides(rides) {
             const container = document.getElementById("ridesList");
             container.innerHTML = "";
@@ -264,17 +261,19 @@
                         <span>${r.cost} zł</span>
                         <span>${formattedDate}</span>
                     </div>
-                    <button class="details-btn" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
+                    <button class="details-btn" data-ride-id="${r.id}" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
                     <div class="ride-details" style="display:none">
-                        <div>${r.carModel ?? 'Unknown'} — ${r.carColor ?? ''}</div>
+                        <div>${r.carModel ?? 'Unknown'} - ${r.carColor ?? ''}</div>
                         <div>Seats: ${r.carSeats ?? '?'}</div>
                         <div>Mileage: ${r.carMileage ?? '?'} km</div>
                         <div>State: ${r.stateName ?? 'unknown'}</div>
+                        <div class="wp-list"><span class="wp-loading">Loading stops...</span></div>
                     </div>
                 `;
 
                 el.addEventListener("click", () => {
                     showRoute(
+                        r.id,
                         { lat: r.startLatitude, lng: r.startLongitude },
                         { lat: r.endLatitude,   lng: r.endLongitude }
                     );
@@ -291,21 +290,139 @@
             });
         }
 
-        // ── ROUTE ─────────────────────────────────────────────
-        function showRoute(startLatLng, endLatLng) {
-            if (!map || !directionsService || !directionsRenderer) return;
-            directionsService.route(
-                { origin: startLatLng, destination: endLatLng, travelMode: google.maps.TravelMode.DRIVING },
-                (result, status) => {
-                    if (status === "OK") directionsRenderer.setDirections(result);
-                    else console.warn("Route failed:", status);
-                }
-            );
+        let _legPolylines = [];
+        let _customMarkers = [];
+
+        function clearLegPolylines() {
+            _legPolylines.forEach(p => p.setMap(null));
+            _legPolylines = [];
         }
 
-        function toggleDetails(btn) {
+        function clearCustomMarkers() {
+            _customMarkers.forEach(m => m.setMap(null));
+            _customMarkers = [];
+        }
+
+        function makeMarkerIcon(color, label) {
+            const fontSize = label.length <= 2 ? 12 : 9;
+            const charW    = label.length <= 2 ? 8 : 6;
+            const w  = Math.max(26, label.length * charW + 16);
+            const h  = 26;
+            const cx = w / 2;
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h + 8}">
+                <rect x="0" y="0" width="${w}" height="${h}" rx="6" fill="${color}"/>
+                <polygon points="${cx - 5},${h} ${cx + 5},${h} ${cx},${h + 8}" fill="${color}"/>
+                <text x="${cx}" y="${h / 2 + fontSize / 3 + 1}" text-anchor="middle" fill="white"
+                      font-size="${fontSize}" font-family="Arial,sans-serif" font-weight="bold">${label}</text>
+            </svg>`;
+            return {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+                scaledSize: new google.maps.Size(w, h + 8),
+                anchor: new google.maps.Point(cx, h + 8)
+            };
+        }
+
+        function placeMarker(position, color, label, title) {
+            _customMarkers.push(new google.maps.Marker({
+                position, map,
+                icon: makeMarkerIcon(color, label),
+                title
+            }));
+        }
+
+        function drawColoredLegs(result, waypoints, startLatLng, endLatLng) {
+            clearLegPolylines();
+            clearCustomMarkers();
+            directionsRenderer.setOptions({ suppressPolylines: true, suppressMarkers: true });
+            directionsRenderer.setDirections(result);
+
+            result.routes[0].legs.forEach((leg, i) => {
+                const color = i < waypoints.length
+                    ? (waypoints[i].type === 'PICKUP' ? '#22c55e' : '#f97316')
+                    : '#667eea';
+                const path = [];
+                leg.steps.forEach(step => step.path.forEach(pt => path.push(pt)));
+                _legPolylines.push(new google.maps.Polyline({ path, strokeColor: color, strokeWeight: 5, map }));
+            });
+
+            placeMarker(startLatLng, '#667eea', 'Start', 'Start');
+            waypoints.forEach(wp => {
+                const isPickup = wp.type === 'PICKUP';
+                const label = (isPickup ? 'P' : 'D') + '-' + wp.sequenceOrder;
+                placeMarker(
+                    { lat: wp.latitude, lng: wp.longitude },
+                    isPickup ? '#22c55e' : '#f97316',
+                    label,
+                    label
+                );
+            });
+            placeMarker(endLatLng, '#667eea', 'End', 'End');
+        }
+
+        function showRoute(rideId, startLatLng, endLatLng) {
+            if (!map || !directionsService || !directionsRenderer) return;
+
+            fetch(`/api/r/rides/${rideId}/waypoints`)
+                .then(res => res.json())
+                .then(waypoints => {
+                    const stops = waypoints.map(wp => ({
+                        location: { lat: wp.latitude, lng: wp.longitude },
+                        stopover: true
+                    }));
+                    directionsService.route(
+                        {
+                            origin: startLatLng,
+                            destination: endLatLng,
+                            waypoints: stops,
+                            optimizeWaypoints: false,
+                            travelMode: google.maps.TravelMode.DRIVING
+                        },
+                        (result, status) => {
+                            if (status === "OK") drawColoredLegs(result, waypoints, startLatLng, endLatLng);
+                            else console.warn("Route failed:", status);
+                        }
+                    );
+                })
+                .catch(() => {
+                    clearLegPolylines();
+                    clearCustomMarkers();
+                    directionsRenderer.setOptions({ suppressPolylines: false, suppressMarkers: false });
+                    directionsService.route(
+                        { origin: startLatLng, destination: endLatLng, travelMode: google.maps.TravelMode.DRIVING },
+                        (result, status) => {
+                            if (status === "OK") directionsRenderer.setDirections(result);
+                        }
+                    );
+                });
+        }
+
+        async function toggleDetails(btn) {
             const details = btn.nextElementSibling;
-            details.style.display = details.style.display === "none" ? "block" : "none";
+            const opening = details.style.display === "none";
+            details.style.display = opening ? "block" : "none";
+
+            if (!opening || btn.dataset.waypointsLoaded) return;
+            btn.dataset.waypointsLoaded = "true";
+
+            const wpList = details.querySelector(".wp-list");
+            try {
+                const waypoints = await fetch(`/api/r/rides/${btn.dataset.rideId}/waypoints`).then(r => r.json());
+                if (!waypoints.length) { wpList.innerHTML = ""; return; }
+
+                const rows = await Promise.all(waypoints.map(async wp => {
+                    const place = await reverseGeocodeLatLng(wp.latitude, wp.longitude);
+                    const isPickup = wp.type === "PICKUP";
+                    const label = (isPickup ? 'P' : 'D') + '-' + wp.sequenceOrder;
+                    return `<div class="wp-item">
+                        <span class="wp-dot" style="background:${isPickup ? '#22c55e' : '#f97316'}"></span>
+                        <span><strong>${isPickup ? 'Pick up' : 'Drop off'}</strong> at ${label} - ${place}</span>
+                    </div>`;
+                }));
+
+                wpList.innerHTML = rows.join("");
+            } catch {
+                wpList.innerHTML = "<span class='wp-loading'>Could not load stops</span>";
+            }
         }
 
         window.initMap = initMap;

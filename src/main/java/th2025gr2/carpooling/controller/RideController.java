@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import th2025gr2.carpooling.dto.CreateRideForm;
 import th2025gr2.carpooling.dto.RideDTO;
 import th2025gr2.carpooling.dto.RideResponse;
+import th2025gr2.carpooling.dto.WaypointDTO;
 import th2025gr2.carpooling.model.Ride;
 import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.repository.UserRepository;
@@ -84,6 +85,12 @@ public class RideController {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/api/r/rides/{id}/waypoints")
+    @ResponseBody
+    public List<WaypointDTO> getRideWaypoints(@PathVariable Long id) {
+        return rideService.getWaypointsForRide(id);
     }
 
     @GetMapping("/api/r/rides/not-started")
