@@ -15,7 +15,7 @@ public class PlannedRide {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserProfile user;
     @Column(name = "start_latitude", nullable = false)
     private Double startLatitude;
     @Column(name = "start_longitude", nullable = false)

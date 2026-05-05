@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.model.UserDriverTickets;
+import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.repository.UserDriverTicketsRepository;
-import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.repository.UserProfileRepository;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminDriverController {
 
-    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final UserDriverTicketsRepository ticketsRepository;
 
     @GetMapping
@@ -33,7 +33,7 @@ public class AdminDriverController {
 
     @GetMapping("/license/{userId}")
     public ResponseEntity<byte[]> showLicense(@PathVariable Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        UserProfile user = userProfileRepository.findById(userId).orElseThrow();
         UserDriverTickets ticket = ticketsRepository.findByUser(user).orElseThrow();
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
@@ -43,19 +43,18 @@ public class AdminDriverController {
     @Transactional
     @PostMapping("/approve/{userId}")
     public String approve(@PathVariable Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        UserProfile user = userProfileRepository.findById(userId).orElseThrow();
         user.setDriver(true);
-        user.setDriverTickets(null);
-        userRepository.save(user);
+        userProfileRepository.save(user);
+        ticketsRepository.deleteByUser(user);
         return "redirect:/admin/drivers";
     }
 
     @Transactional
     @PostMapping("/reject/{userId}")
     public String reject(@PathVariable Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        user.setDriverTickets(null);
-        userRepository.save(user);
+        UserProfile user = userProfileRepository.findById(userId).orElseThrow();
+        ticketsRepository.deleteByUser(user);
         return "redirect:/admin/drivers";
     }
 }

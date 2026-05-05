@@ -14,7 +14,7 @@ public class UserDriverTickets {
     private Long id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    private UserProfile user;
     @Column(name = "driver_license", nullable = false, columnDefinition = "bytea")
     private byte[] driverLicense;
 }

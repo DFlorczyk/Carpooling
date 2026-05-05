@@ -14,10 +14,10 @@ public class ReportParticipant {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reporting_user_id", nullable = false)
-    private User reportingUser;
+    private UserProfile reportingUser;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reported_user_id", nullable = false)
-    private User reportedUser;
+    private UserProfile reportedUser;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "report_id", nullable = false)
     private Report report;

@@ -14,7 +14,7 @@ public class CarDetail {
     private Long id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    private UserProfile user;
     @Column(name = "model", nullable = false)
     private String model;
     @Column(name = "seat_count", nullable = false)
