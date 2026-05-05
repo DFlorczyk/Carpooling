@@ -23,7 +23,6 @@ public class CreateRideForm {
 
     private Integer availableSeats;
 
-    // Google Maps route info
     private String encodedPolyline;
     private Double distanceKm;
     private Integer durationMinutes;

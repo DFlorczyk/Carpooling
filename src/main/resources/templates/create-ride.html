@@ -1,21 +1,16 @@
-<!-- templates/fragments/create-ride.html -->
-<!-- Fragment widoku formularza dodawania przejazdu z Google Maps -->
 <div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <div class="container mt-4">
         <h2 class="mb-4">Dodaj nowy przejazd</h2>
 
-        <!-- Komunikaty -->
         <div id="alertSuccess" class="alert alert-success d-none" role="alert"></div>
         <div id="alertError" class="alert alert-danger d-none" role="alert"></div>
 
         <div class="row">
-            <!-- ── Formularz (lewa kolumna) ────────────────────────── -->
             <div class="col-md-5">
                 <div class="card shadow-sm">
                     <div class="card-body">
 
-                        <!-- Punkt startowy -->
                         <div class="mb-3">
                             <label for="startAddress" class="form-label fw-bold">
                                 <i class="bi bi-geo-alt-fill text-success"></i> Miejsce startu
@@ -24,7 +19,6 @@
                                    placeholder="Wpisz adres startowy..." autocomplete="off"/>
                         </div>
 
-                        <!-- Punkt docelowy -->
                         <div class="mb-3">
                             <label for="endAddress" class="form-label fw-bold">
                                 <i class="bi bi-geo-alt-fill text-danger"></i> Miejsce docelowe
@@ -33,7 +27,6 @@
                                    placeholder="Wpisz adres docelowy..." autocomplete="off"/>
                         </div>
 
-                        <!-- Data i czas -->
                         <div class="mb-3">
                             <label for="departureDate" class="form-label fw-bold">
                                 <i class="bi bi-calendar-event"></i> Data i godzina wyjazdu
@@ -41,7 +34,6 @@
                             <input type="datetime-local" id="departureDate" class="form-control" required/>
                         </div>
 
-                        <!-- Koszt -->
                         <div class="mb-3">
                             <label for="cost" class="form-label fw-bold">
                                 <i class="bi bi-cash"></i> Koszt na osobę (PLN)
@@ -50,7 +42,6 @@
                                    min="0" step="0.50" value="0" placeholder="np. 25.00"/>
                         </div>
 
-                        <!-- Dostępne miejsca -->
                         <div class="mb-3">
                             <label for="availableSeats" class="form-label fw-bold">
                                 <i class="bi bi-people-fill"></i> Liczba wolnych miejsc
@@ -59,7 +50,6 @@
                                    min="1" max="8" value="3"/>
                         </div>
 
-                        <!-- Info o trasie (wypełniane automatycznie) -->
                         <div id="routeInfo" class="card bg-light mb-3 d-none">
                             <div class="card-body py-2">
                                 <small class="text-muted">Informacje o trasie:</small>
@@ -70,7 +60,6 @@
                             </div>
                         </div>
 
-                        <!-- Ukryte pola -->
                         <input type="hidden" id="startLatitude"/>
                         <input type="hidden" id="startLongitude"/>
                         <input type="hidden" id="endLatitude"/>
@@ -87,7 +76,6 @@
                 </div>
             </div>
 
-            <!-- ── Mapa Google (prawa kolumna) ─────────────────────── -->
             <div class="col-md-7">
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
@@ -98,16 +86,13 @@
         </div>
     </div>
 
-    <!-- ── Skrypty Google Maps ──────────────────────────────────────── -->
     <script th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'"
             async defer></script>
 
     <script th:inline="javascript">
         let map, directionsService, directionsRenderer;
-        let startMarker, endMarker;
         let startAutocomplete, endAutocomplete;
 
-        // Dane trasy
         let routeData = {
             startLat: null, startLng: null,
             endLat: null, endLng: null,
@@ -116,10 +101,8 @@
             polyline: null
         };
 
-        // ── Inicjalizacja mapy ──────────────────────────────────────
-
         function initMap() {
-            const defaultCenter = { lat: 52.2297, lng: 21.0122 }; // Warszawa
+            const defaultCenter = { lat: 52.2297, lng: 21.0122 };
 
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 7,
@@ -138,7 +121,6 @@
                 }
             });
 
-            // Autocomplete dla pola startowego
             startAutocomplete = new google.maps.places.Autocomplete(
                 document.getElementById('startAddress'), {
                     types: ['geocode'],
@@ -159,7 +141,6 @@
                 tryCalculateRoute();
             });
 
-            // Autocomplete dla pola docelowego
             endAutocomplete = new google.maps.places.Autocomplete(
                 document.getElementById('endAddress'), {
                     types: ['geocode'],
@@ -180,8 +161,6 @@
                 tryCalculateRoute();
             });
         }
-
-        // ── Obliczanie trasy ────────────────────────────────────────
 
         function tryCalculateRoute() {
             if (!routeData.startLat || !routeData.endLat) return;
@@ -205,7 +184,6 @@
                     routeData.durationMin = durMin;
                     routeData.polyline = polyline;
 
-                    // Aktualizacja UI
                     document.getElementById('distanceInfo').textContent = distKm + ' km';
                     document.getElementById('durationInfo').textContent = durMin + ' min';
                     document.getElementById('routeInfo').classList.remove('d-none');
@@ -220,8 +198,6 @@
                 }
             });
         }
-
-        // ── Wysłanie formularza ─────────────────────────────────────
 
         function submitRide() {
             const departureDate = document.getElementById('departureDate').value;
@@ -260,8 +236,7 @@
                     showAlert('alertError', data.error);
                     resetButton();
                 } else {
-                    showAlert('alertSuccess',
-                        'Przejazd dodany pomyślnie! Przekierowanie...');
+                    showAlert('alertSuccess', 'Przejazd dodany pomyślnie! Przekierowanie...');
                     setTimeout(() => window.location.href = '/rides/' + data.rideId, 1500);
                 }
             })

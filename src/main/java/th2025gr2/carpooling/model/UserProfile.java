@@ -40,7 +40,4 @@ public class UserProfile {
             cascade = CascadeType.ALL, orphanRemoval = true)
     private CarDetail carDetail;
 
-//    @OneToOne(mappedBy = "profile", fetch = FetchType.LAZY,
-//            cascade = CascadeType.ALL, orphanRemoval = true)
-//    private DriverTicket driverTicket;
 }
