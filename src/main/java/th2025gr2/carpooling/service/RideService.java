@@ -12,7 +12,6 @@ import th2025gr2.carpooling.repository.RideRepository;
 import th2025gr2.carpooling.repository.RideStateRepository;
 import th2025gr2.carpooling.repository.RideWaypointRepository;
 import th2025gr2.carpooling.repository.RoleRepository;
-import th2025gr2.carpooling.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,11 +25,10 @@ public class RideService {
     private final RideStateRepository rideStateRepository;
     private final RoleRepository roleRepository;
     private final GoogleMapsService googleMapsService;
-    private final UserRepository userRepository;
     private final RideWaypointRepository rideWaypointRepository;
 
     @Transactional
-    public Ride createRide(CreateRideForm form, User driver) {
+    public Ride createRide(CreateRideForm form, UserProfile driver) {
 
         if (form.getStartAddress() == null || form.getStartAddress().isBlank()) {
             form.setStartAddress(googleMapsService.reverseGeocode(
@@ -116,7 +114,7 @@ public class RideService {
         if (ride.getParticipants() != null) {
             for (RideParticipant rp : ride.getParticipants()) {
                 if ("driver".equalsIgnoreCase(rp.getRole().getName())) {
-                    User driver = rp.getUser();
+                    UserProfile driver = rp.getUser();
                     driverName = driver.getName() + " " + driver.getSurname();
                     driverId = driver.getId();
                     break;
