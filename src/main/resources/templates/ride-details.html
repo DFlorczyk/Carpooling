@@ -1,5 +1,3 @@
-<!-- templates/fragments/ride-details.html -->
-<!-- Fragment widoku szczegółów przejazdu z mapą trasy -->
 <div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <div class="container mt-4">
@@ -10,7 +8,6 @@
         <h2 class="mb-4">Szczegóły przejazdu</h2>
 
         <div class="row">
-            <!-- ── Informacje (lewa kolumna) ───────────────────────── -->
             <div class="col-md-5">
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-primary text-white">
@@ -73,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- ── Mapa trasy (prawa kolumna) ──────────────────────── -->
             <div class="col-md-7">
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
@@ -84,7 +80,6 @@
         </div>
     </div>
 
-    <!-- ── Google Maps – wyświetlanie trasy ─────────────────────────── -->
     <script th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initDetailMap'"
             async defer></script>
 

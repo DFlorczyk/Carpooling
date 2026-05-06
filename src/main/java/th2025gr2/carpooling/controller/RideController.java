@@ -13,8 +13,8 @@ import th2025gr2.carpooling.dto.RideDTO;
 import th2025gr2.carpooling.dto.RideResponse;
 import th2025gr2.carpooling.dto.WaypointDTO;
 import th2025gr2.carpooling.model.Ride;
-import th2025gr2.carpooling.model.User;
-import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.model.UserProfile;
+import th2025gr2.carpooling.repository.UserProfileRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
 import th2025gr2.carpooling.service.RideService;
 
@@ -27,7 +27,7 @@ import java.util.Map;
 public class RideController {
 
     private final RideService rideService;
-    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
@@ -72,7 +72,7 @@ public class RideController {
                     .body(Map.of("error", "Musisz być zalogowany, aby dodać przejazd"));
         }
 
-        User driver = userRepository.findById(userDetails.getId())
+        UserProfile driver = userProfileRepository.findByCredentialId(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
         try {

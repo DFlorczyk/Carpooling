@@ -13,7 +13,7 @@ public class RideParticipant {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserProfile user;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ride_id", nullable = false)
     private Ride ride;

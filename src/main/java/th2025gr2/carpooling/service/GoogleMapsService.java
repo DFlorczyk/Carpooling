@@ -7,13 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * Serwis do komunikacji z Google Maps API.
- * Obsługuje:
- *  - Geocoding (adres → współrzędne)
- *  - Reverse Geocoding (współrzędne → adres)
- *  - Directions (obliczanie trasy, dystansu, czasu przejazdu)
- */
 @Service
 public class GoogleMapsService {
 
@@ -26,12 +19,6 @@ public class GoogleMapsService {
     private static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
     private static final String DIRECTIONS_URL = "https://maps.googleapis.com/maps/api/directions/json";
 
-    // ── Geocoding: adres → współrzędne ──────────────────────────────────
-
-    /**
-     * Konwertuje adres tekstowy na współrzędne geograficzne.
-     * @return tablica [latitude, longitude] lub null gdy brak wyników
-     */
     public double[] geocodeAddress(String address) {
         String url = UriComponentsBuilder.fromHttpUrl(GEOCODE_URL)
                 .queryParam("address", address)
@@ -58,11 +45,6 @@ public class GoogleMapsService {
         }
     }
 
-    // ── Reverse Geocoding: współrzędne → adres ──────────────────────────
-
-    /**
-     * Konwertuje współrzędne geograficzne na czytelny adres.
-     */
     public String reverseGeocode(double latitude, double longitude) {
         String url = UriComponentsBuilder.fromHttpUrl(GEOCODE_URL)
                 .queryParam("latlng", latitude + "," + longitude)
@@ -85,12 +67,6 @@ public class GoogleMapsService {
         }
     }
 
-    // ── Directions: obliczanie trasy ────────────────────────────────────
-
-    /**
-     * Pobiera informacje o trasie między dwoma punktami.
-     * Zwraca obiekt RouteInfo z dystansem, czasem i zakodowaną polilinią.
-     */
     public RouteInfo getDirections(double startLat, double startLng,
                                    double endLat, double endLng) {
         String url = UriComponentsBuilder.fromHttpUrl(DIRECTIONS_URL)
@@ -126,11 +102,6 @@ public class GoogleMapsService {
         }
     }
 
-    // ── RouteInfo – wynik Directions ────────────────────────────────────
-
-    /**
-     * Kontener na dane trasy z Google Directions API.
-     */
     public record RouteInfo(
             double distanceKm,
             int durationMinutes,

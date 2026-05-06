@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import th2025gr2.carpooling.model.User;
+import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.service.UserService;
 
 import java.security.Principal;
@@ -27,7 +27,7 @@ public class HomeController {
         model.addAttribute("view", "home");
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        User user = userService.getCurrentUser(principal);
+        UserProfile user = userService.getCurrentProfile(principal);
         String backendCity = (user != null && user.getCity() != null)
                 ? user.getCity().getName()
                 : null;

@@ -7,11 +7,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import th2025gr2.carpooling.model.RegisterRequest;
-import th2025gr2.carpooling.model.City;
-import th2025gr2.carpooling.model.User;
+import th2025gr2.carpooling.enums.Role;
+import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.CityRepository;
-import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.repository.UserCredentialRepository;
+import th2025gr2.carpooling.repository.UserProfileRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
 
 import java.security.Principal;
@@ -20,53 +20,61 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserCredentialRepository credentialRepository;
+    private final UserProfileRepository profileRepository;
     private final CityRepository cityRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User u = userRepository.findByEmail(email)
+        return credentialRepository.findByEmail(email)
+                .map(UserDetailsWithId::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Nie znaleziono użytkownika: " + email));
-        return new UserDetailsWithId(u);
     }
 
     @Transactional
-    public User register(RegisterRequest request) {
-        if (request.getEmail() == null || request.getEmail().isBlank()) {
+    public UserCredential register(RegisterRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank())
             throw new IllegalArgumentException("Email jest wymagany");
-        }
-        if (request.getPassword() == null || request.getPassword().isBlank()) {
+        if (request.getPassword() == null || request.getPassword().isBlank())
             throw new IllegalArgumentException("Hasło jest wymagane");
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (credentialRepository.existsByEmail(request.getEmail()))
             throw new IllegalArgumentException("Użytkownik o takim emailu już istnieje");
-        }
 
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
-        user.setName(request.getName() == null ? "" : request.getName());
-        user.setSurname(request.getSurname() == null ? "" : request.getSurname());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setDriver(false);
-        user.setWoman(false);
-        user.setBlocked(false);
-        user.setCity(null);
-        user.setCarDetails(null);
-        user.setDriverTickets(null);
+        UserCredential credential = new UserCredential();
+        credential.setEmail(request.getEmail());
+        credential.setHashedPassword(passwordEncoder.encode(request.getPassword()));
+        credential.setBlocked(false);
+        credential.setRole(Role.USER);
+        credentialRepository.save(credential);
 
-        return userRepository.save(user);
+        UserProfile profile = new UserProfile();
+        profile.setCredential(credential);
+        profile.setName(request.getName() == null ? "" : request.getName());
+        profile.setSurname(request.getSurname() == null ? "" : request.getSurname());
+        profile.setPhoneNumber(request.getPhoneNumber());
+        profile.setDriver(false);
+        profile.setWoman(false);
+        profileRepository.save(profile);
+
+        return credential;
     }
 
-    public User getCurrentUser(Principal principal) {
+    public UserCredential getCurrentCredential(Principal principal) {
         if (principal == null) return null;
-        return userRepository.findByEmail(principal.getName()).orElse(null);
+        return credentialRepository.findByEmail(principal.getName()).orElse(null);
     }
 
-    public void updateUserCity(User user, String cityName) {
-        if (user == null || cityName == null || cityName.isBlank()) return;
+    public UserProfile getCurrentProfile(Principal principal) {
+        if (principal == null) return null;
+        return credentialRepository.findByEmail(principal.getName())
+                .map(UserCredential::getProfile)
+                .orElse(null);
+    }
+
+    @Transactional
+    public void updateCity(UserProfile profile, String cityName) {
+        if (profile == null || cityName == null || cityName.isBlank()) return;
 
         City city = cityRepository.findByNameIgnoreCase(cityName)
                 .orElseGet(() -> {
@@ -75,7 +83,7 @@ public class UserService implements UserDetailsService {
                     return cityRepository.save(newCity);
                 });
 
-        user.setCity(city);
-        userRepository.save(user);
+        profile.setCity(city);
+        profileRepository.save(profile);
     }
 }

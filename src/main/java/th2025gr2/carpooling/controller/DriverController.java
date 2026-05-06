@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import th2025gr2.carpooling.model.CarDetail;
-import th2025gr2.carpooling.model.User;
 import th2025gr2.carpooling.model.UserDriverTickets;
+import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.repository.CarDetailRepository;
 import th2025gr2.carpooling.repository.UserDriverTicketsRepository;
-import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.repository.UserProfileRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
 
 import java.io.IOException;
@@ -24,18 +24,17 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class DriverController {
 
-    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final UserDriverTicketsRepository ticketsRepository;
     private final CarDetailRepository carDetailRepository;
 
     @GetMapping("/register")
-    public String registerForm(@AuthenticationPrincipal UserDetailsWithId userDetails,
-                               Model model) {
-        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+    public String registerForm(@AuthenticationPrincipal UserDetailsWithId userDetails, Model model) {
+        UserProfile user = userProfileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
 
         if (user.isDriver()) return "redirect:/profile";
 
-        if (user.getDriverTickets() != null) {
+        if (ticketsRepository.findByUser(user).isPresent()) {
             model.addAttribute("pageTitle", "Become a Driver");
             model.addAttribute("view", "driver-pending");
             return "layout";
@@ -52,10 +51,10 @@ public class DriverController {
             @RequestParam MultipartFile driverLicense,
             Model model
     ) {
-        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+        UserProfile user = userProfileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
 
         if (user.isDriver()) return "redirect:/profile";
-        if (user.getDriverTickets() != null) return "redirect:/driver/register";
+        if (ticketsRepository.findByUser(user).isPresent()) return "redirect:/driver/register";
 
         String contentType = driverLicense.getContentType();
         if (driverLicense.isEmpty() || contentType == null || !contentType.startsWith("image/")) {
@@ -89,7 +88,7 @@ public class DriverController {
 
     @GetMapping("/car")
     public String carForm(@AuthenticationPrincipal UserDetailsWithId userDetails, Model model) {
-        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+        UserProfile user = userProfileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
 
         if (!user.isDriver()) return "redirect:/driver/register";
 
@@ -100,6 +99,7 @@ public class DriverController {
         model.addAttribute("car", car);
         return "layout";
     }
+
     @PostMapping("/car")
     public String submitCar(
             @AuthenticationPrincipal UserDetailsWithId userDetails,
@@ -108,7 +108,7 @@ public class DriverController {
             @RequestParam Short mileage,
             @RequestParam String color
     ) {
-        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+        UserProfile user = userProfileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
 
         if (!user.isDriver()) return "redirect:/driver/register";
 

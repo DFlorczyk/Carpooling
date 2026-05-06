@@ -1,5 +1,3 @@
-<!-- templates/fragments/rides-list.html -->
-<!-- Fragment widoku listy aktywnych przejazdów -->
 <div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <div class="container mt-4">
@@ -10,20 +8,17 @@
             </a>
         </div>
 
-        <!-- Brak przejazdów -->
         <div th:if="${#lists.isEmpty(rides)}" class="text-center py-5">
             <i class="bi bi-car-front" style="font-size: 3rem; color: #ccc;"></i>
             <p class="text-muted mt-3">Brak dostępnych przejazdów.</p>
             <a href="/rides/create" class="btn btn-outline-primary">Dodaj pierwszy przejazd</a>
         </div>
 
-        <!-- Lista przejazdów -->
         <div class="row" th:unless="${#lists.isEmpty(rides)}">
             <div class="col-md-6 col-lg-4 mb-3" th:each="ride : ${rides}">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
 
-                        <!-- Trasa -->
                         <div class="mb-2">
                             <div class="d-flex align-items-start mb-1">
                                 <i class="bi bi-geo-alt-fill text-success me-2 mt-1"></i>
@@ -37,7 +32,6 @@
 
                         <hr class="my-2"/>
 
-                        <!-- Szczegóły -->
                         <div class="row small text-muted">
                             <div class="col-6">
                                 <i class="bi bi-calendar-event"></i>
@@ -59,7 +53,6 @@
                             </div>
                         </div>
 
-                        <!-- Kierowca -->
                         <div class="mt-2 small">
                             <i class="bi bi-person-circle"></i>
                             <span th:text="${ride.driverName}">Kierowca</span>

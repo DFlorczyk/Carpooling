@@ -33,7 +33,7 @@
             <label style="font-weight:600; display:block; margin-bottom:0.3rem;">
                 Email
             </label>
-            <input type="email" th:field="*{email}" required
+            <input type="email" name="email" th:value="${user.credential.email}" required
                    style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem;"/>
         </div>
 

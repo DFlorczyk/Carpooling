@@ -19,5 +19,5 @@ public class City {
     @Column(nullable = false)
     private String name;
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
-    private List<User> users;
+    private List<UserProfile> users;
 }

@@ -159,7 +159,6 @@
             password: password
         };
 
-        // Używamy /auth/register zamiast pełnego adresu localhost
         const response = await fetch("/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -171,7 +170,7 @@
             message.style.color = "green";
             message.textContent = "Zarejestrowano! Przekierowanie do logowania...";
             setTimeout(() => {
-                window.location.href = "/login"; // Przekierowanie po 2 sekundach
+                window.location.href = "/login";
             }, 2000);
         } else {
             message.style.color = "red";

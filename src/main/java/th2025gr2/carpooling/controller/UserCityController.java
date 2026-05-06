@@ -2,7 +2,7 @@ package th2025gr2.carpooling.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import th2025gr2.carpooling.model.User;
+import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.service.UserService;
 
 import java.security.Principal;
@@ -20,11 +20,12 @@ public class UserCityController {
 
     @PostMapping("/city")
     public ResponseEntity<?> updateCity(@RequestBody Map<String, String> body, Principal principal) {
-        if (principal == null) return ResponseEntity.ok().build();
+        if (principal == null) return ResponseEntity.status(401).build();
 
-        User user = userService.getCurrentUser(principal);
-        String cityName = body.get("city");
-        userService.updateUserCity(user, cityName);
+        UserProfile profile = userService.getCurrentProfile(principal);
+        if (profile == null) return ResponseEntity.status(404).build();
+
+        userService.updateCity(profile, body.get("city"));
 
         return ResponseEntity.ok().build();
     }

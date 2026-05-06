@@ -1,24 +1,25 @@
 package th2025gr2.carpooling.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import th2025gr2.carpooling.service.AdminDetailsService;
 import th2025gr2.carpooling.service.UserService;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     @Order(1)
-    SecurityFilterChain adminFilterChain(HttpSecurity http, AdminDetailsService adminDetailsService) throws Exception {
+    SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/admin/**")
                 .csrf(csrf -> csrf.disable())
@@ -33,13 +34,13 @@ public class SecurityConfig {
                         .failureUrl("/admin/login?error=true")
                         .permitAll()
                 )
-                .authenticationProvider(adminAuthProvider(adminDetailsService))
+                .authenticationProvider(authProvider())
                 .build();
     }
 
     @Bean
     @Order(2)
-    SecurityFilterChain userFilterChain(HttpSecurity http, UserService userService) throws Exception {
+    SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/**")
                 .csrf(csrf -> csrf.disable())
@@ -48,7 +49,6 @@ public class SecurityConfig {
                                 "/auth/**", "/login", "/error",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
-                        // Endpointy przejazdów wymagają autentykacji (obsługiwane domyślnie)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -58,31 +58,16 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
-                .authenticationProvider(userAuthProvider(userService))
+                .authenticationProvider(authProvider())
                 .build();
     }
 
-    DaoAuthenticationProvider userAuthProvider(UserService userService) {
-        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
-        p.setUserDetailsService(userService);
-        p.setPasswordEncoder(passwordEncoder());
-        return p;
-    }
-
-    DaoAuthenticationProvider adminAuthProvider(AdminDetailsService adminDetailsService) {
-        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
-        p.setUserDetailsService(adminDetailsService);
-        p.setPasswordEncoder(passwordEncoder());
-        return p;
-    }
-
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 
-//    @Bean
-//    AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-//        return cfg.getAuthenticationManager();
-//    }
 }
