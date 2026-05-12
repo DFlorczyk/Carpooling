@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+        <div style="width: 100%; max-width: 800px; background-color: #eef2f7; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h1 style="color: #667eea; font-size: 2rem; margin: 0 0 1rem 0; text-align: center;">Ride History</h1>
+            <ul style="list-style: none; padding: 0; margin: 0;" th:if="${rides}">
+                <li th:each="ride : ${rides}"
+                    style="background-color: #ffffff; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+
+
+                    <div>
+                        <div style="font-size: 1.1rem; font-weight: bold;">🚗 Ride</div>
+                        <div style="margin-top: 0.3rem; color: #555;">
+                            📅 <span th:text="${#temporals.format(ride.date, 'dd.MM.yyyy HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <a th:href="@{'/ride/details/' + ${ride.id}}"
+                       class="nav-link"
+                       style="padding: 0.8rem 1.2rem; font-size: 1rem; text-align: center;">
+                        Details
+                    </a>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\mateusz\\\\IdeaProjects\\\\Carpooling\" -Recurse -Directory | Select-Object -First 30 | ForEach-Object { $_.FullName })",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\mateusz\\\\IdeaProjects\\\\Carpooling\\\\src\\\\main\\\\resources\\\\static\" -Recurse | ForEach-Object { $_.FullName })",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\mateusz\\\\IdeaProjects\\\\Carpooling\" -File | ForEach-Object { $_.Name })",
+      "Bash(xargs cat)"
+    ]
+  }
+}

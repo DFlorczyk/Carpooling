@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" style="max-width: 700px; margin: 0 auto;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <a href="/driver/register" class="nav-link">← Back</a>
+        <h1 style="color: #667eea; font-size: 1.8rem; margin: 0;">Chat with Admin</h1>
+        <div></div>
+    </div>
+
+    <div style="background: #fafafa; border-radius: 12px; padding: 1.5rem;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08); min-height: 400px;
+                display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+
+        <div th:if="${#lists.isEmpty(messages)}"
+             style="text-align: center; color: #aaa; margin: auto;">
+            No messages yet. Start the conversation.
+        </div>
+
+        <div th:each="msg : ${messages}"
+             th:style="${msg.fromAdmin} ? 'align-self: flex-start; max-width: 75%;' : 'align-self: flex-end; max-width: 75%;'">
+
+            <div th:style="${msg.fromAdmin}
+                    ? 'background: #f0f0f0; color: #333; border-radius: 12px 12px 12px 0; padding: 0.8rem 1rem;'
+                    : 'background: #667eea; color: white; border-radius: 12px 12px 0 12px; padding: 0.8rem 1rem;'">
+
+                <div th:if="${msg.content != null}" th:text="${msg.content}"
+                     style="word-break: break-word;"></div>
+
+                <img th:if="${msg.attachment != null}"
+                     th:src="@{/driver/chat/attachment/{id}(id=${msg.id})}"
+                     alt="attachment"
+                     style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem; display: block;"/>
+            </div>
+
+            <div th:style="${msg.fromAdmin} ? 'font-size: 0.75rem; color: #aaa; margin-top: 0.2rem;'
+                                            : 'font-size: 0.75rem; color: #aaa; margin-top: 0.2rem; text-align: right;'"
+                 th:text="${#temporals.format(msg.sentAt, 'dd.MM.yyyy HH:mm')}">
+            </div>
+        </div>
+    </div>
+
+    <form action="/driver/chat" method="post" enctype="multipart/form-data"
+          style="background: white; border-radius: 12px; padding: 1.2rem;
+                 box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 0.8rem;">
+
+        <textarea name="content" rows="3" placeholder="Type a message..."
+                  style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;
+                         font-size: 1rem; resize: vertical; font-family: inherit;"></textarea>
+
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <input type="file" name="attachment" accept="image/*"
+                   style="font-size: 0.9rem; color: #666;"/>
+            <button type="submit"
+                    style="padding: 0.7rem 1.8rem; background: #667eea; color: white;
+                           border: none; border-radius: 8px; font-size: 1rem;
+                           font-weight: 600; cursor: pointer;">
+                Send
+            </button>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
