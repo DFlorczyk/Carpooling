@@ -19,4 +19,8 @@ public class RideRestService {
     public List<RideDTO> getRidesDTOByState(String stateName) {
         return rideRepository.findDTOsByStateName(stateName);
     }
+
+    public List<RideDTO> getRidesDrivenBy(Long driverProfileId) {
+        return rideRepository.findDTOsByDriverId(driverProfileId);
+    }
 }

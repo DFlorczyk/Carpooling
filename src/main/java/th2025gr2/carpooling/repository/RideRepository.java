@@ -102,4 +102,23 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         ORDER BY r.date ASC
         """)
     List<Ride> findActiveRides();
+
+    @Query("""
+        SELECT new th2025gr2.carpooling.dto.RideDTO(
+            r.id,
+            r.startLatitude, r.startLongitude,
+            r.endLatitude, r.endLongitude,
+            r.cost, r.date,
+            r.state.name,
+            CONCAT(rp.user.name, ' ', rp.user.surname),
+            cd.model, cd.color, cd.seatCount, cd.mileage
+        )
+        FROM Ride r
+        JOIN r.participants rp
+        LEFT JOIN CarDetail cd ON cd.user = rp.user
+        WHERE rp.role.name = 'driver'
+          AND rp.user.id = :driverId
+        ORDER BY r.date DESC
+        """)
+    List<RideDTO> findDTOsByDriverId(@Param("driverId") Long driverId);
 }
