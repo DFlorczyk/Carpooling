@@ -1,71 +1,279 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="content" style="max-width: 600px; margin: 0 auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+<div th:fragment="content" style="max-width:700px;margin:0 auto;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
         <a href="/profile/edit" class="nav-link">Edit Profile</a>
-        <h1 style="color: #667eea; font-size: 2rem; margin: 0;">Profile Page</h1>
+        <h1 style="color:#667eea;font-size:2rem;margin:0;">Profile Page</h1>
         <a th:href="${user.driver} ? '/driver/car' : '/driver/register'"
            th:text="${user.driver} ? 'Edit Car Details' : 'Become a Driver'"
-           class="nav-link">
-        </a>
+           class="nav-link"></a>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 2rem; background: #fff;
-            border-radius: 12px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-
-        <div style="
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 3rem;
-        "
-             th:text="${#strings.substring(user.name, 0, 1)}">
-        </div>
-
-        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+    <div style="display:flex;align-items:center;gap:2rem;background:#fff;border-radius:12px;padding:2rem;box-shadow:0 2px 10px rgba(0,0,0,.1);">
+        <div style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:3rem;"
+             th:text="${#strings.substring(user.name,0,1)}"></div>
+        <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <h2 style="color: #333; font-size: 2rem; margin-bottom: 0.5rem;"
-                    th:text="${user.name} + ' ' + ${user.surname}"></h2>
-                <p style="color: #666; font-size: 1.1rem;">User</p>
+                <h2 style="color:#333;font-size:2rem;margin-bottom:.5rem;" th:text="${user.name}+' '+${user.surname}"></h2>
+                <p style="color:#666;font-size:1.1rem;">User</p>
             </div>
-
-            <a th:href="@{/ridehistory/{id}(id=${user.id})}"
-               class="nav-link"
-               style="padding: 0.6rem 1.2rem; font-size: 1rem;">
-                Ride History
-            </a>
+            <a th:href="@{/ridehistory/{id}(id=${user.id})}" class="nav-link" style="padding:.6rem 1.2rem;font-size:1rem;">Ride History</a>
         </div>
     </div>
 
-    <div style="margin: 2rem 0; text-align: center;">
-        <span style="font-size: 2rem; color: #ccc;">☆</span>
-        <span style="font-size: 2rem; color: #ccc;">☆</span>
-        <span style="font-size: 2rem; color: #ccc;">☆</span>
-        <span style="font-size: 2rem; color: #ccc;">☆</span>
-        <span style="font-size: 2rem; color: #ccc;">☆</span>
+    <div style="margin:2rem 0;text-align:center;">
+        <span style="font-size:2rem;color:#ccc;">☆</span><span style="font-size:2rem;color:#ccc;">☆</span>
+        <span style="font-size:2rem;color:#ccc;">☆</span><span style="font-size:2rem;color:#ccc;">☆</span>
+        <span style="font-size:2rem;color:#ccc;">☆</span>
     </div>
 
-    <div style="margin-top: 2rem; background: #fafafa; border-radius: 8px; padding: 1.5rem;">
-        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
-            <strong>Email:</strong> <span th:text="${user.credential.email}"></span>
-        </p>
-        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
-            <strong>Phone:</strong> <span th:text="${user.phoneNumber}"></span>
-        </p>
-        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
-            <strong>City:</strong> <span th:text="${user.city != null ? user.city.name : 'N/A'}"></span>
-        </p>
-        <p style="color: #444; font-size: 1.1rem; margin-bottom: 0.8rem;">
-            <strong>Ride Count:</strong> <span>0</span>
-        </p>
+    <div style="background:#fafafa;border-radius:8px;padding:1.5rem;">
+        <p style="color:#444;font-size:1.1rem;margin-bottom:.8rem;"><strong>Email:</strong> <span th:text="${user.credential.email}"></span></p>
+        <p style="color:#444;font-size:1.1rem;margin-bottom:.8rem;"><strong>Phone:</strong> <span th:text="${user.phoneNumber}"></span></p>
+        <p style="color:#444;font-size:1.1rem;margin-bottom:.8rem;"><strong>City:</strong> <span th:text="${user.city != null ? user.city.name : 'N/A'}"></span></p>
+        <p style="color:#444;font-size:1.1rem;margin-bottom:.8rem;"><strong>Ride Count:</strong> <span>0</span></p>
     </div>
+
+    <div style="margin-top:2rem;">
+        <h3 class="section-title">My Applications</h3>
+        <div id="myAppList"><p class="req-empty">Loading...</p></div>
+    </div>
+
+    <div th:if="${user.driver}" style="margin-top:2rem;">
+        <h3 class="section-title">Pending Ride Applications</h3>
+        <div id="pendingList"><p class="req-empty">Loading...</p></div>
+    </div>
+
+    <div id="mapModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);">
+        <div style="position:absolute;inset:30px;background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25);">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;border-bottom:1px solid #e8ecf5;flex-shrink:0;flex-wrap:wrap;gap:.5rem;">
+                <span style="font-weight:700;font-size:.95rem;color:#1e293b;">Route Preview</span>
+                <div id="modalLegend" style="display:flex;align-items:center;gap:1rem;font-size:.78rem;color:#64748b;flex-wrap:wrap;"></div>
+                <button onclick="closeMapModal()" style="border:none;background:#f1f5f9;color:#475569;border-radius:6px;padding:.3rem .7rem;cursor:pointer;font-size:.82rem;font-weight:600;">✕ Close</button>
+            </div>
+            <div id="modalMap" style="flex:1;"></div>
+        </div>
+    </div>
+
+    <style>
+        .section-title { font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:.75rem; }
+        .req-item { background:#fff;border:1px solid #e8ecf5;border-radius:10px;padding:.85rem 1rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem; }
+        .req-info { flex:1;font-size:.82rem;color:#475569;display:flex;flex-direction:column;gap:.25rem; }
+        .req-name { font-weight:700;color:#1e293b;font-size:.9rem; }
+        .req-loc  { display:flex;align-items:flex-start;gap:.4rem; }
+        .req-dot  { width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px; }
+        .req-btns { display:flex;gap:.4rem;flex-shrink:0;align-items:flex-start;flex-wrap:wrap; }
+        .btn-acc  { padding:.3rem .8rem;background:#22c55e;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
+        .btn-rej  { padding:.3rem .8rem;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
+        .btn-view { padding:.3rem .8rem;background:#667eea;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
+        .btn-acc:hover,.btn-rej:hover,.btn-view:hover { opacity:.85; }
+        .req-empty { color:#94a3b8;font-size:.85rem; }
+        .req-feedback { padding:.5rem .75rem;border-radius:7px;font-size:.82rem;margin-bottom:.5rem; }
+        .req-feedback.ok  { background:#dcfce7;color:#15803d;border:1px solid #bbf7d0; }
+        .req-feedback.err { background:#fee2e2;color:#b91c1c;border:1px solid #fecaca; }
+        .status-badge { display:inline-block;padding:.15rem .55rem;border-radius:20px;font-size:.72rem;font-weight:700; }
+        .status-badge.pending  { background:#fef9c3;color:#a16207;border:1px solid #fde68a; }
+        .status-badge.accepted { background:#dcfce7;color:#15803d;border:1px solid #bbf7d0; }
+        .status-badge.rejected { background:#fee2e2;color:#b91c1c;border:1px solid #fecaca; }
+        .legend-dot { display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:3px;vertical-align:middle; }
+    </style>
+
+    <script>
+        let modalMap, modalDirService, modalDirRenderer, modalOverlays = [];
+
+        function geocodeInto(elId, lat, lng) {
+            if (typeof google === 'undefined') {
+                const el = document.getElementById(elId);
+                if (el) el.textContent = lat.toFixed(4) + ', ' + lng.toFixed(4);
+                return;
+            }
+            new google.maps.Geocoder().geocode({ location: { lat, lng } }, (res, st) => {
+                const el = document.getElementById(elId);
+                if (el) el.textContent = st === 'OK' && res[0] ? res[0].formatted_address : lat.toFixed(4) + ', ' + lng.toFixed(4);
+            });
+        }
+
+        function makeSvgIcon(color, label, circle) {
+            const s = circle ? 30 : 26, r = circle ? 15 : 6, fs = label.length > 2 ? 9 : 12;
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s+8}">
+                <rect x="0" y="0" width="${s}" height="${s}" rx="${r}" fill="${color}"/>
+                <polygon points="${s/2-5},${s} ${s/2+5},${s} ${s/2},${s+8}" fill="${color}"/>
+                <text x="${s/2}" y="${s/2+fs/3+1}" text-anchor="middle" fill="white" font-size="${fs}" font-family="Arial" font-weight="bold">${label}</text>
+            </svg>`;
+            return { url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg), scaledSize:new google.maps.Size(s,s+8), anchor:new google.maps.Point(s/2,s+8) };
+        }
+
+        function addOverlayMarker(position, color, label, circle) {
+            const m = new google.maps.Marker({ position, map: modalMap, icon: makeSvgIcon(color, label, circle) });
+            modalOverlays.push(m);
+        }
+
+        function clearOverlays() {
+            modalOverlays.forEach(o => o.setMap(null));
+            modalOverlays = [];
+        }
+
+        function openMapModal(rideId, newPickupLat, newPickupLng, newDropoffLat, newDropoffLng, startLat, startLng, endLat, endLng, driverMode, existingWpCount) {
+            document.getElementById('mapModal').style.display = 'block';
+
+            if (!modalMap) {
+                modalMap = new google.maps.Map(document.getElementById('modalMap'), {
+                    zoom: 7, center: { lat: (startLat+endLat)/2, lng: (startLng+endLng)/2 },
+                    mapTypeControl: false, streetViewControl: false
+                });
+                modalDirService  = new google.maps.DirectionsService();
+                modalDirRenderer = new google.maps.DirectionsRenderer({ map: modalMap, suppressMarkers: true, suppressPolylines: true });
+            }
+
+            clearOverlays();
+            if (modalDirRenderer) modalDirRenderer.setDirections({ routes: [] });
+
+            const legend = document.getElementById('modalLegend');
+            legend.innerHTML = `
+                <span><span class="legend-dot" style="background:#ef4444"></span>Existing route</span>
+                <span><span class="legend-dot" style="background:#16a34a"></span>${driverMode ? 'Passenger segment' : 'Your segment'}</span>
+                <span><span class="legend-dot" style="background:#16a34a;border-radius:50%"></span>${driverMode ? 'Pickup / drop-off' : 'Your pickup / drop-off'}</span>`;
+
+            fetch(`/api/r/rides/${rideId}/waypoints`)
+                .then(r => r.json())
+                .then(waypoints => {
+                    const origin = { lat: startLat, lng: startLng };
+                    const dest   = { lat: endLat,   lng: endLng   };
+                    const bounds = new google.maps.LatLngBounds();
+
+                    function routeAndDraw(from, to, stops, color, zIdx, weight, callback) {
+                        modalDirService.route({
+                            origin: from, destination: to,
+                            waypoints: stops,
+                            optimizeWaypoints: false,
+                            travelMode: google.maps.TravelMode.DRIVING
+                        }, (result, status) => {
+                            if (status !== 'OK') { if (callback) callback(); return; }
+                            result.routes[0].legs.forEach(leg => {
+                                const path = [];
+                                leg.steps.forEach(step => step.path.forEach(pt => { path.push(pt); bounds.extend(pt); }));
+                                modalOverlays.push(new google.maps.Polyline({ path, strokeColor: color, strokeWeight: weight, zIndex: zIdx, map: modalMap }));
+                            });
+                            if (callback) callback();
+                        });
+                    }
+
+                    const oldStops = waypoints.map(w => ({ location: { lat: w.latitude, lng: w.longitude }, stopover: true }));
+
+                    // RED: full old route (start → existing waypoints → end)
+                    routeAndDraw(origin, dest, oldStops, '#ef4444', 1, 5, () => {
+                        // GREEN: just pickup → dropoff (the new segment only)
+                        routeAndDraw(
+                            { lat: newPickupLat, lng: newPickupLng },
+                            { lat: newDropoffLat, lng: newDropoffLng },
+                            [], '#16a34a', 2, 4,
+                            () => {
+                                bounds.extend({ lat: newPickupLat,  lng: newPickupLng  });
+                                bounds.extend({ lat: newDropoffLat, lng: newDropoffLng });
+                                modalMap.fitBounds(bounds);
+                                addOverlayMarker(origin, '#475569', 'S');
+                                addOverlayMarker(dest,   '#475569', 'E');
+                                addOverlayMarker({ lat: newPickupLat,  lng: newPickupLng  }, '#16a34a', '★P', true);
+                                addOverlayMarker({ lat: newDropoffLat, lng: newDropoffLng }, '#16a34a', '★D', true);
+                            }
+                        );
+                    });
+                });
+        }
+
+        function closeMapModal() {
+            document.getElementById('mapModal').style.display = 'none';
+        }
+
+        function loadMyApplications() {
+            fetch('/api/my-applications')
+                .then(r => r.json())
+                .then(data => {
+                    const c = document.getElementById('myAppList');
+                    if (!data.length) { c.innerHTML = '<p class="req-empty">You have not applied for any rides yet.</p>'; return; }
+                    c.innerHTML = '';
+                    data.forEach(a => {
+                        const el = document.createElement('div');
+                        el.className = 'req-item';
+                        el.innerHTML = `
+                            <div class="req-info">
+                                <span class="req-name">Ride <a href="/rides/${a.rideId}" style="color:#667eea;">#${a.rideId}</a></span>
+                                <span class="req-loc"><span class="req-dot" style="background:#22c55e"></span><span id="apu-${a.id}">Loading...</span></span>
+                                <span class="req-loc"><span class="req-dot" style="background:#f97316"></span><span id="ado-${a.id}">Loading...</span></span>
+                            </div>
+                            <div class="req-btns">
+                                <button class="btn-view" onclick="openMapModal(${a.rideId},${a.pickupLatitude},${a.pickupLongitude},${a.dropoffLatitude},${a.dropoffLongitude},${a.rideStartLatitude},${a.rideStartLongitude},${a.rideEndLatitude},${a.rideEndLongitude},false,0)">View Route</button>
+                                <span class="status-badge ${a.status.toLowerCase()}">${a.status}</span>
+                            </div>`;
+                        c.appendChild(el);
+                        geocodeInto('apu-' + a.id, a.pickupLatitude, a.pickupLongitude);
+                        geocodeInto('ado-' + a.id, a.dropoffLatitude, a.dropoffLongitude);
+                    });
+                })
+                .catch(() => document.getElementById('myAppList').innerHTML = '<p class="req-empty">Failed to load.</p>');
+        }
+    </script>
+
+    <script th:if="${user.driver}">
+        function loadPending() {
+            fetch('/api/my-ride-requests')
+                .then(r => r.json())
+                .then(data => renderPending(data))
+                .catch(() => document.getElementById('pendingList').innerHTML = '<p class="req-empty">Failed to load.</p>');
+        }
+
+        function renderPending(data) {
+            const c = document.getElementById('pendingList');
+            if (!data.length) { c.innerHTML = '<p class="req-empty">No pending applications.</p>'; return; }
+            c.innerHTML = '';
+            data.forEach(r => {
+                const el = document.createElement('div');
+                el.className = 'req-item';
+                el.innerHTML = `
+                    <div class="req-info">
+                        <span class="req-name">${r.passengerName}</span>
+                        <span class="req-loc"><span class="req-dot" style="background:#22c55e"></span><span id="pu-${r.id}">Loading...</span></span>
+                        <span class="req-loc"><span class="req-dot" style="background:#f97316"></span><span id="do-${r.id}">Loading...</span></span>
+                    </div>
+                    <div class="req-btns">
+                        <button class="btn-view" onclick="openMapModal(${r.rideId},${r.pickupLatitude},${r.pickupLongitude},${r.dropoffLatitude},${r.dropoffLongitude},${r.rideStartLatitude},${r.rideStartLongitude},${r.rideEndLatitude},${r.rideEndLongitude},true,0)">View</button>
+                        <button class="btn-acc" onclick="handleReq(${r.id},'accept')">Accept</button>
+                        <button class="btn-rej" onclick="handleReq(${r.id},'reject')">Reject</button>
+                    </div>`;
+                c.appendChild(el);
+                geocodeInto('pu-' + r.id, r.pickupLatitude, r.pickupLongitude);
+                geocodeInto('do-' + r.id, r.dropoffLatitude, r.dropoffLongitude);
+            });
+        }
+
+        function handleReq(id, action) {
+            fetch(`/api/ride-requests/${id}/${action}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    const fb = document.createElement('div');
+                    fb.className = 'req-feedback ' + (data.error ? 'err' : 'ok');
+                    fb.textContent = data.error || (action === 'accept' ? 'Accepted!' : 'Rejected.');
+                    document.getElementById('pendingList').prepend(fb);
+                    setTimeout(() => fb.remove(), 3000);
+                    if (!data.error) loadPending();
+                });
+        }
+
+        function initGoogleForProfile() { loadPending(); loadMyApplications(); }
+
+        if (typeof google !== 'undefined' && google.maps) { loadPending(); loadMyApplications(); }
+        else { window.initGoogleForProfile = function() { loadPending(); loadMyApplications(); }; }
+    </script>
+
+    <script th:unless="${user.driver}">
+        function initGoogleForProfile() { loadMyApplications(); }
+        if (typeof google !== 'undefined' && google.maps) { loadMyApplications(); }
+        else { window.initGoogleForProfile = loadMyApplications; }
+    </script>
+
+    <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initGoogleForProfile'}" async defer></script>
 
 </div>
 </body>

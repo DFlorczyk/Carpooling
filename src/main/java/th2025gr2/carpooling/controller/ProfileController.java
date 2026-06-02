@@ -1,5 +1,6 @@
 package th2025gr2.carpooling.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,9 @@ public class ProfileController {
     private final UserProfileRepository profileRepository;
     private final UserCredentialRepository credentialRepository;
 
+    @Value("${google.maps.api.key}")
+    private String googleMapsApiKey;
+
     public ProfileController(UserProfileRepository profileRepository,
                              UserCredentialRepository credentialRepository) {
         this.profileRepository = profileRepository;
@@ -31,6 +35,7 @@ public class ProfileController {
         model.addAttribute("pageTitle", "Profile");
         model.addAttribute("view", "profile");
         model.addAttribute("user", user);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "layout";
     }

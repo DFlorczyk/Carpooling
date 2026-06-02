@@ -21,6 +21,7 @@ import th2025gr2.carpooling.service.RideService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,21 +42,40 @@ public class RideController {
         return "layout";
     }
 
-    @GetMapping("/rides")
-    public String listRides(Model model) {
-        List<RideResponse> rides = rideService.getActiveRides();
-        model.addAttribute("pageTitle", "Przejazdy");
-        model.addAttribute("view", "rides-list");
-        model.addAttribute("rides", rides);
+    @GetMapping("/rides/{id}")
+    public String rideDetails(@PathVariable Long id,
+                               @AuthenticationPrincipal UserDetailsWithId userDetails,
+                               Model model) {
+        RideResponse ride = rideService.getRideById(id);
+
+        boolean isDriver = false;
+        if (userDetails != null && ride.getDriverId() != null) {
+            Optional<UserProfile> profile = userProfileRepository.findByCredentialId(userDetails.getId());
+            isDriver = profile.map(p -> p.getId().equals(ride.getDriverId())).orElse(false);
+        }
+
+        model.addAttribute("pageTitle", "Szczegóły przejazdu");
+        model.addAttribute("view", "ride-details");
+        model.addAttribute("ride", ride);
+        model.addAttribute("isDriver", isDriver);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
         return "layout";
     }
 
-    @GetMapping("/rides/{id}")
-    public String rideDetails(@PathVariable Long id, Model model) {
+    @GetMapping("/rides/{id}/requests")
+    public String rideRequests(@PathVariable Long id,
+                                @AuthenticationPrincipal UserDetailsWithId userDetails,
+                                Model model) {
         RideResponse ride = rideService.getRideById(id);
-        model.addAttribute("pageTitle", "Szczegóły przejazdu");
-        model.addAttribute("view", "ride-details");
+
+        UserProfile driver = userProfileRepository.findByCredentialId(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isDriver = ride.getDriverId() != null && ride.getDriverId().equals(driver.getId());
+        if (!isDriver) return "redirect:/rides/" + id;
+
+        model.addAttribute("pageTitle", "Zgłoszenia do przejazdu");
+        model.addAttribute("view", "ride-requests");
         model.addAttribute("ride", ride);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
         return "layout";

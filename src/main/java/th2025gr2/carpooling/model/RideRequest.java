@@ -21,7 +21,7 @@ public class RideRequest {
     @JoinColumn(name = "ride_id", nullable = false)
     private Ride ride;
 
-    @Column(name = "is_accepted", nullable = false)
+    @Column(name = "is_accepted")
     private Boolean isAccepted;
 
     @Column(name = "pickup_latitude", nullable = false)

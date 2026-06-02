@@ -162,9 +162,18 @@
 
     <div class="rd-wrap">
 
-        <a href="/rides" class="back-btn">
-            <i class="bi bi-arrow-left"></i> Powrót do listy
-        </a>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+            <a href="/" class="back-btn" style="margin-bottom:0;">
+                <i class="bi bi-arrow-left"></i> Powrót do listy
+            </a>
+            <a th:if="${isDriver}" th:href="'/rides/' + ${ride.id} + '/requests'"
+               style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;
+                      background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;
+                      font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s;"
+               onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                <i class="bi bi-person-check-fill"></i> View Applications
+            </a>
+        </div>
 
         <div class="page-title">Szczegóły przejazdu</div>
 

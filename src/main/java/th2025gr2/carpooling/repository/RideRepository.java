@@ -29,6 +29,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
             r.endLatitude, r.endLongitude,
             r.cost, r.date,
             r.state.name,
+            rp.user.id,
             CONCAT(rp.user.name, ' ', rp.user.surname),
             cd.model, cd.color, cd.seatCount, cd.mileage
         )
@@ -48,6 +49,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         r.endLatitude, r.endLongitude,
         r.cost, r.date,
         r.state.name,
+        rp.user.id,
         CONCAT(rp.user.name, ' ', rp.user.surname),
         cd.model, cd.color, cd.seatCount, cd.mileage
     )
@@ -73,6 +75,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         r.endLatitude, r.endLongitude,
         r.cost, r.date,
         r.state.name,
+        rp.user.id,
         CONCAT(rp.user.name, ' ', rp.user.surname),
         cd.model, cd.color, cd.seatCount, cd.mileage
     )
