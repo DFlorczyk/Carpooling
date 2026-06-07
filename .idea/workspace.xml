@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ec5a5bf7-ec23-48ee-9422-8af42261ca61" name="Changes" comment="small cleanup">
+      <change afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/static/images/fem_pic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/static/images/male_pic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/TravelPlanner.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/admin-dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/admin-driver-chat.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/admin-drivers.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/admin-layout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/admin-login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/create-ride.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/driver-car.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/driver-chat.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/driver-pending.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/driver-register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/help.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/home.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/layout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/profile.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/registration-site.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/ride-details.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/ride-history.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/rides-list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/settings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/templates/user-details.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/CarpoolingApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/AdminController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/AdminDriverController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/AdminLoginController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/AuthController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/AuthRestController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/DriverChatController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/DriverController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/HelpController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/HomeController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/LoginController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/LogoutController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/ProfileController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/RideController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/RideRestController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/RidesHistoryController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/SettingsController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/TravelPlannerController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/UserCityController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/controller/UserRestController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/CreateRideForm.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/DateEventForm.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/LoginRequest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/LoginResponse.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/RideDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/RideResponse$RideResponseBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/RideResponse.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/UserProfileResponse.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/dto/WaypointDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/enums/Role.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/enums/WaypointType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/model/TicketMessage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/model/UserCredential.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/model/UserDriverTickets.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/model/UserProfile.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/model/UserReview.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/CarDetailRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/CityRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/RideRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/RideStateRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/RideWaypointRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/RoleRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/TicketMessageRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/UserCredentialRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/UserDriverTicketsRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/repository/UserProfileRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/security/JwtAuthFilter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/security/JwtService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/security/PasswordEncoderConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/security/SecurityConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/security/UserDetailsWithId.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/service/GoogleMapsService$RouteInfo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/service/GoogleMapsService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/service/RideRestService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/service/RideService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/th2025gr2/carpooling/service/UserService.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+        <option value="HTML File" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="admin-chats" />
+  </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="main" />
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="main" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="KEEP" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;DFlorczyk&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:DFlorczyk/Carpooling.git&quot;,
+    &quot;accountId&quot;: &quot;53280e24-71ae-4066-8572-79ff855bc726&quot;
+  }
+}</component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="35Fj3yUDrDE4t76yBT16Dib6Bvz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Database Script.data.sql.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.CarpoolingApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mobileapp&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Dawid/IdeaProjects/Carpooling&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ],
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;9f14fd87-959c-49fb-9580-4e6434f680a1&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Dawid\IdeaProjects\Carpooling\src\main\java\th2025gr2\carpooling\model" />
+      <recent name="C:\Users\Dawid\IdeaProjects\Carpooling\src\main\java\th2025gr2\carpooling\controller" />
+      <recent name="C:\Users\Dawid\IdeaProjects\Carpooling\src\main\resources\templates" />
+      <recent name="C:\Users\Dawid\IdeaProjects\Carpooling\src\main\resources\static\images" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.CarpoolingApplication">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="11" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/src/main/resources/data.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="9f14fd87-959c-49fb-9580-4e6434f680a1" />
+      <method v="2" />
+    </configuration>
+    <configuration name="CarpoolingApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <envs>
+        <env name="GMAPS_API" value="AIzaSyBi0tx3dZWozkJ93yAzefE7URLv5fDOnqQ" />
+      </envs>
+      <module name="Carpooling" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="th2025gr2.carpooling.CarpoolingApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="Database Script.data.sql" />
+      <item itemvalue="Spring Boot.CarpoolingApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Database Script.data.sql" />
+        <item itemvalue="Database Script.data.sql" />
+        <item itemvalue="Database Script.data.sql" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ec5a5bf7-ec23-48ee-9422-8af42261ca61" name="Changes" comment="" />
+      <created>1762712519862</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762712519862</updated>
+      <workItem from="1762712521402" duration="7608000" />
+      <workItem from="1762775892695" duration="4765000" />
+      <workItem from="1762786511138" duration="1775000" />
+      <workItem from="1762792974560" duration="49000" />
+      <workItem from="1763473498391" duration="134000" />
+      <workItem from="1763473777801" duration="65000" />
+      <workItem from="1763474546720" duration="1615000" />
+      <workItem from="1764082119882" duration="2928000" />
+      <workItem from="1764101053936" duration="2804000" />
+      <workItem from="1764106512573" duration="32000" />
+      <workItem from="1764144254883" duration="4444000" />
+      <workItem from="1764667932925" duration="3000" />
+      <workItem from="1764945735324" duration="437000" />
+      <workItem from="1764956089601" duration="1959000" />
+      <workItem from="1765461986997" duration="49000" />
+      <workItem from="1765558332537" duration="22000" />
+      <workItem from="1765889695626" duration="1036000" />
+      <workItem from="1766059176103" duration="13000" />
+      <workItem from="1766237166023" duration="2000" />
+      <workItem from="1766349958346" duration="54000" />
+      <workItem from="1766350880705" duration="495000" />
+      <workItem from="1766352125524" duration="13000" />
+      <workItem from="1766416033112" duration="182000" />
+      <workItem from="1766583686362" duration="51000" />
+      <workItem from="1766682812870" duration="7000" />
+      <workItem from="1766967810019" duration="40000" />
+      <workItem from="1767022597096" duration="635000" />
+      <workItem from="1767271569670" duration="2726000" />
+      <workItem from="1767365735995" duration="4933000" />
+      <workItem from="1767441241280" duration="11000" />
+      <workItem from="1767549630951" duration="20000" />
+      <workItem from="1767560307924" duration="99000" />
+      <workItem from="1767623037784" duration="3000" />
+      <workItem from="1767632792949" duration="2310000" />
+      <workItem from="1767648319994" duration="3000" />
+      <workItem from="1767714337861" duration="4329000" />
+      <workItem from="1767784478565" duration="6690000" />
+      <workItem from="1767804424477" duration="6853000" />
+      <workItem from="1767955888258" duration="38000" />
+      <workItem from="1768035925595" duration="195000" />
+      <workItem from="1768061810240" duration="2511000" />
+      <workItem from="1768133164480" duration="148000" />
+      <workItem from="1768151646982" duration="11088000" />
+      <workItem from="1768215873511" duration="245000" />
+      <workItem from="1768227680084" duration="38000" />
+      <workItem from="1768229019518" duration="2381000" />
+      <workItem from="1768341080538" duration="735000" />
+      <workItem from="1768375609233" duration="6337000" />
+      <workItem from="1768395748191" duration="1098000" />
+      <workItem from="1773916891077" duration="2473000" />
+      <workItem from="1774351063493" duration="2161000" />
+      <workItem from="1774375316927" duration="998000" />
+      <workItem from="1774377750958" duration="2000" />
+      <workItem from="1774377995292" duration="674000" />
+      <workItem from="1774534548464" duration="8337000" />
+      <workItem from="1774603317574" duration="2107000" />
+      <workItem from="1774629730709" duration="1242000" />
+      <workItem from="1774704383911" duration="1251000" />
+      <workItem from="1774716306145" duration="9416000" />
+      <workItem from="1774780695297" duration="13674000" />
+      <workItem from="1774896631423" duration="139000" />
+      <workItem from="1774971073156" duration="3530000" />
+      <workItem from="1774983219623" duration="9479000" />
+      <workItem from="1775050118274" duration="3546000" />
+      <workItem from="1775323986196" duration="2841000" />
+      <workItem from="1776180339342" duration="2075000" />
+      <workItem from="1777732408296" duration="1316000" />
+      <workItem from="1777798890383" duration="5108000" />
+      <workItem from="1777821846298" duration="2721000" />
+      <workItem from="1777885995776" duration="1266000" />
+      <workItem from="1777907697907" duration="5164000" />
+      <workItem from="1777924358628" duration="345000" />
+      <workItem from="1777924716666" duration="178000" />
+      <workItem from="1777924927124" duration="3317000" />
+      <workItem from="1777930548110" duration="31000" />
+      <workItem from="1777984808588" duration="14608000" />
+      <workItem from="1778016535666" duration="1264000" />
+      <workItem from="1778051710428" duration="7727000" />
+      <workItem from="1778076306736" duration="392000" />
+      <workItem from="1778518755360" duration="385000" />
+      <workItem from="1778611777910" duration="31000" />
+      <workItem from="1779196154216" duration="2869000" />
+      <workItem from="1779215404300" duration="8495000" />
+      <workItem from="1779259498910" duration="1491000" />
+      <workItem from="1779284733768" duration="1956000" />
+      <workItem from="1779286884451" duration="475000" />
+      <workItem from="1779287377716" duration="366000" />
+      <workItem from="1780762962307" duration="595000" />
+      <workItem from="1780824315915" duration="1051000" />
+    </task>
+    <task id="LOCAL-00001" summary="Newest version from bitbucket">
+      <option name="closed" value="true" />
+      <created>1774376073532</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774376073532</updated>
+    </task>
+    <task id="LOCAL-00002" summary="google maps api key now in env variable">
+      <option name="closed" value="true" />
+      <created>1774535695784</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774535695784</updated>
+    </task>
+    <task id="LOCAL-00003" summary="newest version for real this time">
+      <option name="closed" value="true" />
+      <created>1774552884094</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552884094</updated>
+    </task>
+    <task id="LOCAL-00004" summary="some more reverting">
+      <option name="closed" value="true" />
+      <created>1774554009046</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1774554009046</updated>
+    </task>
+    <task id="LOCAL-00005" summary="driver registration + admin panel + creating car details">
+      <option name="closed" value="true" />
+      <created>1774976608796</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774976608796</updated>
+    </task>
+    <task id="LOCAL-00006" summary="registration merged">
+      <option name="closed" value="true" />
+      <created>1774988147365</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1774988147366</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fixed bug with removing tickets">
+      <option name="closed" value="true" />
+      <created>1774991510230</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1774991510230</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fixed bug with removing tickets">
+      <option name="closed" value="true" />
+      <created>1774991899315</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1774991899315</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Fixed role bug">
+      <option name="closed" value="true" />
+      <created>1775324649528</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1775324649528</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Modified user tables in the db">
+      <option name="closed" value="true" />
+      <created>1777994691236</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1777994691236</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Chat added">
+      <option name="closed" value="true" />
+      <created>1778016173251</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1778016173251</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Chats merged with waypoints">
+      <option name="closed" value="true" />
+      <created>1778054651349</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1778054651349</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Login now possible on mobile app">
+      <option name="closed" value="true" />
+      <created>1779197675521</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1779197675521</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Cleanup">
+      <option name="closed" value="true" />
+      <created>1779285851274</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1779285851274</updated>
+    </task>
+    <task id="LOCAL-00015" summary="small cleanup">
+      <option name="closed" value="true" />
+      <created>1779286431797</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1779286431797</updated>
+    </task>
+    <task id="LOCAL-00016" summary="small cleanup">
+      <option name="closed" value="true" />
+      <created>1779286498633</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1779286498633</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Newest version from bitbucket" />
+    <MESSAGE value="google maps api key now in env variable" />
+    <MESSAGE value="newest version for real this time" />
+    <MESSAGE value="some more reverting" />
+    <MESSAGE value="driver registration + admin panel + creating car details" />
+    <MESSAGE value="registration merged" />
+    <MESSAGE value="fixed bug with removing tickets" />
+    <MESSAGE value="Fixed role bug" />
+    <MESSAGE value="Modified user tables in the db" />
+    <MESSAGE value="Chat added" />
+    <MESSAGE value="Chats merged with waypoints" />
+    <MESSAGE value="Login now possible on mobile app" />
+    <MESSAGE value="Cleanup" />
+    <MESSAGE value="small cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="small cleanup" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
