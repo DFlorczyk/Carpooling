@@ -59,6 +59,6 @@ public class Ride {
 
     public void addParticipant(RideParticipant participant) {
         participants.add(participant);
-        participant.setRide(this);
+        participant.setRide(this); // IMPORTANT
     }
 }
