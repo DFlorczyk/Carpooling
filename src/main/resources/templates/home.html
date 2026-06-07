@@ -29,6 +29,34 @@
             </div>
 
             <div id="ridesList"></div>
+
+            <div id="applyPanel" class="d-none apply-panel">
+                <div style="display:flex;align-items:center;gap:.6rem;">
+                    <button onclick="closeApplyPanel()" class="apply-back-btn">← Back</button>
+                    <span style="font-weight:700;font-size:.95rem;color:#1e293b;">Apply for Ride</span>
+                </div>
+                <div id="applyHint" class="apply-hint">Click on the map to set your pickup point</div>
+                <div class="apply-loc-row">
+                    <div class="apply-loc-dot" style="background:#22c55e;"></div>
+                    <div style="flex:1">
+                        <div class="apply-loc-label">Pickup</div>
+                        <div id="applyPickupAddr" class="apply-loc-addr">—</div>
+                    </div>
+                    <button class="apply-reset-btn" onclick="resetApplyPoint('pickup')">Change</button>
+                </div>
+                <div class="apply-loc-row">
+                    <div class="apply-loc-dot" style="background:#f97316;"></div>
+                    <div style="flex:1">
+                        <div class="apply-loc-label">Drop-off</div>
+                        <div id="applyDropoffAddr" class="apply-loc-addr">—</div>
+                    </div>
+                    <button class="apply-reset-btn" onclick="resetApplyPoint('dropoff')">Change</button>
+                </div>
+                <div id="applyFeedback" class="d-none"></div>
+                <button id="applySubmitBtn" class="btn-search" disabled onclick="submitApply()">
+                    Send Application
+                </button>
+            </div>
         </div>
 
         <div class="map-section">
@@ -170,30 +198,263 @@
 
         .map-section { flex: 1; display: flex; flex-direction: column; }
         #map { flex: 1; width: 100%; }
+
+        .apply-btn {
+            padding: 3px 10px;
+            border: 1px solid #667eea;
+            background: #f4f6fb;
+            color: #667eea;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .apply-btn:hover { background: #667eea; color: #fff; }
+
+        .apply-back-btn {
+            border: 1px solid #dde1f0; background: #f8f9ff; color: #667eea;
+            border-radius: 6px; padding: 3px 10px; font-size: .78rem; font-weight: 600;
+            cursor: pointer; transition: background .15s;
+        }
+        .apply-back-btn:hover { background: #eef0fb; }
+
+        .apply-hint {
+            background: linear-gradient(135deg, rgba(102,126,234,.08), rgba(118,75,162,.06));
+            border: 1px solid rgba(102,126,234,.2);
+            border-radius: 8px; padding: .5rem .75rem;
+            font-size: .8rem; color: #475569; font-weight: 500;
+        }
+
+        .apply-loc-row {
+            display: flex; align-items: center; gap: .6rem;
+            background: #fff; border: 1px solid #dde1f0;
+            border-radius: 8px; padding: .5rem .75rem;
+        }
+        .apply-loc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .apply-loc-label { font-size: .68rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+        .apply-loc-addr { font-size: .8rem; color: #1e293b; font-weight: 500; word-break: break-word; }
+
+        .apply-reset-btn {
+            flex-shrink: 0; border: 1px solid #dde1f0; background: #f4f6fb;
+            color: #667eea; border-radius: 6px; padding: 2px 8px;
+            font-size: .72rem; font-weight: 600; cursor: pointer;
+        }
+        .apply-reset-btn:hover { background: #eef0fb; }
+
+        .apply-feedback {
+            padding: .5rem .75rem; border-radius: 8px; font-size: .8rem;
+        }
+        .apply-feedback.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .apply-feedback.error   { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .apply-panel { display: flex; flex-direction: column; gap: .6rem; }
     </style>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
 
         const backendCity = [[${backendCity}]];
+        const currentProfileId = [[${currentProfileId}]];
         let map;
         let directionsService;
-        let directionsRenderer;
+
+        let applyRideId = null;
+        let applyPickup = null;
+        let applyDropoff = null;
+        let applyStep = null;
+        let applyMarkers = [];
+
+        const STYLES_1 = [
+            { featureType: "all",     elementType: "labels",   stylers: [{ visibility: "off" }] },
+            { featureType: "poi",     stylers: [{ visibility: "off" }] },
+            { featureType: "transit", stylers: [{ visibility: "off" }] },
+            { featureType: "road",    elementType: "geometry", stylers: [{ visibility: "off" }] },
+            { featureType: "landscape.man_made", stylers: [{ visibility: "off" }] },
+            { featureType: "administrative.country", elementType: "labels.text", stylers: [{ visibility: "on" }, { color: "#888" }] }
+        ];
+
+        const STYLES_2 = [
+            { featureType: "all",     elementType: "labels",   stylers: [{ visibility: "off" }] },
+            { featureType: "poi",     stylers: [{ visibility: "off" }] },
+            { featureType: "transit", stylers: [{ visibility: "off" }] },
+            { featureType: "road",    elementType: "geometry", stylers: [{ visibility: "simplified" }] },
+            { featureType: "administrative.locality", elementType: "labels.text", stylers: [{ visibility: "on" }] }
+        ];
+
+        const STYLES_3 = [
+            { featureType: "poi",     stylers: [{ visibility: "off" }] },
+            { featureType: "transit", stylers: [{ visibility: "off" }] },
+            { featureType: "road.local",    elementType: "labels", stylers: [{ visibility: "off" }] },
+            { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
+            { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+            { featureType: "landscape.man_made", stylers: [{ visibility: "off" }] },
+            { featureType: "landscape.natural", elementType: "geometry", stylers: [{ saturation: -20 }] },
+            { featureType: "poi.park",          elementType: "geometry", stylers: [{ color: "#e8ece8" }] }
+        ];
+
+        const STYLES_4 = [
+            { featureType: "landscape.natural", elementType: "geometry", stylers: [{ saturation: -20 }] },
+            { featureType: "poi.park",          elementType: "geometry", stylers: [{ color: "#e8ece8" }] }
+        ];
+
+        function applyStylesForZoom(zoom) {
+            if (zoom <= 5)       map.setOptions({ styles: STYLES_1 });
+            else if (zoom <= 9)  map.setOptions({ styles: STYLES_2 });
+            else if (zoom <= 13) map.setOptions({ styles: STYLES_3 });
+            else                 map.setOptions({ styles: STYLES_4 });
+        }
 
         function initMap() {
             const defaultLoc = { lat: 52.2297, lng: 21.0122 };
             map = new google.maps.Map(document.getElementById("map"), {
                 center: defaultLoc,
-                zoom: 12
+                zoom: 12,
+                styles: STYLES_3
             });
 
-            directionsService  = new google.maps.DirectionsService();
-            directionsRenderer = new google.maps.DirectionsRenderer({
-                polylineOptions: { strokeColor: "#667eea", strokeWeight: 5 }
+            map.addListener("zoom_changed", () => applyStylesForZoom(map.getZoom()));
+
+            map.addListener("click", function(event) {
+                if (!applyStep) return;
+                const lat = event.latLng.lat();
+                const lng = event.latLng.lng();
+
+                new google.maps.Geocoder().geocode({ location: event.latLng }, function(results, status) {
+                    const addr = (status === "OK" && results[0]) ? results[0].formatted_address : lat.toFixed(5) + ", " + lng.toFixed(5);
+
+                    if (applyStep === "pickup") {
+                        applyPickup = { lat, lng, addr };
+                        placeApplyMarker(event.latLng, "#22c55e", "P");
+                        document.getElementById("applyPickupAddr").textContent = addr;
+                        applyStep = "dropoff";
+                    } else {
+                        applyDropoff = { lat, lng, addr };
+                        placeApplyMarker(event.latLng, "#f97316", "D");
+                        document.getElementById("applyDropoffAddr").textContent = addr;
+                        applyStep = null;
+                        map.setOptions({ draggableCursor: null });
+                    }
+                    updateApplyHint();
+                    document.getElementById("applySubmitBtn").disabled = !(applyPickup && applyDropoff);
+                });
             });
-            directionsRenderer.setMap(map);
+
+            directionsService = new google.maps.DirectionsService();
 
             loadRides();
+        }
+
+        function placeApplyMarker(latLng, color, label) {
+            applyMarkers = applyMarkers.filter(m => {
+                if (m.label === label) { m.marker.setMap(null); return false; }
+                return true;
+            });
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="34">
+                <rect x="0" y="0" width="26" height="26" rx="6" fill="${color}"/>
+                <polygon points="8,26 18,26 13,34" fill="${color}"/>
+                <text x="13" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">${label}</text>
+            </svg>`;
+            applyMarkers.push({
+                label,
+                marker: new google.maps.Marker({
+                    position: latLng, map,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+                        scaledSize: new google.maps.Size(26, 34),
+                        anchor: new google.maps.Point(13, 34)
+                    }
+                })
+            });
+        }
+
+        function openApplyPanel(rideId) {
+            applyRideId = rideId;
+            applyPickup = null;
+            applyDropoff = null;
+            applyStep = "pickup";
+            applyMarkers.forEach(m => m.marker.setMap(null));
+            applyMarkers = [];
+
+            document.getElementById("ridesList").classList.add("d-none");
+            document.getElementById("applyPanel").classList.remove("d-none");
+            document.getElementById("applyPickupAddr").textContent = "—";
+            document.getElementById("applyDropoffAddr").textContent = "—";
+            document.getElementById("applySubmitBtn").disabled = true;
+            document.getElementById("applyFeedback").className = "d-none";
+            map.setOptions({ draggableCursor: "crosshair" });
+            updateApplyHint();
+        }
+
+        function closeApplyPanel() {
+            applyStep = null;
+            applyMarkers.forEach(m => m.marker.setMap(null));
+            applyMarkers = [];
+            map.setOptions({ draggableCursor: null });
+            document.getElementById("applyPanel").classList.add("d-none");
+            document.getElementById("ridesList").classList.remove("d-none");
+        }
+
+        function resetApplyPoint(which) {
+            if (which === "pickup") {
+                applyPickup = null;
+                applyMarkers = applyMarkers.filter(m => { if (m.label === "P") { m.marker.setMap(null); return false; } return true; });
+                document.getElementById("applyPickupAddr").textContent = "—";
+                applyStep = "pickup";
+            } else {
+                applyDropoff = null;
+                applyMarkers = applyMarkers.filter(m => { if (m.label === "D") { m.marker.setMap(null); return false; } return true; });
+                document.getElementById("applyDropoffAddr").textContent = "—";
+                applyStep = "dropoff";
+            }
+            map.setOptions({ draggableCursor: "crosshair" });
+            document.getElementById("applySubmitBtn").disabled = true;
+            updateApplyHint();
+        }
+
+        function updateApplyHint() {
+            const el = document.getElementById("applyHint");
+            if (applyStep === "pickup")  el.textContent = "Click on the map to set your pickup point";
+            else if (applyStep === "dropoff") el.textContent = "Now click to set your drop-off point";
+            else el.textContent = "Both points set — submit to apply";
+        }
+
+        function submitApply() {
+            if (!applyPickup || !applyDropoff) return;
+            const btn = document.getElementById("applySubmitBtn");
+            btn.disabled = true;
+            btn.textContent = "Sending...";
+
+            fetch(`/api/rides/${applyRideId}/apply`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    pickupLatitude:  applyPickup.lat,
+                    pickupLongitude: applyPickup.lng,
+                    dropoffLatitude:  applyDropoff.lat,
+                    dropoffLongitude: applyDropoff.lng
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                const fb = document.getElementById("applyFeedback");
+                if (data.error) {
+                    fb.textContent = data.error;
+                    fb.className = "apply-feedback error";
+                    btn.disabled = false;
+                    btn.textContent = "Send Application";
+                } else {
+                    fb.textContent = "Application sent successfully!";
+                    fb.className = "apply-feedback success";
+                    setTimeout(closeApplyPanel, 1800);
+                }
+            })
+            .catch(() => {
+                document.getElementById("applyFeedback").textContent = "Something went wrong.";
+                document.getElementById("applyFeedback").className = "apply-feedback error";
+                btn.disabled = false;
+                btn.textContent = "Send Application";
+            });
         }
 
         function loadRides() {
@@ -254,6 +515,7 @@
                 const formattedDate = date.toLocaleDateString("pl-PL") + " " +
                     date.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
 
+                const isOwnRide = currentProfileId && r.driverId && r.driverId === currentProfileId;
                 el.innerHTML = `
                     <div class="ride-route">Loading...</div>
                     <div class="ride-meta">
@@ -261,7 +523,10 @@
                         <span>${r.cost} zł</span>
                         <span>${formattedDate}</span>
                     </div>
-                    <button class="details-btn" data-ride-id="${r.id}" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
+                        <button class="details-btn" data-ride-id="${r.id}" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
+                        ${!isOwnRide ? `<button class="apply-btn" onclick="event.stopPropagation(); openApplyPanel(${r.id})">Apply</button>` : ''}
+                    </div>
                     <div class="ride-details" style="display:none">
                         <div>${r.carModel ?? 'Unknown'} - ${r.carColor ?? ''}</div>
                         <div>Seats: ${r.carSeats ?? '?'}</div>
@@ -292,13 +557,11 @@
 
         let _legPolylines = [];
         let _customMarkers = [];
+        let _routeToken = 0;
 
-        function clearLegPolylines() {
+        function clearRoute() {
             _legPolylines.forEach(p => p.setMap(null));
             _legPolylines = [];
-        }
-
-        function clearCustomMarkers() {
             _customMarkers.forEach(m => m.setMap(null));
             _customMarkers = [];
         }
@@ -330,12 +593,7 @@
             }));
         }
 
-        function drawColoredLegs(result, waypoints, startLatLng, endLatLng) {
-            clearLegPolylines();
-            clearCustomMarkers();
-            directionsRenderer.setOptions({ suppressPolylines: true, suppressMarkers: true });
-            directionsRenderer.setDirections(result);
-
+        function drawRoute(result, waypoints, startLatLng, endLatLng) {
             result.routes[0].legs.forEach((leg, i) => {
                 const color = i < waypoints.length
                     ? (waypoints[i].type === 'PICKUP' ? '#22c55e' : '#f97316')
@@ -349,55 +607,33 @@
             waypoints.forEach(wp => {
                 const isPickup = wp.type === 'PICKUP';
                 const label = (isPickup ? 'P' : 'D') + '-' + wp.sequenceOrder;
-                placeMarker(
-                    { lat: wp.latitude, lng: wp.longitude },
-                    isPickup ? '#22c55e' : '#f97316',
-                    label,
-                    label
-                );
+                placeMarker({ lat: wp.latitude, lng: wp.longitude }, isPickup ? '#22c55e' : '#f97316', label, label);
             });
             placeMarker(endLatLng, '#667eea', 'End', 'End');
         }
 
         function showRoute(rideId, startLatLng, endLatLng) {
-            if (!map || !directionsService || !directionsRenderer) return;
+            if (!map || !directionsService) return;
+            const token = ++_routeToken;
+            clearRoute();
 
             fetch(`/api/r/rides/${rideId}/waypoints`)
                 .then(res => res.json())
                 .then(waypoints => {
-                    const stops = waypoints.map(wp => ({
-                        location: { lat: wp.latitude, lng: wp.longitude },
-                        stopover: true
-                    }));
+                    if (token !== _routeToken) return;
+                    const stops = waypoints.map(wp => ({ location: { lat: wp.latitude, lng: wp.longitude }, stopover: true }));
                     directionsService.route(
-                        {
-                            origin: startLatLng,
-                            destination: endLatLng,
-                            waypoints: stops,
-                            optimizeWaypoints: false,
-                            travelMode: google.maps.TravelMode.DRIVING
-                        },
+                        { origin: startLatLng, destination: endLatLng, waypoints: stops, optimizeWaypoints: false, travelMode: google.maps.TravelMode.DRIVING },
                         (result, status) => {
-                            if (status === "OK") drawColoredLegs(result, waypoints, startLatLng, endLatLng);
-                            else console.warn("Route failed:", status);
-                        }
-                    );
-                })
-                .catch(() => {
-                    clearLegPolylines();
-                    clearCustomMarkers();
-                    directionsRenderer.setOptions({ suppressPolylines: false, suppressMarkers: false });
-                    directionsService.route(
-                        { origin: startLatLng, destination: endLatLng, travelMode: google.maps.TravelMode.DRIVING },
-                        (result, status) => {
-                            if (status === "OK") directionsRenderer.setDirections(result);
+                            if (token !== _routeToken) return;
+                            if (status === "OK") drawRoute(result, waypoints, startLatLng, endLatLng);
                         }
                     );
                 });
         }
 
         async function toggleDetails(btn) {
-            const details = btn.nextElementSibling;
+            const details = btn.closest(".ride-card").querySelector(".ride-details");
             const opening = details.style.display === "none";
             details.style.display = opening ? "block" : "none";
 

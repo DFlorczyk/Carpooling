@@ -1,3 +1,15 @@
+ALTER TABLE ride_requests ALTER COLUMN is_accepted DROP NOT NULL;
+
+ALTER TABLE ride_requests   DROP CONSTRAINT IF EXISTS fk41cbu7ct1o25egxpt4wk9uf0t;
+ALTER TABLE ride_waypoints  DROP CONSTRAINT IF EXISTS fk23gkm4nibuvgxhf1ut56ukogl;
+ALTER TABLE ride_waypoints    DROP CONSTRAINT IF EXISTS fk_ride_waypoints_passenger;
+ALTER TABLE ride_waypoints    ADD  CONSTRAINT fk_ride_waypoints_passenger  FOREIGN KEY (passenger_id) REFERENCES user_profiles(id);
+ALTER TABLE ride_participants DROP CONSTRAINT IF EXISTS fkg2tw36nkhf97l5rfdx52qisl9;
+ALTER TABLE ride_participants DROP CONSTRAINT IF EXISTS fk_ride_participants_user;
+ALTER TABLE ride_participants ADD  CONSTRAINT fk_ride_participants_user     FOREIGN KEY (user_id)     REFERENCES user_profiles(id);
+ALTER TABLE ride_requests DROP CONSTRAINT IF EXISTS fk_ride_requests_user_profile;
+ALTER TABLE ride_requests ADD CONSTRAINT fk_ride_requests_user_profile FOREIGN KEY (user_id) REFERENCES user_profiles(id);
+
 INSERT INTO cities (name) SELECT 'Warsaw'  WHERE NOT EXISTS (SELECT 1 FROM cities WHERE name = 'Warsaw');
 INSERT INTO cities (name) SELECT 'Krakow'  WHERE NOT EXISTS (SELECT 1 FROM cities WHERE name = 'Krakow');
 INSERT INTO cities (name) SELECT 'Gdansk'  WHERE NOT EXISTS (SELECT 1 FROM cities WHERE name = 'Gdansk');
