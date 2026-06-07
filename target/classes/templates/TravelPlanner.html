@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" style="float: none">
+    <h1 style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">Schedule your ride</h1>
+    <div style="font-size: 30px; float: left">
+        <form action="#" th:action="@{/travelPlanner}" th:object="${ev}" method="post">
+
+            <a style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">Start</a>
+            <label>
+                <input type="datetime-local"
+                       th:field="*{dateStartTime}"
+                       />
+            </label>
+
+            <br>
+            <a style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">End</a>
+            <label>
+                <input type="datetime-local"
+                       th:field="*{dateStartEnd}"
+                />
+            </label>
+
+            <button type="submit">Zapisz</button>
+        </form>
+
+    </div>
+
+</div>
+</body>
+</html>
