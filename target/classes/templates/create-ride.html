@@ -1,311 +1,61 @@
 <div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <div class="container mt-4">
+        <h2 class="mb-4">Dodaj nowy przejazd</h2>
 
-    <style>
-        /* ── Layout ── */
-        .cr-wrap { max-width: 1100px; margin: 0 auto; }
+        <div id="alertSuccess" class="alert alert-success d-none" role="alert"></div>
+        <div id="alertError" class="alert alert-danger d-none" role="alert"></div>
 
-        .cr-hero {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: linear-gradient(135deg, rgba(102,126,234,.08), rgba(118,75,162,.06));
-            border-left: 4px solid #667eea;
-            border-radius: 10px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-        .cr-hero-icon {
-            width: 44px; height: 44px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.2rem; flex-shrink: 0;
-        }
-        .cr-hero h2 { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin: 0; }
-        .cr-hero p  { font-size: 0.8rem; color: #64748b; margin: 0.15rem 0 0; }
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
 
-        .cr-columns {
-            display: flex;
-            gap: 1.5rem;
-            align-items: flex-start;
-        }
-        .cr-form-panel { flex: 0 0 400px; }
-        .cr-map-panel  { flex: 1; min-width: 0; }
-
-        /* ── Alerts ── */
-        .cr-alert {
-            padding: .7rem 1rem;
-            border-radius: 8px;
-            font-size: .88rem;
-            margin-bottom: 1rem;
-        }
-        .cr-alert.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-        .cr-alert.danger  { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
-        .d-none { display: none !important; }
-
-        /* ── Form card ── */
-        .cr-card {
-            border: 1px solid #e8ecf5;
-            border-radius: 12px;
-            box-shadow: 0 2px 14px rgba(102,126,234,.08);
-            overflow: hidden;
-        }
-        .cr-card-body { padding: 1.4rem; }
-
-        .field-group { margin-bottom: 1rem; }
-        .field-group:last-of-type { margin-bottom: 0; }
-
-        .field-label {
-            display: block;
-            font-size: .75rem;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            margin-bottom: .3rem;
-        }
-        .field-label i { margin-right: .25rem; }
-
-        .field-input {
-            width: 100%;
-            padding: .5rem .75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: .9rem;
-            color: #1e293b;
-            font-family: inherit;
-            background: #fff;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-        }
-        .field-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,.15);
-        }
-
-        .field-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        .field-row .field-group { flex: 1; margin-bottom: 0; }
-
-        /* ── Route info ── */
-        .route-info {
-            background: linear-gradient(135deg, rgba(102,126,234,.07), rgba(118,75,162,.06));
-            border: 1px solid rgba(102,126,234,.2);
-            border-radius: 10px;
-            padding: .8rem 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 1rem;
-        }
-        .route-stat {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            flex: 1;
-        }
-        .route-stat-icon {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: .85rem; flex-shrink: 0;
-        }
-        .route-stat-label { font-size: .68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
-        .route-stat-value { font-size: 1rem; font-weight: 700; color: #1e293b; line-height: 1.1; }
-
-        /* ── Submit button ── */
-        .submit-btn {
-            width: 100%;
-            margin-top: .75rem;
-            padding: .65rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: .9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: .4rem;
-            transition: opacity .2s, transform .15s;
-            font-family: inherit;
-        }
-        .submit-btn:hover:not(:disabled) { opacity: .92; transform: translateY(-1px); }
-        .submit-btn:active:not(:disabled) { transform: translateY(0); }
-        .submit-btn:disabled { opacity: .55; cursor: not-allowed; }
-
-        .spinner {
-            display: inline-block;
-            width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,.4);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── Pick-on-map buttons ── */
-        .field-with-btn {
-            display: flex;
-            gap: .4rem;
-        }
-        .field-with-btn .field-input { flex: 1; }
-
-        .pick-btn {
-            flex-shrink: 0;
-            padding: 0 .65rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #f8f9ff;
-            color: #667eea;
-            cursor: pointer;
-            font-size: .95rem;
-            transition: background .15s, border-color .15s, color .15s;
-            display: flex;
-            align-items: center;
-        }
-        .pick-btn:hover { background: #eef0fb; border-color: #667eea; }
-        .pick-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: transparent;
-            color: #fff;
-        }
-
-        /* ── Map pick hint overlay ── */
-        .map-wrapper { position: relative; }
-        .pick-hint {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(30,41,59,.82);
-            color: #fff;
-            padding: .4rem 1rem;
-            border-radius: 20px;
-            font-size: .8rem;
-            font-weight: 500;
-            pointer-events: none;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-            white-space: nowrap;
-            backdrop-filter: blur(4px);
-        }
-
-        /* ── Map card ── */
-        .map-card {
-            border: 1px solid #e8ecf5;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 14px rgba(102,126,234,.08);
-        }
-        .map-header {
-            padding: .6rem 1rem;
-            background: rgba(102,126,234,.05);
-            border-bottom: 1px solid #e8ecf5;
-            font-size: .75rem;
-            font-weight: 600;
-            color: #667eea;
-            text-transform: uppercase;
-            letter-spacing: .06em;
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-        }
-    </style>
-
-    <div class="cr-wrap">
-
-        <div class="cr-hero">
-            <div class="cr-hero-icon"><i class="bi bi-plus-circle-fill"></i></div>
-            <div>
-                <h2>Dodaj nowy przejazd</h2>
-                <p>Zaplanuj trasę na mapie i uzupełnij szczegóły wyjazdu</p>
-            </div>
-        </div>
-
-        <div id="alertSuccess" class="cr-alert success d-none"></div>
-        <div id="alertError"   class="cr-alert danger  d-none"></div>
-
-        <div class="cr-columns">
-
-            <div class="cr-form-panel">
-                <div class="cr-card">
-                    <div class="cr-card-body">
-
-                        <div class="field-group">
-                            <label class="field-label" for="startAddress">
-                                <i class="bi bi-geo-alt-fill" style="color:#22c55e"></i>Miejsce startu
+                        <div class="mb-3">
+                            <label for="startAddress" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt-fill text-success"></i> Miejsce startu
                             </label>
-                            <div class="field-with-btn">
-                                <input type="text" id="startAddress" class="field-input"
-                                       placeholder="Wpisz adres startowy..." autocomplete="off"/>
-                                <button type="button" id="pickStartBtn" class="pick-btn"
-                                        onclick="activatePickMode('start')" title="Kliknij punkt na mapie">
-                                    <i class="bi bi-cursor-fill"></i>
-                                </button>
-                            </div>
+                            <input type="text" id="startAddress" class="form-control"
+                                   placeholder="Wpisz adres startowy..." autocomplete="off"/>
                         </div>
 
-                        <div class="field-group">
-                            <label class="field-label" for="endAddress">
-                                <i class="bi bi-geo-alt-fill" style="color:#ef4444"></i>Miejsce docelowe
+                        <div class="mb-3">
+                            <label for="endAddress" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt-fill text-danger"></i> Miejsce docelowe
                             </label>
-                            <div class="field-with-btn">
-                                <input type="text" id="endAddress" class="field-input"
-                                       placeholder="Wpisz adres docelowy..." autocomplete="off"/>
-                                <button type="button" id="pickEndBtn" class="pick-btn"
-                                        onclick="activatePickMode('end')" title="Kliknij punkt na mapie">
-                                    <i class="bi bi-cursor-fill"></i>
-                                </button>
-                            </div>
+                            <input type="text" id="endAddress" class="form-control"
+                                   placeholder="Wpisz adres docelowy..." autocomplete="off"/>
                         </div>
 
-                        <div class="field-group">
-                            <label class="field-label" for="departureDate">
-                                <i class="bi bi-calendar-event" style="color:#667eea"></i>Data i godzina wyjazdu
+                        <div class="mb-3">
+                            <label for="departureDate" class="form-label fw-bold">
+                                <i class="bi bi-calendar-event"></i> Data i godzina wyjazdu
                             </label>
-                            <input type="datetime-local" id="departureDate" class="field-input" required/>
+                            <input type="datetime-local" id="departureDate" class="form-control" required/>
                         </div>
 
-                        <div class="field-row">
-                            <div class="field-group">
-                                <label class="field-label" for="cost">
-                                    <i class="bi bi-cash" style="color:#667eea"></i>Koszt / osoba (PLN)
-                                </label>
-                                <input type="number" id="cost" class="field-input"
-                                       min="0" step="0.50" value="0" placeholder="0.00"/>
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label" for="availableSeats">
-                                    <i class="bi bi-people-fill" style="color:#667eea"></i>Wolne miejsca
-                                </label>
-                                <input type="number" id="availableSeats" class="field-input"
-                                       min="1" max="8" value="3"/>
-                            </div>
+                        <div class="mb-3">
+                            <label for="cost" class="form-label fw-bold">
+                                <i class="bi bi-cash"></i> Koszt na osobę (PLN)
+                            </label>
+                            <input type="number" id="cost" class="form-control"
+                                   min="0" step="0.50" value="0" placeholder="np. 25.00"/>
                         </div>
 
-                        <div id="routeInfo" class="route-info d-none">
-                            <div class="route-stat">
-                                <div class="route-stat-icon"><i class="bi bi-signpost-2"></i></div>
-                                <div>
-                                    <div class="route-stat-label">Dystans</div>
-                                    <div class="route-stat-value" id="distanceInfo">—</div>
-                                </div>
-                            </div>
-                            <div class="route-stat">
-                                <div class="route-stat-icon"><i class="bi bi-clock"></i></div>
-                                <div>
-                                    <div class="route-stat-label">Czas przejazdu</div>
-                                    <div class="route-stat-value" id="durationInfo">—</div>
+                        <div class="mb-3">
+                            <label for="availableSeats" class="form-label fw-bold">
+                                <i class="bi bi-people-fill"></i> Liczba wolnych miejsc
+                            </label>
+                            <input type="number" id="availableSeats" class="form-control"
+                                   min="1" max="8" value="3"/>
+                        </div>
+
+                        <div id="routeInfo" class="card bg-light mb-3 d-none">
+                            <div class="card-body py-2">
+                                <small class="text-muted">Informacje o trasie:</small>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span><i class="bi bi-signpost-2"></i> <span id="distanceInfo">-</span></span>
+                                    <span><i class="bi bi-clock"></i> <span id="durationInfo">-</span></span>
                                 </div>
                             </div>
                         </div>
@@ -318,29 +68,21 @@
                         <input type="hidden" id="distanceKm"/>
                         <input type="hidden" id="durationMinutes"/>
 
-                        <button id="submitRideBtn" class="submit-btn" onclick="submitRide()" disabled>
+                        <button id="submitRideBtn" class="btn btn-primary w-100 mt-2"
+                                onclick="submitRide()" disabled>
                             <i class="bi bi-plus-circle"></i> Dodaj przejazd
                         </button>
-
                     </div>
                 </div>
             </div>
 
-            <div class="cr-map-panel">
-                <div class="map-card">
-                    <div class="map-header">
-                        <i class="bi bi-map"></i> Podgląd trasy
-                    </div>
-                    <div class="map-wrapper">
-                        <div id="pickHint" class="pick-hint d-none">
-                            <i class="bi bi-cursor-fill"></i>
-                            <span id="pickHintText">Kliknij na mapie</span>
-                        </div>
-                        <div id="map" style="height: 510px;"></div>
+            <div class="col-md-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div id="map" style="height: 550px; border-radius: 0.375rem;"></div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -350,8 +92,6 @@
     <script th:inline="javascript">
         let map, directionsService, directionsRenderer;
         let startAutocomplete, endAutocomplete;
-        let pickMode = null;
-        let tempMarkers = [];
 
         let routeData = {
             startLat: null, startLng: null,
@@ -375,150 +115,82 @@
             directionsRenderer = new google.maps.DirectionsRenderer({
                 map: map,
                 suppressMarkers: false,
-                polylineOptions: { strokeColor: '#667eea', strokeWeight: 5 }
+                polylineOptions: {
+                    strokeColor: '#4285F4',
+                    strokeWeight: 5
+                }
             });
 
             startAutocomplete = new google.maps.places.Autocomplete(
-                document.getElementById('startAddress'),
-                { types: ['geocode'], componentRestrictions: { country: 'pl' } }
+                document.getElementById('startAddress'), {
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'pl' }
+                }
             );
             startAutocomplete.addListener('place_changed', function () {
                 const place = startAutocomplete.getPlace();
                 if (!place.geometry) return;
-                routeData.startLat  = place.geometry.location.lat();
-                routeData.startLng  = place.geometry.location.lng();
+
+                routeData.startLat = place.geometry.location.lat();
+                routeData.startLng = place.geometry.location.lng();
                 routeData.startAddr = place.formatted_address;
-                document.getElementById('startLatitude').value  = routeData.startLat;
+
+                document.getElementById('startLatitude').value = routeData.startLat;
                 document.getElementById('startLongitude').value = routeData.startLng;
+
                 tryCalculateRoute();
             });
 
             endAutocomplete = new google.maps.places.Autocomplete(
-                document.getElementById('endAddress'),
-                { types: ['geocode'], componentRestrictions: { country: 'pl' } }
+                document.getElementById('endAddress'), {
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'pl' }
+                }
             );
             endAutocomplete.addListener('place_changed', function () {
                 const place = endAutocomplete.getPlace();
                 if (!place.geometry) return;
-                routeData.endLat  = place.geometry.location.lat();
-                routeData.endLng  = place.geometry.location.lng();
+
+                routeData.endLat = place.geometry.location.lat();
+                routeData.endLng = place.geometry.location.lng();
                 routeData.endAddr = place.formatted_address;
-                document.getElementById('endLatitude').value  = routeData.endLat;
+
+                document.getElementById('endLatitude').value = routeData.endLat;
                 document.getElementById('endLongitude').value = routeData.endLng;
+
                 tryCalculateRoute();
             });
-
-            map.addListener('click', function (event) {
-                if (!pickMode) return;
-
-                const lat  = event.latLng.lat();
-                const lng  = event.latLng.lng();
-                const mode = pickMode;
-                deactivatePickMode();
-
-                new google.maps.Geocoder().geocode({ location: event.latLng }, function (results, status) {
-                    const address = (status === 'OK' && results[0])
-                        ? results[0].formatted_address
-                        : lat.toFixed(5) + ', ' + lng.toFixed(5);
-
-                    if (mode === 'start') {
-                        routeData.startLat  = lat;
-                        routeData.startLng  = lng;
-                        routeData.startAddr = address;
-                        document.getElementById('startAddress').value   = address;
-                        document.getElementById('startLatitude').value  = lat;
-                        document.getElementById('startLongitude').value = lng;
-                    } else {
-                        routeData.endLat  = lat;
-                        routeData.endLng  = lng;
-                        routeData.endAddr = address;
-                        document.getElementById('endAddress').value   = address;
-                        document.getElementById('endLatitude').value  = lat;
-                        document.getElementById('endLongitude').value = lng;
-                    }
-
-                    placeTempMarker(event.latLng, mode);
-                    tryCalculateRoute();
-                });
-            });
-        }
-
-        function activatePickMode(mode) {
-            if (pickMode === mode) { deactivatePickMode(); return; }
-            pickMode = mode;
-            document.getElementById('pickStartBtn').classList.toggle('active', mode === 'start');
-            document.getElementById('pickEndBtn').classList.toggle('active', mode === 'end');
-            map.setOptions({ draggableCursor: 'crosshair' });
-            const label = mode === 'start' ? 'Kliknij aby ustawić punkt startowy' : 'Kliknij aby ustawić punkt docelowy';
-            document.getElementById('pickHintText').textContent = label;
-            document.getElementById('pickHint').classList.remove('d-none');
-        }
-
-        function deactivatePickMode() {
-            pickMode = null;
-            document.getElementById('pickStartBtn').classList.remove('active');
-            document.getElementById('pickEndBtn').classList.remove('active');
-            map.setOptions({ draggableCursor: null });
-            document.getElementById('pickHint').classList.add('d-none');
-        }
-
-        function placeTempMarker(latLng, mode) {
-            tempMarkers = tempMarkers.filter(m => {
-                if (m.mode === mode) { m.marker.setMap(null); return false; }
-                return true;
-            });
-            const color = mode === 'start' ? '#22c55e' : '#ef4444';
-            tempMarkers.push({
-                mode,
-                marker: new google.maps.Marker({
-                    position: latLng,
-                    map: map,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 9,
-                        fillColor: color,
-                        fillOpacity: 1,
-                        strokeColor: '#fff',
-                        strokeWeight: 2.5
-                    },
-                    title: mode === 'start' ? 'Punkt startowy' : 'Punkt docelowy'
-                })
-            });
-        }
-
-        function clearTempMarkers() {
-            tempMarkers.forEach(m => m.marker.setMap(null));
-            tempMarkers = [];
         }
 
         function tryCalculateRoute() {
             if (!routeData.startLat || !routeData.endLat) return;
 
-            directionsService.route({
+            const request = {
                 origin: { lat: routeData.startLat, lng: routeData.startLng },
                 destination: { lat: routeData.endLat, lng: routeData.endLng },
                 travelMode: google.maps.TravelMode.DRIVING
-            }, function (result, status) {
+            };
+
+            directionsService.route(request, function (result, status) {
                 if (status === 'OK') {
-                    clearTempMarkers();
                     directionsRenderer.setDirections(result);
 
-                    const leg     = result.routes[0].legs[0];
-                    const distKm  = (leg.distance.value / 1000).toFixed(1);
-                    const durMin  = Math.ceil(leg.duration.value / 60);
+                    const leg = result.routes[0].legs[0];
+                    const distKm = (leg.distance.value / 1000).toFixed(1);
+                    const durMin = Math.ceil(leg.duration.value / 60);
                     const polyline = result.routes[0].overview_polyline;
 
                     routeData.distanceKm = parseFloat(distKm);
                     routeData.durationMin = durMin;
-                    routeData.polyline   = polyline;
+                    routeData.polyline = polyline;
 
                     document.getElementById('distanceInfo').textContent = distKm + ' km';
                     document.getElementById('durationInfo').textContent = durMin + ' min';
                     document.getElementById('routeInfo').classList.remove('d-none');
 
-                    document.getElementById('distanceKm').value      = distKm;
-                    document.getElementById('durationMinutes').value  = durMin;
-                    document.getElementById('encodedPolyline').value  = polyline;
+                    document.getElementById('distanceKm').value = distKm;
+                    document.getElementById('durationMinutes').value = durMin;
+                    document.getElementById('encodedPolyline').value = polyline;
 
                     document.getElementById('submitRideBtn').disabled = false;
                 } else {
@@ -535,23 +207,23 @@
             }
 
             const payload = {
-                startAddress:    routeData.startAddr || document.getElementById('startAddress').value,
-                startLatitude:   routeData.startLat,
-                startLongitude:  routeData.startLng,
-                endAddress:      routeData.endAddr   || document.getElementById('endAddress').value,
-                endLatitude:     routeData.endLat,
-                endLongitude:    routeData.endLng,
-                departureDate:   departureDate,
-                cost:            parseFloat(document.getElementById('cost').value) || 0,
-                availableSeats:  parseInt(document.getElementById('availableSeats').value) || 3,
-                distanceKm:      routeData.distanceKm,
+                startAddress: routeData.startAddr || document.getElementById('startAddress').value,
+                startLatitude: routeData.startLat,
+                startLongitude: routeData.startLng,
+                endAddress: routeData.endAddr || document.getElementById('endAddress').value,
+                endLatitude: routeData.endLat,
+                endLongitude: routeData.endLng,
+                departureDate: departureDate,
+                cost: parseFloat(document.getElementById('cost').value) || 0,
+                availableSeats: parseInt(document.getElementById('availableSeats').value) || 3,
+                distanceKm: routeData.distanceKm,
                 durationMinutes: routeData.durationMin,
                 encodedPolyline: routeData.polyline
             };
 
-            const btn = document.getElementById('submitRideBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Dodawanie...';
+            document.getElementById('submitRideBtn').disabled = true;
+            document.getElementById('submitRideBtn').innerHTML =
+                '<span class="spinner-border spinner-border-sm"></span> Dodawanie...';
 
             fetch('/api/rides', {
                 method: 'POST',

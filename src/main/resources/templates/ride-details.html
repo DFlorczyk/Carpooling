@@ -1,249 +1,82 @@
 <div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <style>
-        /* ── Layout ── */
-        .rd-wrap { max-width: 1100px; margin: 0 auto; }
-
-        .rd-columns {
-            display: flex;
-            gap: 1.5rem;
-            align-items: flex-start;
-        }
-        .rd-info-panel { flex: 0 0 400px; }
-        .rd-map-panel  { flex: 1; min-width: 0; }
-
-        /* ── Back button ── */
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            color: #667eea;
-            text-decoration: none;
-            font-size: .85rem;
-            font-weight: 500;
-            padding: .4rem .9rem;
-            border: 1px solid #dde1f0;
-            border-radius: 8px;
-            background: #f8f9ff;
-            margin-bottom: 1.25rem;
-            transition: background .15s, border-color .15s;
-        }
-        .back-btn:hover { background: #eef0fb; border-color: #667eea; }
-
-        .page-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 1.25rem;
-        }
-
-        /* ── Cards ── */
-        .rd-card {
-            border: 1px solid #e8ecf5;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(102,126,234,.08);
-            margin-bottom: 1.25rem;
-        }
-        .rd-card:last-child { margin-bottom: 0; }
-
-        .rd-card-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff;
-            padding: .7rem 1.1rem;
-            font-size: .85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .rd-card-header.light {
-            background: #f8f9ff;
-            color: #475569;
-            border-bottom: 1px solid #e8ecf5;
-        }
-
-        .rd-card-body { padding: 1.1rem 1.25rem; }
-
-        /* ── Route addresses ── */
-        .addr-block { margin-bottom: .9rem; }
-        .addr-block:last-child { margin-bottom: 0; }
-        .addr-label {
-            font-size: .7rem;
-            font-weight: 600;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-            margin-bottom: .2rem;
-        }
-        .addr-value {
-            font-size: .92rem;
-            font-weight: 600;
-            color: #1e293b;
-            display: flex;
-            align-items: flex-start;
-            gap: .4rem;
-        }
-        .addr-sep {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            margin: .45rem 0;
-            color: #cbd5e1;
-            font-size: .8rem;
-        }
-        .addr-sep::before, .addr-sep::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e8ecf5;
-        }
-
-        /* ── Info rows ── */
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: .6rem 1.25rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .info-row:last-child { border-bottom: none; }
-
-        .info-row-label {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            font-size: .85rem;
-            color: #64748b;
-        }
-        .info-row-label i { color: #667eea; }
-
-        .info-row-value {
-            font-size: .88rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .status-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: .3rem;
-            padding: .22rem .65rem;
-            border-radius: 20px;
-            font-size: .78rem;
-            font-weight: 600;
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        /* ── Map card ── */
-        .map-card {
-            border: 1px solid #e8ecf5;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(102,126,234,.08);
-        }
-        .map-header {
-            padding: .6rem 1rem;
-            background: rgba(102,126,234,.05);
-            border-bottom: 1px solid #e8ecf5;
-            font-size: .75rem;
-            font-weight: 600;
-            color: #667eea;
-            text-transform: uppercase;
-            letter-spacing: .06em;
-            display: flex;
-            align-items: center;
-            gap: .4rem;
-        }
-    </style>
-
-    <div class="rd-wrap">
-
-        <a href="/rides" class="back-btn">
+    <div class="container mt-4">
+        <a href="/rides" class="btn btn-outline-secondary btn-sm mb-3">
             <i class="bi bi-arrow-left"></i> Powrót do listy
         </a>
 
-        <div class="page-title">Szczegóły przejazdu</div>
+        <h2 class="mb-4">Szczegóły przejazdu</h2>
 
-        <div class="rd-columns">
-
-            <div class="rd-info-panel">
-
-                <div class="rd-card">
-                    <div class="rd-card-header">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-primary text-white">
                         <i class="bi bi-car-front-fill"></i> Trasa
                     </div>
-                    <div class="rd-card-body">
-                        <div class="addr-block">
-                            <div class="addr-label">Skąd</div>
-                            <div class="addr-value">
-                                <i class="bi bi-circle-fill" style="color:#22c55e; font-size:.5rem; margin-top:.35rem; flex-shrink:0;"></i>
-                                <span th:text="${ride.startAddress}">—</span>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="small text-muted">Skąd:</label>
+                            <div class="fw-bold">
+                                <i class="bi bi-geo-alt-fill text-success"></i>
+                                <span th:text="${ride.startAddress}">-</span>
                             </div>
                         </div>
-                        <div class="addr-sep"><i class="bi bi-three-dots-vertical"></i></div>
-                        <div class="addr-block">
-                            <div class="addr-label">Dokąd</div>
-                            <div class="addr-value">
-                                <i class="bi bi-geo-alt-fill" style="color:#ef4444; flex-shrink:0;"></i>
-                                <span th:text="${ride.endAddress}">—</span>
+                        <div class="mb-3">
+                            <label class="small text-muted">Dokąd:</label>
+                            <div class="fw-bold">
+                                <i class="bi bi-geo-alt-fill text-danger"></i>
+                                <span th:text="${ride.endAddress}">-</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="rd-card">
-                    <div class="rd-card-header light">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
                         <i class="bi bi-info-circle"></i> Informacje
                     </div>
-                    <div class="info-row">
-                        <span class="info-row-label"><i class="bi bi-calendar-event"></i> Data wyjazdu</span>
-                        <span class="info-row-value"
-                              th:text="${#temporals.format(ride.departureDate, 'dd.MM.yyyy HH:mm')}">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-row-label"><i class="bi bi-cash"></i> Koszt</span>
-                        <span class="info-row-value" th:text="${ride.cost + ' PLN'}">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-row-label"><i class="bi bi-people-fill"></i> Wolne miejsca</span>
-                        <span class="info-row-value" th:text="${ride.availableSeats}">—</span>
-                    </div>
-                    <div class="info-row" th:if="${ride.distanceKm != null}">
-                        <span class="info-row-label"><i class="bi bi-signpost-2"></i> Dystans</span>
-                        <span class="info-row-value" th:text="${ride.distanceKm + ' km'}">—</span>
-                    </div>
-                    <div class="info-row" th:if="${ride.durationMinutes != null}">
-                        <span class="info-row-label"><i class="bi bi-clock"></i> Czas przejazdu</span>
-                        <span class="info-row-value" th:text="${ride.durationMinutes + ' min'}">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-row-label"><i class="bi bi-person-circle"></i> Kierowca</span>
-                        <span class="info-row-value" th:text="${ride.driverName}">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-row-label"><i class="bi bi-tag"></i> Status</span>
-                        <span class="status-chip">
-                            <i class="bi bi-check-circle-fill" style="font-size:.7rem;"></i>
-                            <span th:text="${ride.stateName}">—</span>
-                        </span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="rd-map-panel">
-                <div class="map-card">
-                    <div class="map-header">
-                        <i class="bi bi-map"></i> Mapa trasy
-                    </div>
-                    <div id="detailMap" style="height: 510px;"></div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-calendar-event"></i> Data wyjazdu</span>
+                            <strong th:text="${#temporals.format(ride.departureDate, 'dd.MM.yyyy HH:mm')}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-cash"></i> Koszt</span>
+                            <strong th:text="${ride.cost + ' PLN'}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-people-fill"></i> Wolne miejsca</span>
+                            <strong th:text="${ride.availableSeats}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between"
+                            th:if="${ride.distanceKm != null}">
+                            <span><i class="bi bi-signpost-2"></i> Dystans</span>
+                            <strong th:text="${ride.distanceKm + ' km'}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between"
+                            th:if="${ride.durationMinutes != null}">
+                            <span><i class="bi bi-clock"></i> Czas przejazdu</span>
+                            <strong th:text="${ride.durationMinutes + ' min'}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-person-circle"></i> Kierowca</span>
+                            <strong th:text="${ride.driverName}">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-tag"></i> Status</span>
+                            <span class="badge bg-success" th:text="${ride.stateName}">-</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
+            <div class="col-md-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div id="detailMap" style="height: 550px; border-radius: 0.375rem;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -264,18 +97,23 @@
                 streetViewControl: false
             });
 
-            const directionsService  = new google.maps.DirectionsService();
+            const directionsService = new google.maps.DirectionsService();
             const directionsRenderer = new google.maps.DirectionsRenderer({
                 map: map,
-                polylineOptions: { strokeColor: '#667eea', strokeWeight: 5 }
+                polylineOptions: {
+                    strokeColor: '#4285F4',
+                    strokeWeight: 5
+                }
             });
 
             directionsService.route({
-                origin:      { lat: rideStartLat, lng: rideStartLng },
-                destination: { lat: rideEndLat,   lng: rideEndLng },
-                travelMode:  google.maps.TravelMode.DRIVING
+                origin: { lat: rideStartLat, lng: rideStartLng },
+                destination: { lat: rideEndLat, lng: rideEndLng },
+                travelMode: google.maps.TravelMode.DRIVING
             }, function (result, status) {
-                if (status === 'OK') directionsRenderer.setDirections(result);
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                }
             });
         }
     </script>
