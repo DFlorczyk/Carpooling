@@ -34,6 +34,9 @@ public class HomeController {
 
         model.addAttribute("backendCity", backendCity);
 
+        Long currentProfileId = (user != null) ? user.getId() : null;
+        model.addAttribute("currentProfileId", currentProfileId);
+
         return "layout";
     }
 }

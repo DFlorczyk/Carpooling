@@ -3,16 +3,10 @@ package th2025gr2.carpooling.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import th2025gr2.carpooling.dto.CreateRideForm;
-import th2025gr2.carpooling.dto.RideDTO;
-import th2025gr2.carpooling.dto.RideResponse;
-import th2025gr2.carpooling.dto.WaypointDTO;
+import th2025gr2.carpooling.dto.*;
+import th2025gr2.carpooling.enums.WaypointType;
 import th2025gr2.carpooling.model.*;
-import th2025gr2.carpooling.repository.RideRepository;
-import th2025gr2.carpooling.repository.RideStateRepository;
-import th2025gr2.carpooling.repository.RideWaypointRepository;
-import th2025gr2.carpooling.repository.RoleRepository;
-import th2025gr2.carpooling.repository.UserRepository;
+import th2025gr2.carpooling.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,11 +20,12 @@ public class RideService {
     private final RideStateRepository rideStateRepository;
     private final RoleRepository roleRepository;
     private final GoogleMapsService googleMapsService;
-    private final UserRepository userRepository;
     private final RideWaypointRepository rideWaypointRepository;
+    private final RideRequestRepository rideRequestRepository;
+    private final RideParticipantRepository rideParticipantRepository;
 
     @Transactional
-    public Ride createRide(CreateRideForm form, User driver) {
+    public Ride createRide(CreateRideForm form, UserProfile driver) {
 
         if (form.getStartAddress() == null || form.getStartAddress().isBlank()) {
             form.setStartAddress(googleMapsService.reverseGeocode(
@@ -109,6 +104,134 @@ public class RideService {
         return rideRepository.findFilteredRidesWithAllParams(dateFrom, dateTo, maxPrice);
     }
 
+    @Transactional
+    public void applyForRide(Long rideId, ApplyRideForm form, UserProfile passenger) {
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        boolean isDriver = ride.getParticipants().stream()
+                .anyMatch(p -> "driver".equalsIgnoreCase(p.getRole().getName())
+                            && p.getUser().getId().equals(passenger.getId()));
+        if (isDriver) throw new RuntimeException("You cannot apply for your own ride");
+
+        rideRequestRepository.findByUser_IdAndRide_Id(passenger.getId(), rideId)
+                .ifPresent(r -> { throw new RuntimeException("You have already applied for this ride"); });
+
+        RideRequest request = new RideRequest();
+        request.setRide(ride);
+        request.setUser(passenger);
+        request.setIsAccepted(null);
+        request.setPickupLatitude(form.getPickupLatitude());
+        request.setPickupLongitude(form.getPickupLongitude());
+        request.setDropoffLatitude(form.getDropoffLatitude());
+        request.setDropoffLongitude(form.getDropoffLongitude());
+        rideRequestRepository.save(request);
+    }
+
+    public List<PendingRequestDTO> getPendingRequests(Long rideId, UserProfile driver) {
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        boolean isDriver = ride.getParticipants().stream()
+                .anyMatch(p -> "driver".equalsIgnoreCase(p.getRole().getName())
+                            && p.getUser().getId().equals(driver.getId()));
+        if (!isDriver) throw new RuntimeException("Not authorized");
+
+        return rideRequestRepository.findByRide_IdAndIsAcceptedIsNull(rideId).stream()
+                .map(r -> new PendingRequestDTO(
+                        r.getId(), rideId,
+                        r.getUser().getName() + " " + r.getUser().getSurname(),
+                        r.getPickupLatitude(), r.getPickupLongitude(),
+                        r.getDropoffLatitude(), r.getDropoffLongitude(),
+                        r.getRide().getStartLatitude(), r.getRide().getStartLongitude(),
+                        r.getRide().getEndLatitude(), r.getRide().getEndLongitude()
+                )).toList();
+    }
+
+    public List<MyApplicationDTO> getMyApplications(UserProfile passenger) {
+        return rideRequestRepository.findByUser_IdOrderByIdDesc(passenger.getId()).stream()
+                .map(r -> {
+                    String status = r.getIsAccepted() == null ? "Pending"
+                            : (r.getIsAccepted() ? "Accepted" : "Rejected");
+                    return new MyApplicationDTO(
+                            r.getId(), r.getRide().getId(), status,
+                            r.getPickupLatitude(), r.getPickupLongitude(),
+                            r.getDropoffLatitude(), r.getDropoffLongitude(),
+                            r.getRide().getStartLatitude(), r.getRide().getStartLongitude(),
+                            r.getRide().getEndLatitude(), r.getRide().getEndLongitude()
+                    );
+                }).toList();
+    }
+
+    public List<PendingRequestDTO> getAllPendingForDriver(UserProfile driver) {
+        return rideRequestRepository.findAllPendingForDriver(driver.getId()).stream()
+                .map(r -> new PendingRequestDTO(
+                        r.getId(), r.getRide().getId(),
+                        r.getUser().getName() + " " + r.getUser().getSurname(),
+                        r.getPickupLatitude(), r.getPickupLongitude(),
+                        r.getDropoffLatitude(), r.getDropoffLongitude(),
+                        r.getRide().getStartLatitude(), r.getRide().getStartLongitude(),
+                        r.getRide().getEndLatitude(), r.getRide().getEndLongitude()
+                )).toList();
+    }
+
+    @Transactional
+    public void acceptRequest(Long requestId, UserProfile driver) {
+        RideRequest request = rideRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        Ride ride = request.getRide();
+        boolean isDriver = ride.getParticipants().stream()
+                .anyMatch(p -> "driver".equalsIgnoreCase(p.getRole().getName())
+                            && p.getUser().getId().equals(driver.getId()));
+        if (!isDriver) throw new RuntimeException("Not authorized");
+
+        request.setIsAccepted(true);
+        rideRequestRepository.save(request);
+
+        int maxOrder = rideWaypointRepository.findMaxSequenceOrderByRideId(ride.getId());
+
+        RideWaypoint pickup = new RideWaypoint();
+        pickup.setRide(ride);
+        pickup.setPassenger(request.getUser());
+        pickup.setLatitude(request.getPickupLatitude());
+        pickup.setLongitude(request.getPickupLongitude());
+        pickup.setType(WaypointType.PICKUP);
+        pickup.setSequenceOrder(maxOrder + 1);
+        rideWaypointRepository.save(pickup);
+
+        RideWaypoint dropoff = new RideWaypoint();
+        dropoff.setRide(ride);
+        dropoff.setPassenger(request.getUser());
+        dropoff.setLatitude(request.getDropoffLatitude());
+        dropoff.setLongitude(request.getDropoffLongitude());
+        dropoff.setType(WaypointType.DROPOFF);
+        dropoff.setSequenceOrder(maxOrder + 2);
+        rideWaypointRepository.save(dropoff);
+
+        RideParticipant participant = new RideParticipant();
+        participant.setRide(ride);
+        participant.setUser(request.getUser());
+        participant.setRole(roleRepository.findByNameIgnoreCase("passenger")
+                .orElseThrow(() -> new RuntimeException("Passenger role not found")));
+        rideParticipantRepository.save(participant);
+    }
+
+    @Transactional
+    public void rejectRequest(Long requestId, UserProfile driver) {
+        RideRequest request = rideRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        Ride ride = request.getRide();
+        boolean isDriver = ride.getParticipants().stream()
+                .anyMatch(p -> "driver".equalsIgnoreCase(p.getRole().getName())
+                            && p.getUser().getId().equals(driver.getId()));
+        if (!isDriver) throw new RuntimeException("Not authorized");
+
+        request.setIsAccepted(false);
+        rideRequestRepository.save(request);
+    }
+
     private RideResponse toResponse(Ride ride) {
         String driverName = "Nieznany";
         Long driverId = null;
@@ -116,7 +239,7 @@ public class RideService {
         if (ride.getParticipants() != null) {
             for (RideParticipant rp : ride.getParticipants()) {
                 if ("driver".equalsIgnoreCase(rp.getRole().getName())) {
-                    User driver = rp.getUser();
+                    UserProfile driver = rp.getUser();
                     driverName = driver.getName() + " " + driver.getSurname();
                     driverId = driver.getId();
                     break;

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .review-wrap { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem; }
+        .review-title { color: #667eea; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 1.8rem; }
+        .review-card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+        .participant-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2);
+                  display: flex; align-items: center; justify-content: center; color: #fff;
+                  font-size: 1.4rem; font-weight: 700; flex-shrink: 0; }
+        .participant-name { font-weight: 700; font-size: 1.05rem; color: #1e293b; }
+        .participant-role { font-size: 0.85rem; color: #64748b; margin-top: 2px; }
+        .field-label { font-weight: 600; color: #374151; margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .stars-row { display: flex; gap: 4px; margin-bottom: 1rem; }
+        .star-btn { font-size: 2rem; cursor: pointer; color: #d1d5db; line-height: 1;
+                    transition: color .1s, transform .1s; user-select: none; }
+        .star-btn:hover { transform: scale(1.15); }
+        .star-btn.active { color: #f59e0b; }
+        .comment-input { width: 100%; padding: 0.55rem 0.8rem; border: 1px solid #e2e8f0; border-radius: 8px;
+                         font-size: 0.92rem; resize: vertical; min-height: 72px;
+                         font-family: inherit; color: #374151; transition: border-color .15s; }
+        .comment-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 2px rgba(102,126,234,.15); }
+        .char-count { font-size: 0.78rem; color: #94a3b8; text-align: right; margin-top: 2px; }
+        .submit-btn { margin-top: 1rem; background: linear-gradient(135deg, #667eea, #764ba2);
+                      color: #fff; border: none; padding: 0.65rem 1.6rem; border-radius: 8px;
+                      font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+        .submit-btn:hover { opacity: .88; }
+        .empty-state { text-align: center; color: #94a3b8; padding: 2.5rem 1rem; font-size: 1rem; }
+        .empty-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+        .error-box { background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px;
+                     padding: 1rem 1.2rem; margin-bottom: 1.2rem; color: #856404; font-weight: 600; }
+        .section-header { font-size: 1.1rem; font-weight: 700; color: #374151; margin: 1.5rem 0 0.8rem; }
+        .done-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px;
+                     padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
+        .done-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+        .done-stars { font-size: 1.4rem; letter-spacing: 1px; }
+        .done-comment { color: #374151; font-size: 0.92rem; background: #fff; border-radius: 8px;
+                        padding: 0.5rem 0.8rem; border: 1px solid #d1fae5; margin-top: 0.5rem; }
+        .no-comment { color: #94a3b8; font-size: 0.85rem; font-style: italic; margin-top: 0.4rem; }
+        .back-link { display: block; text-align: center; margin-top: 1.5rem;
+                     color: #667eea; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+
+    <div class="review-wrap">
+        <h1 class="review-title">Oceń uczestników przejazdu</h1>
+
+        <!-- Błąd: przejazd nie jest ukończony -->
+        <div th:if="${errorMessage}" class="error-box">
+            ⚠ <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Formularze oceniania -->
+        <div th:unless="${errorMessage}">
+            <div th:if="${#lists.isEmpty(participants) and #lists.isEmpty(submittedReviews)}"
+                 class="review-card empty-state">
+                <div class="empty-icon">✓</div>
+                <p>Wszystkie oceny dla tego przejazdu zostały już wystawione.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(participants)}">
+                <div th:each="p, idx : ${participants}" class="review-card">
+                    <div class="participant-header">
+                        <div class="avatar" th:text="${#strings.substring(p.user.name, 0, 1)}"></div>
+                        <div>
+                            <div class="participant-name"
+                                 th:text="${p.user.name + ' ' + p.user.surname}"></div>
+                            <div class="participant-role"
+                                 th:text="${p.role.name == 'driver'} ? 'Kierowca' : 'Pasażer'"></div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{'/review/ride/' + ${rideId} + '/user/' + ${p.user.id}}"
+                          method="post"
+                          onsubmit="return validateForm(this)">
+
+                        <div class="field-label">Ocena *</div>
+                        <div class="stars-row" th:id="${'stars-row-' + idx.index}">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                  class="star-btn"
+                                  th:data-value="${i}"
+                                  th:data-row="${idx.index}"
+                                  onclick="selectStar(this)">★</span>
+                        </div>
+                        <input type="hidden" name="stars"
+                               th:id="${'stars-input-' + idx.index}" value="0">
+
+                        <div class="field-label">Komentarz (opcjonalny)</div>
+                        <textarea class="comment-input" name="comment" maxlength="200"
+                                  placeholder="Krótki komentarz..."
+                                  th:id="${'comment-' + idx.index}"
+                                  oninput="updateCount(this, [[${idx.index}]])"></textarea>
+                        <div class="char-count" th:id="${'count-' + idx.index}">0 / 200</div>
+
+                        <button type="submit" class="submit-btn">Wyślij ocenę</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wystawione oceny dla tego przejazdu -->
+        <div th:unless="${#lists.isEmpty(submittedReviews)}">
+            <div class="section-header">Twoje wystawione oceny</div>
+
+            <div th:each="r : ${submittedReviews}" class="done-card">
+                <div class="done-header">
+                    <div class="avatar" style="width:38px;height:38px;font-size:1rem;"
+                         th:text="${#strings.substring(r.receiver.name, 0, 1)}"></div>
+                    <div>
+                        <div class="participant-name"
+                             th:text="${r.receiver.name + ' ' + r.receiver.surname}"></div>
+                        <div class="done-stars">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                  th:text="${i <= r.starRating.value} ? '★' : '☆'"
+                                  th:style="${i <= r.starRating.value} ? 'color:#f59e0b' : 'color:#d1d5db'"></span>
+                            <span style="font-size:0.85rem;color:#64748b;margin-left:4px;"
+                                  th:text="${r.starRating.value} + ' / 5'"></span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${r.comment}" class="done-comment"
+                     th:text="${r.comment}"></div>
+                <div th:unless="${r.comment}" class="no-comment">Brak komentarza</div>
+            </div>
+        </div>
+
+        <a th:href="@{'/ridehistory/' + ${userId}}" class="back-link">← Wróć do historii przejazdów</a>
+    </div>
+
+    <script>
+        function selectStar(el) {
+            const rowIdx = el.dataset.row;
+            const value  = parseInt(el.dataset.value);
+            const row    = document.getElementById('stars-row-' + rowIdx);
+            row.querySelectorAll('.star-btn').forEach(s => {
+                s.classList.toggle('active', parseInt(s.dataset.value) <= value);
+                s.style.color = parseInt(s.dataset.value) <= value ? '#f59e0b' : '#d1d5db';
+            });
+            document.getElementById('stars-input-' + rowIdx).value = value;
+        }
+
+        document.querySelectorAll('.stars-row').forEach(row => {
+            row.addEventListener('mouseover', e => {
+                if (!e.target.classList.contains('star-btn')) return;
+                const val = parseInt(e.target.dataset.value);
+                row.querySelectorAll('.star-btn').forEach(s =>
+                    s.style.color = parseInt(s.dataset.value) <= val ? '#f59e0b' : '#d1d5db'
+                );
+            });
+            row.addEventListener('mouseleave', () => {
+                row.querySelectorAll('.star-btn').forEach(s => {
+                    s.style.color = s.classList.contains('active') ? '#f59e0b' : '#d1d5db';
+                });
+            });
+        });
+
+        function updateCount(textarea, idx) {
+            document.getElementById('count-' + idx).textContent = textarea.value.length + ' / 200';
+        }
+
+        function validateForm(form) {
+            const hidden = form.querySelector('input[name="stars"]');
+            if (!hidden || hidden.value === '0') {
+                alert('Wybierz ocenę w postaci gwiazdek przed wysłaniem.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+</div>
+</body>
+</html>

@@ -16,9 +16,10 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     @Query("""
         SELECT DISTINCT r
         FROM Ride r
+        JOIN FETCH r.state
         JOIN r.participants rp
         WHERE rp.user.id = :userId
-          AND r.state.id = 1
+          AND r.state.name = 'finished'
         """)
     List<Ride> findFinishedRidesByUserId(@Param("userId") Long userId);
 
@@ -29,6 +30,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
             r.endLatitude, r.endLongitude,
             r.cost, r.date,
             r.state.name,
+            rp.user.id,
             CONCAT(rp.user.name, ' ', rp.user.surname),
             cd.model, cd.color, cd.seatCount, cd.mileage
         )
@@ -48,6 +50,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         r.endLatitude, r.endLongitude,
         r.cost, r.date,
         r.state.name,
+        rp.user.id,
         CONCAT(rp.user.name, ' ', rp.user.surname),
         cd.model, cd.color, cd.seatCount, cd.mileage
     )
@@ -73,6 +76,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         r.endLatitude, r.endLongitude,
         r.cost, r.date,
         r.state.name,
+        rp.user.id,
         CONCAT(rp.user.name, ' ', rp.user.surname),
         cd.model, cd.color, cd.seatCount, cd.mileage
     )
@@ -102,4 +106,24 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
         ORDER BY r.date ASC
         """)
     List<Ride> findActiveRides();
+
+    @Query("""
+        SELECT new th2025gr2.carpooling.dto.RideDTO(
+            r.id,
+            r.startLatitude, r.startLongitude,
+            r.endLatitude, r.endLongitude,
+            r.cost, r.date,
+            r.state.name,
+            rp.user.id,
+            CONCAT(rp.user.name, ' ', rp.user.surname),
+            cd.model, cd.color, cd.seatCount, cd.mileage
+        )
+        FROM Ride r
+        JOIN r.participants rp
+        LEFT JOIN CarDetail cd ON cd.user = rp.user
+        WHERE rp.role.name = 'driver'
+          AND rp.user.id = :driverId
+        ORDER BY r.date DESC
+        """)
+    List<RideDTO> findDTOsByDriverId(@Param("driverId") Long driverId);
 }

@@ -11,6 +11,7 @@ public class RideDTO {
     public Double cost;
     public LocalDateTime date;
     public String stateName;
+    public Long driverId;
     public String driverName;
     public String carModel;
     public String carColor;
@@ -20,7 +21,7 @@ public class RideDTO {
     public RideDTO(Long id, Double startLatitude, Double startLongitude,
                    Double endLatitude, Double endLongitude,
                    Double cost, LocalDateTime date,
-                   String stateName, String driverName,
+                   String stateName, Long driverId, String driverName,
                    String carModel, String carColor,
                    Short carSeats, Short carMileage) {
         this.id = id;
@@ -31,6 +32,7 @@ public class RideDTO {
         this.cost = cost;
         this.date = date;
         this.stateName = stateName;
+        this.driverId = driverId;
         this.driverName = driverName;
         this.carModel = carModel;
         this.carColor = carColor;
