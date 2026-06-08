@@ -16,9 +16,10 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     @Query("""
         SELECT DISTINCT r
         FROM Ride r
+        JOIN FETCH r.state
         JOIN r.participants rp
         WHERE rp.user.id = :userId
-          AND r.state.id = 1
+          AND r.state.name = 'finished'
         """)
     List<Ride> findFinishedRidesByUserId(@Param("userId") Long userId);
 

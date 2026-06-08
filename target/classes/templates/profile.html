@@ -24,9 +24,13 @@
     </div>
 
     <div style="margin:2rem 0;text-align:center;">
-        <span style="font-size:2rem;color:#ccc;">☆</span><span style="font-size:2rem;color:#ccc;">☆</span>
-        <span style="font-size:2rem;color:#ccc;">☆</span><span style="font-size:2rem;color:#ccc;">☆</span>
-        <span style="font-size:2rem;color:#ccc;">☆</span>
+        <div th:with="rounded=${T(java.lang.Math).round(avgRating)}">
+            <span th:each="i : ${#numbers.sequence(1,5)}"
+                  th:text="${i <= rounded} ? '★' : '☆'"
+                  th:style="${i <= rounded} ? 'font-size:2rem;color:#f59e0b;' : 'font-size:2rem;color:#d1d5db;'"></span>
+        </div>
+        <div style="color:#64748b;font-size:0.9rem;margin-top:0.3rem;"
+             th:text="${avgRating > 0} ? ${#numbers.formatDecimal(avgRating, 1, 1)} + ' / 5' : 'Brak ocen'"></div>
     </div>
 
     <div style="background:#fafafa;border-radius:8px;padding:1.5rem;">
@@ -44,6 +48,33 @@
     <div th:if="${user.driver}" style="margin-top:2rem;">
         <h3 class="section-title">Pending Ride Applications</h3>
         <div id="pendingList"><p class="req-empty">Loading...</p></div>
+    </div>
+
+    <div style="margin-top:2rem;">
+        <h3 class="section-title">Reviews About You</h3>
+        <div th:if="${#lists.isEmpty(receivedReviews)}"
+             class="req-empty" style="padding:.5rem 0;">No reviews yet.</div>
+        <div th:each="r : ${receivedReviews}"
+             style="background:#fff;border:1px solid #e8ecf5;border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:.6rem;">
+                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);
+                                display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9rem;flex-shrink:0;"
+                         th:text="${#strings.substring(r.sender.name,0,1)}"></div>
+                    <span style="font-weight:700;color:#1e293b;font-size:.9rem;"
+                          th:text="${r.sender.name + ' ' + r.sender.surname}"></span>
+                </div>
+                <div style="font-size:1.3rem;letter-spacing:1px;">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:text="${i <= r.starRating.value} ? '★' : '☆'"
+                          th:style="${i <= r.starRating.value} ? 'color:#f59e0b' : 'color:#d1d5db'"></span>
+                </div>
+            </div>
+            <div th:if="${r.comment}"
+                 style="margin-top:.5rem;color:#475569;font-size:.88rem;background:#f8fafc;
+                        border-radius:6px;padding:.4rem .7rem;border-left:3px solid #667eea;"
+                 th:text="${r.comment}"></div>
+        </div>
     </div>
 
     <div id="mapModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);">

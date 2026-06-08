@@ -12,29 +12,37 @@ import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.repository.UserCredentialRepository;
 import th2025gr2.carpooling.repository.UserProfileRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
+import th2025gr2.carpooling.service.ReviewService;
 
 @Controller
 public class ProfileController {
 
     private final UserProfileRepository profileRepository;
     private final UserCredentialRepository credentialRepository;
+    private final ReviewService reviewService;
 
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 
     public ProfileController(UserProfileRepository profileRepository,
-                             UserCredentialRepository credentialRepository) {
+                             UserCredentialRepository credentialRepository,
+                             ReviewService reviewService) {
         this.profileRepository = profileRepository;
         this.credentialRepository = credentialRepository;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetailsWithId userDetails, Model model) {
         UserProfile user = profileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
+        double avgRating = reviewService.getAverageRating(user);
+        var receivedReviews = reviewService.getReceivedReviews(user);
 
         model.addAttribute("pageTitle", "Profile");
         model.addAttribute("view", "profile");
         model.addAttribute("user", user);
+        model.addAttribute("avgRating", avgRating);
+        model.addAttribute("receivedReviews", receivedReviews);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "layout";

@@ -7,7 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_reviews")
+@Table(name = "user_reviews",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"sender_id", "receiver_id", "ride_id"}))
 public class UserReview {
 
     @Id
@@ -23,6 +24,13 @@ public class UserReview {
     private UserProfile receiver;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ride_id", nullable = false)
+    private Ride ride;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "star_rating_id", nullable = false)
     private StarRating starRating;
+
+    @Column(name = "comment", length = 200)
+    private String comment;
 }
