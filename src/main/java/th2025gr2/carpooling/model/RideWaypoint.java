@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import th2025gr2.carpooling.enums.WaypointType;
 
 @Getter
 @Setter
@@ -36,5 +37,5 @@ public class RideWaypoint {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "passenger_id", nullable = false)
-    private User passenger;
+    private UserProfile passenger;
 }

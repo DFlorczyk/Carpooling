@@ -51,7 +51,7 @@ public class RideService {
         RideState activeState = rideStateRepository.findByNameIgnoreCase("not started")
                 .orElseGet(() -> rideStateRepository.findById(2L)
                         .orElseThrow(() -> new RuntimeException(
-                                "Brak stanu 'ACTIVE' w tabeli ride_states")));
+                                "Brak stanu 'active' w tabeli ride_states")));
 
         Ride ride = new Ride();
         ride.setStartLatitude(form.getStartLatitude());
@@ -193,7 +193,7 @@ public class RideService {
 
         RideWaypoint pickup = new RideWaypoint();
         pickup.setRide(ride);
-        pickup.setPassenger(request.getUser());
+        //pickup.setPassenger(request.getUser());
         pickup.setLatitude(request.getPickupLatitude());
         pickup.setLongitude(request.getPickupLongitude());
         pickup.setType(WaypointType.PICKUP);
@@ -202,7 +202,7 @@ public class RideService {
 
         RideWaypoint dropoff = new RideWaypoint();
         dropoff.setRide(ride);
-        dropoff.setPassenger(request.getUser());
+        //dropoff.setPassenger(request.getUser());
         dropoff.setLatitude(request.getDropoffLatitude());
         dropoff.setLongitude(request.getDropoffLongitude());
         dropoff.setType(WaypointType.DROPOFF);

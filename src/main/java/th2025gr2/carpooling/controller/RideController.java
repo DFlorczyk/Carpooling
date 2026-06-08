@@ -34,7 +34,10 @@ public class RideController {
     private String googleMapsApiKey;
 
     @GetMapping("/rides/create")
-    public String showCreateRideForm(Model model) {
+    public String showCreateRideForm(@AuthenticationPrincipal UserDetailsWithId userDetails, Model model) {
+        UserProfile user = userProfileRepository.findByCredentialId(userDetails.getId()).orElseThrow();
+        if (!user.isDriver()) return "redirect:/driver/register";
+
         model.addAttribute("pageTitle", "Dodaj przejazd");
         model.addAttribute("view", "create-ride");
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
@@ -94,6 +97,11 @@ public class RideController {
 
         UserProfile driver = userProfileRepository.findByCredentialId(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+
+        if (!driver.isDriver()) {
+            return ResponseEntity.status(403)
+                    .body(Map.of("error", "Tylko zarejestrowani kierowcy mogą dodawać przejazdy"));
+        }
 
         try {
             Ride ride = rideService.createRide(form, driver);

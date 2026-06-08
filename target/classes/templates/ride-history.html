@@ -24,7 +24,7 @@
                            style="padding: 0.6rem 1rem; font-size: 0.9rem; text-align: center;
                                   background: linear-gradient(135deg, #667eea, #764ba2);
                                   color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                            ★ Oceń
+                            ★ Rate
                         </a>
                         <a th:href="@{'/rides/' + ${ride.id}}"
                            class="nav-link"
@@ -35,7 +35,7 @@
 
                 </li>
             </ul>
-            <p th:unless="${rides}" style="text-align: center; color: #888;">Brak historii przejazdów.</p>
+            <p th:unless="${rides}" style="text-align: center; color: #888;">No ride history found.</p>
         </div>
     </div>
 </div>
