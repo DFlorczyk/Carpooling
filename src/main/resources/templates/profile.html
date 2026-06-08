@@ -99,7 +99,9 @@
         .btn-acc  { padding:.3rem .8rem;background:#22c55e;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
         .btn-rej  { padding:.3rem .8rem;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
         .btn-view { padding:.3rem .8rem;background:#667eea;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer; }
-        .btn-acc:hover,.btn-rej:hover,.btn-view:hover { opacity:.85; }
+        .btn-pay  { padding:.3rem .8rem;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:6px;font-size:.78rem;font-weight:600;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:.3rem; }
+        .paid-badge { padding:.3rem .7rem;background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;border-radius:6px;font-size:.78rem;font-weight:600; }
+        .btn-acc:hover,.btn-rej:hover,.btn-view:hover,.btn-pay:hover { opacity:.85; }
         .req-empty { color:#94a3b8;font-size:.85rem; }
         .req-feedback { padding:.5rem .75rem;border-radius:7px;font-size:.82rem;margin-bottom:.5rem; }
         .req-feedback.ok  { background:#dcfce7;color:#15803d;border:1px solid #bbf7d0; }
@@ -303,6 +305,9 @@
                             <div class="req-btns">
                                 <button class="btn-view" onclick="openMapModal(${a.rideId},${a.pickupLatitude},${a.pickupLongitude},${a.dropoffLatitude},${a.dropoffLongitude},${a.rideStartLatitude},${a.rideStartLongitude},${a.rideEndLatitude},${a.rideEndLongitude},false,0)">View Route</button>
                                 <span class="status-badge ${a.status.toLowerCase()}">${a.status}</span>
+                                ${a.status === 'Accepted' && !a.isPaid
+                                    ? `<a href="/payment/request/${a.id}" class="btn-pay"><svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x=".75" y=".75" width="12.5" height="9.5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x=".75" y="3.25" width="12.5" height="2" fill="currentColor"/><rect x="1.75" y="7" width="3.5" height="1.25" rx=".4" fill="currentColor"/></svg> Pay ${a.rideCost != null ? (a.rideCost + 2).toFixed(2) + ' PLN' : ''}</a>`
+                                    : (a.status === 'Accepted' && a.isPaid ? '<span class="paid-badge">✓ Paid</span>' : '')}
                             </div>`;
                         c.appendChild(el);
                         geocodeInto('apu-' + a.id, a.pickupLatitude, a.pickupLongitude);

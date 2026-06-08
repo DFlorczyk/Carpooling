@@ -155,6 +155,8 @@ public class RideService {
                             : (r.getIsAccepted() ? "Accepted" : "Rejected");
                     return new MyApplicationDTO(
                             r.getId(), r.getRide().getId(), status,
+                            r.getIsPaid() != null && r.getIsPaid(),
+                            r.getRide().getCost(),
                             r.getPickupLatitude(), r.getPickupLongitude(),
                             r.getDropoffLatitude(), r.getDropoffLongitude(),
                             r.getRide().getStartLatitude(), r.getRide().getStartLongitude(),

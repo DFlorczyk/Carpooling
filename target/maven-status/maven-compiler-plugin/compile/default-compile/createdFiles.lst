@@ -24,6 +24,7 @@ th2025gr2\carpooling\service\RideService.class
 th2025gr2\carpooling\repository\UserDriverTicketsRepository.class
 th2025gr2\carpooling\enums\Role.class
 th2025gr2\carpooling\model\StarRating.class
+th2025gr2\carpooling\service\PaymentService.class
 th2025gr2\carpooling\repository\RideStateRepository.class
 th2025gr2\carpooling\controller\DriverController.class
 th2025gr2\carpooling\dto\ApplyRideForm.class
@@ -38,6 +39,7 @@ th2025gr2\carpooling\model\UserCredential.class
 th2025gr2\carpooling\service\RideRestService.class
 th2025gr2\carpooling\security\PasswordEncoderConfig.class
 th2025gr2\carpooling\model\Payment.class
+th2025gr2\carpooling\controller\PaymentController.class
 th2025gr2\carpooling\model\City.class
 th2025gr2\carpooling\model\UserReview.class
 th2025gr2\carpooling\controller\AdminDriverController.class
