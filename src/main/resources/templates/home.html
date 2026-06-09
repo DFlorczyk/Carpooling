@@ -519,7 +519,7 @@
                 el.innerHTML = `
                     <div class="ride-route">Loading...</div>
                     <div class="ride-meta">
-                        <span>${r.driverName ?? 'No driver'}</span>
+                        <span>${r.driverId ? `<a href="/profile/${r.driverId}" onclick="event.stopPropagation()" style="color:#667eea;font-weight:600;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${r.driverName ?? 'No driver'}</a>` : (r.driverName ?? 'No driver')}</span>
                         <span>${r.cost} zł</span>
                         <span>${formattedDate}</span>
                     </div>

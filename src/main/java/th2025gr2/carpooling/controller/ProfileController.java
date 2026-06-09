@@ -5,6 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import th2025gr2.carpooling.model.UserCredential;
@@ -44,6 +45,22 @@ public class ProfileController {
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("receivedReviews", receivedReviews);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "layout";
+    }
+
+    @GetMapping("/profile/{userId}")
+    public String publicProfile(@PathVariable Long userId, Model model) {
+        UserProfile user = profileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        double avgRating = reviewService.getAverageRating(user);
+        var receivedReviews = reviewService.getReceivedReviews(user);
+
+        model.addAttribute("pageTitle", user.getName() + " " + user.getSurname());
+        model.addAttribute("view", "public-profile");
+        model.addAttribute("user", user);
+        model.addAttribute("avgRating", avgRating);
+        model.addAttribute("receivedReviews", receivedReviews);
 
         return "layout";
     }

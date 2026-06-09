@@ -140,6 +140,7 @@ public class RideService {
         return rideRequestRepository.findByRide_IdAndIsAcceptedIsNull(rideId).stream()
                 .map(r -> new PendingRequestDTO(
                         r.getId(), rideId,
+                        r.getUser().getId(),
                         r.getUser().getName() + " " + r.getUser().getSurname(),
                         r.getPickupLatitude(), r.getPickupLongitude(),
                         r.getDropoffLatitude(), r.getDropoffLongitude(),
@@ -169,6 +170,7 @@ public class RideService {
         return rideRequestRepository.findAllPendingForDriver(driver.getId()).stream()
                 .map(r -> new PendingRequestDTO(
                         r.getId(), r.getRide().getId(),
+                        r.getUser().getId(),
                         r.getUser().getName() + " " + r.getUser().getSurname(),
                         r.getPickupLatitude(), r.getPickupLongitude(),
                         r.getDropoffLatitude(), r.getDropoffLongitude(),

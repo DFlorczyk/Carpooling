@@ -231,7 +231,15 @@
                     </div>
                     <div class="info-row">
                         <span class="info-row-label"><i class="bi bi-person-circle"></i> Kierowca</span>
-                        <span class="info-row-value" th:text="${ride.driverName}">—</span>
+                        <span class="info-row-value">
+                            <a th:if="${ride.driverId != null}"
+                               th:href="@{/profile/{id}(id=${ride.driverId})}"
+                               th:text="${ride.driverName}"
+                               style="color:#667eea;text-decoration:none;font-weight:600;"
+                               onmouseover="this.style.textDecoration='underline'"
+                               onmouseout="this.style.textDecoration='none'">—</a>
+                            <span th:unless="${ride.driverId != null}" th:text="${ride.driverName}">—</span>
+                        </span>
                     </div>
                     <div class="info-row">
                         <span class="info-row-label"><i class="bi bi-tag"></i> Status</span>

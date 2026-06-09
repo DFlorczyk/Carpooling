@@ -340,6 +340,7 @@
                         <span class="req-loc"><span class="req-dot" style="background:#f97316"></span><span id="do-${r.id}">Loading...</span></span>
                     </div>
                     <div class="req-btns">
+                        <a href="/profile/${r.passengerProfileId}" class="btn-view" style="text-decoration:none;">Profile</a>
                         <button class="btn-view" onclick="openMapModal(${r.rideId},${r.pickupLatitude},${r.pickupLongitude},${r.dropoffLatitude},${r.dropoffLongitude},${r.rideStartLatitude},${r.rideStartLongitude},${r.rideEndLatitude},${r.rideEndLongitude},true,0)">View</button>
                         <button class="btn-acc" onclick="handleReq(${r.id},'accept')">Accept</button>
                         <button class="btn-rej" onclick="handleReq(${r.id},'reject')">Reject</button>
