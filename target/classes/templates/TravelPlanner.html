@@ -1,31 +1,206 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<div th:fragment="content" style="float: none">
-    <h1 style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">Schedule your ride</h1>
-    <div style="font-size: 30px; float: left">
-        <form action="#" th:action="@{/travelPlanner}" th:object="${ev}" method="post">
+<div th:fragment="content" xmlns:th="http://www.w3.org/1999/xhtml">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-            <a style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">Start</a>
-            <label>
-                <input type="datetime-local"
-                       th:field="*{dateStartTime}"
-                       />
-            </label>
+    <style>
+        .tp-wrap { max-width: 1100px; margin: 0 auto; }
 
-            <br>
-            <a style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">End</a>
-            <label>
-                <input type="datetime-local"
-                       th:field="*{dateStartEnd}"
-                />
-            </label>
+        .tp-hero {
+            display: flex; align-items: center; gap: 1rem;
+            background: linear-gradient(135deg, rgba(102,126,234,.08), rgba(118,75,162,.06));
+            border-left: 4px solid #667eea; border-radius: 10px;
+            padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+        }
+        .tp-hero-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .tp-hero h2 { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin: 0; }
+        .tp-hero p { font-size: 0.8rem; color: #64748b; margin: 0.15rem 0 0; }
 
-            <button type="submit">Zapisz</button>
-        </form>
+        .tp-columns { display: flex; gap: 1.5rem; align-items: flex-start; }
+        .tp-form-panel { flex: 0 0 400px; }
+        .tp-map-panel { flex: 1; min-width: 0; }
 
+        .tp-card { border: 1px solid #e8ecf5; border-radius: 12px; box-shadow: 0 2px 14px rgba(102,126,234,.08); overflow: hidden; background: #fff; }
+        .tp-card-body { padding: 1.4rem; }
+
+        .field-group { margin-bottom: 1rem; }
+        .field-label { display: block; font-size: .75rem; font-weight: 600; color: #475569; text-transform: uppercase; margin-bottom: .3rem; }
+        .field-input { width: 100%; padding: .5rem .75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: .9rem; outline: none; }
+        .field-input:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,.15); }
+
+        .field-with-btn { display: flex; gap: .4rem; }
+        .pick-btn { padding: 0 .65rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8f9ff; color: #667eea; cursor: pointer; display: flex; align-items: center; }
+        .pick-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-color: transparent; }
+
+        .submit-btn {
+            width: 100%; margin-top: .75rem; padding: .65rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+        }
+        .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+        .alert { padding: .7rem 1rem; border-radius: 8px; font-size: .88rem; margin-bottom: 1rem; display: none; }
+        .alert-success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        #map { height: 500px; border-radius: 12px; }
+        .d-none { display: none; }
+    </style>
+
+    <div class="tp-wrap">
+        <div class="tp-hero">
+            <div class="tp-hero-icon"><i class="bi bi-bell-fill"></i></div>
+            <div>
+                <h2>Planner Podróży</h2>
+                <p>Zapisz trasę, którą chcesz przebyć. Poinformujemy Cię, gdy ktoś doda pasujący przejazd!</p>
+            </div>
+        </div>
+
+        <div id="alertSuccess" class="alert alert-success">Plan został zapisany!</div>
+        <div id="alertError" class="alert alert-error">Wystąpił błąd podczas zapisywania.</div>
+
+        <div class="tp-columns">
+            <div class="tp-form-panel">
+                <div class="tp-card">
+                    <div class="tp-card-body">
+                        <div class="field-group">
+                            <label class="field-label"><i class="bi bi-geo-alt-fill text-success"></i> Punkt Startowy</label>
+                            <div class="field-with-btn">
+                                <input type="text" id="startAddress" class="field-input" placeholder="Skąd chcesz ruszyć?" autocomplete="off">
+                                <button type="button" id="pickStartBtn" class="pick-btn" onclick="activatePickMode('start')"><i class="bi bi-cursor-fill"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label"><i class="bi bi-geo-alt-fill text-danger"></i> Punkt Docelowy</label>
+                            <div class="field-with-btn">
+                                <input type="text" id="endAddress" class="field-input" placeholder="Dokąd chcesz dojechać?" autocomplete="off">
+                                <button type="button" id="pickEndBtn" class="pick-btn" onclick="activatePickMode('end')"><i class="bi bi-cursor-fill"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label"><i class="bi bi-calendar-check"></i> Data podróży</label>
+                            <input type="date" id="plannedDate" class="field-input">
+                        </div>
+
+                        <button id="savePlanBtn" class="submit-btn" onclick="savePlannedRide()">
+                            <i class="bi bi-bookmark-plus"></i> Zapisz i obserwuj
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tp-map-panel">
+                <div class="tp-card">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'" async defer></script>
+
+    <script th:inline="javascript">
+        let map, startAutocomplete, endAutocomplete;
+        let pickMode = null;
+        let markers = { start: null, end: null };
+        let coords = { startLat: null, startLng: null, endLat: null, endLng: null };
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 6, center: { lat: 52.2297, lng: 21.0122 },
+                mapTypeControl: false, streetViewControl: false
+            });
+
+            startAutocomplete = new google.maps.places.Autocomplete(document.getElementById('startAddress'));
+            startAutocomplete.addListener('place_changed', () => handlePlaceChange('start', startAutocomplete));
+
+            endAutocomplete = new google.maps.places.Autocomplete(document.getElementById('endAddress'));
+            endAutocomplete.addListener('place_changed', () => handlePlaceChange('end', endAutocomplete));
+
+            map.addListener('click', (e) => {
+                if (!pickMode) return;
+                updateLocation(pickMode, e.latLng.lat(), e.latLng.lng());
+                deactivatePickMode();
+            });
+        }
+
+        function handlePlaceChange(type, autocomplete) {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+            updateLocation(type, place.geometry.location.lat(), place.geometry.location.lng(), place.formatted_address);
+        }
+
+        function updateLocation(type, lat, lng, address = null) {
+            coords[type + 'Lat'] = lat;
+            coords[type + 'Lng'] = lng;
+
+            if (markers[type]) markers[type].setMap(null);
+            markers[type] = new google.maps.Marker({
+                position: { lat, lng }, map,
+                icon: type === 'start' ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            });
+
+            if (!address) {
+                new google.maps.Geocoder().geocode({ location: { lat, lng } }, (results, status) => {
+                    if (status === 'OK') document.getElementById(type + 'Address').value = results[0].formatted_address;
+                });
+            }
+
+            if (coords.startLat && coords.endLat) {
+                const bounds = new google.maps.LatLngBounds();
+                bounds.extend(markers.start.getPosition());
+                bounds.extend(markers.end.getPosition());
+                map.fitBounds(bounds);
+            }
+        }
+
+        function activatePickMode(mode) {
+            pickMode = mode;
+            document.getElementById('pickStartBtn').classList.toggle('active', mode === 'start');
+            document.getElementById('pickEndBtn').classList.toggle('active', mode === 'end');
+            map.setOptions({ draggableCursor: 'crosshair' });
+        }
+
+        function deactivatePickMode() {
+            pickMode = null;
+            document.getElementById('pickStartBtn').classList.remove('active');
+            document.getElementById('pickEndBtn').classList.remove('active');
+            map.setOptions({ draggableCursor: null });
+        }
+
+        function savePlannedRide() {
+            const date = document.getElementById('plannedDate').value;
+            if (!coords.startLat || !coords.endLat || !date) {
+                alert("Proszę uzupełnić wszystkie pola!");
+                return;
+            }
+
+            const payload = {
+                startLatitude: coords.startLat,
+                startLongitude: coords.startLng,
+                endLatitude: coords.endLat,
+                endLongitude: coords.endLng,
+                startDate: date
+            };
+
+            fetch('/api/planned-rides', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if (res.ok) {
+                    document.getElementById('alertSuccess').style.display = 'block';
+                    setTimeout(() => window.location.href = '/profile', 2000);
+                } else {
+                    document.getElementById('alertError').style.display = 'block';
+                }
+            });
+        }
+    </script>
 </div>
-</body>
-</html>

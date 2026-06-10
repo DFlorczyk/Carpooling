@@ -7,6 +7,7 @@ import th2025gr2.carpooling.dto.*;
 import th2025gr2.carpooling.enums.WaypointType;
 import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.*;
+import th2025gr2.carpooling.service.PlannedRideService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RideService {
 
+    private final PlannedRideService plannedRideService;
     private final RideRepository rideRepository;
     private final RideStateRepository rideStateRepository;
     private final RoleRepository roleRepository;
@@ -72,6 +74,8 @@ public class RideService {
         ride.setParticipants(List.of(participant));
 
         ride = rideRepository.save(ride);
+
+        plannedRideService.checkAndNotifyUsers(ride);
 
         return ride;
     }

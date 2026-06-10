@@ -15,6 +15,7 @@ public class PlannedRide {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private UserProfile user;
     @Column(name = "start_latitude", nullable = false)
     private Double startLatitude;
@@ -28,4 +29,8 @@ public class PlannedRide {
     private LocalDate startDate;
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+    @Column(name = "radius_km", nullable = false)
+    private Double radiusKm;
+    private String startAddress;
+    private String endAddress;
 }

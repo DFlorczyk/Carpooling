@@ -26,14 +26,19 @@ th2025gr2\carpooling\enums\Role.class
 th2025gr2\carpooling\model\StarRating.class
 th2025gr2\carpooling\service\PaymentService.class
 th2025gr2\carpooling\repository\RideStateRepository.class
+th2025gr2\carpooling\service\RideStateException.class
+th2025gr2\carpooling\controller\RideLocationController.class
 th2025gr2\carpooling\controller\DriverController.class
+th2025gr2\carpooling\repository\ParticipantLocationRepository.class
 th2025gr2\carpooling\dto\ApplyRideForm.class
 th2025gr2\carpooling\enums\WaypointType.class
 th2025gr2\carpooling\model\ReportParticipant.class
 th2025gr2\carpooling\model\RideRequest.class
+th2025gr2\carpooling\model\ParticipantLocation.class
 th2025gr2\carpooling\repository\CityRepository.class
 th2025gr2\carpooling\model\RegisterRequest.class
 th2025gr2\carpooling\security\SecurityConfig.class
+th2025gr2\carpooling\dto\ParticipantLocationDTO.class
 th2025gr2\carpooling\repository\UserProfileRepository.class
 th2025gr2\carpooling\model\UserCredential.class
 th2025gr2\carpooling\service\RideRestService.class
@@ -55,6 +60,7 @@ th2025gr2\carpooling\dto\PendingRequestDTO.class
 th2025gr2\carpooling\model\Report.class
 th2025gr2\carpooling\controller\DriverChatController.class
 th2025gr2\carpooling\service\GoogleMapsService.class
+th2025gr2\carpooling\dto\LocationUpdateRequest.class
 th2025gr2\carpooling\dto\RideDTO.class
 th2025gr2\carpooling\repository\RoleRepository.class
 th2025gr2\carpooling\model\UserDriverTickets.class
@@ -69,6 +75,7 @@ th2025gr2\carpooling\controller\AuthRestController.class
 th2025gr2\carpooling\model\UserProfile.class
 th2025gr2\carpooling\security\JwtAuthFilter.class
 th2025gr2\carpooling\model\TicketMessage.class
+th2025gr2\carpooling\service\RideLocationService.class
 th2025gr2\carpooling\model\ReportState.class
 th2025gr2\carpooling\dto\DateEventForm.class
 th2025gr2\carpooling\model\RideWaypoint.class
