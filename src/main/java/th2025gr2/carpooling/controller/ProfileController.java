@@ -12,8 +12,10 @@ import th2025gr2.carpooling.model.UserCredential;
 import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.repository.UserCredentialRepository;
 import th2025gr2.carpooling.repository.UserProfileRepository;
+import th2025gr2.carpooling.repository.NotificationRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
 import th2025gr2.carpooling.service.ReviewService;
+
 
 @Controller
 public class ProfileController {
@@ -21,16 +23,20 @@ public class ProfileController {
     private final UserProfileRepository profileRepository;
     private final UserCredentialRepository credentialRepository;
     private final ReviewService reviewService;
+    private final NotificationRepository notificationRepository;
 
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 
+    // 2. ZAKTUALIZUJ KONSTRUKTOR (Dodaj NotificationRepository):
     public ProfileController(UserProfileRepository profileRepository,
                              UserCredentialRepository credentialRepository,
-                             ReviewService reviewService) {
+                             ReviewService reviewService,
+                             NotificationRepository notificationRepository) {
         this.profileRepository = profileRepository;
         this.credentialRepository = credentialRepository;
         this.reviewService = reviewService;
+        this.notificationRepository = notificationRepository;
     }
 
     @GetMapping("/profile")
@@ -45,6 +51,12 @@ public class ProfileController {
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("receivedReviews", receivedReviews);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        // Pobierz powiadomienia z nowej tabeli
+        var notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
+
+        // Przekaż je do HTML (musi nazywać się "notifications")
+        model.addAttribute("notifications", notifications);
 
         return "layout";
     }
