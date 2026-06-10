@@ -190,7 +190,7 @@
                             <div class="addr-label">Skąd</div>
                             <div class="addr-value">
                                 <i class="bi bi-circle-fill" style="color:#22c55e; font-size:.5rem; margin-top:.35rem; flex-shrink:0;"></i>
-                                <span th:text="${ride.startAddress}">—</span>
+                                <span id="addr-start">Ładowanie…</span>
                             </div>
                         </div>
                         <div class="addr-sep"><i class="bi bi-three-dots-vertical"></i></div>
@@ -198,7 +198,7 @@
                             <div class="addr-label">Dokąd</div>
                             <div class="addr-value">
                                 <i class="bi bi-geo-alt-fill" style="color:#ef4444; flex-shrink:0;"></i>
-                                <span th:text="${ride.endAddress}">—</span>
+                                <span id="addr-end">Ładowanie…</span>
                             </div>
                         </div>
                     </div>
@@ -231,7 +231,15 @@
                     </div>
                     <div class="info-row">
                         <span class="info-row-label"><i class="bi bi-person-circle"></i> Kierowca</span>
-                        <span class="info-row-value" th:text="${ride.driverName}">—</span>
+                        <span class="info-row-value">
+                            <a th:if="${ride.driverId != null}"
+                               th:href="@{/profile/{id}(id=${ride.driverId})}"
+                               th:text="${ride.driverName}"
+                               style="color:#667eea;text-decoration:none;font-weight:600;"
+                               onmouseover="this.style.textDecoration='underline'"
+                               onmouseout="this.style.textDecoration='none'">—</a>
+                            <span th:unless="${ride.driverId != null}" th:text="${ride.driverName}">—</span>
+                        </span>
                     </div>
                     <div class="info-row">
                         <span class="info-row-label"><i class="bi bi-tag"></i> Status</span>
@@ -260,12 +268,16 @@
             async defer></script>
 
     <script th:inline="javascript">
+        const rideId       = /*[[${ride.id}]]*/ 0;
         const rideStartLat = /*[[${ride.startLatitude}]]*/ 0;
         const rideStartLng = /*[[${ride.startLongitude}]]*/ 0;
         const rideEndLat   = /*[[${ride.endLatitude}]]*/ 0;
         const rideEndLng   = /*[[${ride.endLongitude}]]*/ 0;
 
         function initDetailMap() {
+            const startLatLng = { lat: rideStartLat, lng: rideStartLng };
+            const endLatLng   = { lat: rideEndLat,   lng: rideEndLng   };
+
             const map = new google.maps.Map(document.getElementById('detailMap'), {
                 zoom: 7,
                 center: { lat: (rideStartLat + rideEndLat) / 2, lng: (rideStartLng + rideEndLng) / 2 },
@@ -273,19 +285,72 @@
                 streetViewControl: false
             });
 
-            const directionsService  = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer({
-                map: map,
-                polylineOptions: { strokeColor: '#667eea', strokeWeight: 5 }
+            // Geocode start / end addresses into the info panel
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: startLatLng }, (res, st) => {
+                const el = document.getElementById('addr-start');
+                if (el) el.textContent = (st === 'OK' && res[0]) ? res[0].formatted_address : rideStartLat.toFixed(4) + ', ' + rideStartLng.toFixed(4);
+            });
+            geocoder.geocode({ location: endLatLng }, (res, st) => {
+                const el = document.getElementById('addr-end');
+                if (el) el.textContent = (st === 'OK' && res[0]) ? res[0].formatted_address : rideEndLat.toFixed(4) + ', ' + rideEndLng.toFixed(4);
             });
 
-            directionsService.route({
-                origin:      { lat: rideStartLat, lng: rideStartLng },
-                destination: { lat: rideEndLat,   lng: rideEndLng },
-                travelMode:  google.maps.TravelMode.DRIVING
-            }, function (result, status) {
-                if (status === 'OK') directionsRenderer.setDirections(result);
-            });
+            const directionsService = new google.maps.DirectionsService();
+
+            function makeSvgIcon(color, label) {
+                const s = 26, r = 6, fs = label.length > 1 ? 9 : 12;
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s+8}">
+                    <rect x="0" y="0" width="${s}" height="${s}" rx="${r}" fill="${color}"/>
+                    <polygon points="${s/2-5},${s} ${s/2+5},${s} ${s/2},${s+8}" fill="${color}"/>
+                    <text x="${s/2}" y="${s/2+fs/3+1}" text-anchor="middle" fill="white" font-size="${fs}" font-family="Arial" font-weight="bold">${label}</text>
+                </svg>`;
+                return { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg), scaledSize: new google.maps.Size(s, s+8), anchor: new google.maps.Point(s/2, s+8) };
+            }
+
+            function placeMarker(position, color, label) {
+                new google.maps.Marker({ position, map, icon: makeSvgIcon(color, label) });
+            }
+
+            // Fetch waypoints then draw the optimised route — same logic as the home page
+            fetch(`/api/r/rides/${rideId}/waypoints`)
+                .then(r => r.json())
+                .then(waypoints => {
+                    const stops = waypoints.map(wp => ({ location: { lat: wp.latitude, lng: wp.longitude }, stopover: true }));
+                    directionsService.route({
+                        origin: startLatLng, destination: endLatLng,
+                        waypoints: stops, optimizeWaypoints: true,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    }, (result, status) => {
+                        if (status !== 'OK') return;
+                        const route = result.routes[0];
+                        const order = (route.waypoint_order && route.waypoint_order.length > 0)
+                            ? route.waypoint_order
+                            : waypoints.map((_, i) => i);
+                        const orderedWaypoints = order.map(idx => waypoints[idx]);
+
+                        route.legs.forEach((leg, i) => {
+                            // Segment colour: green → PICKUP, orange → DROPOFF, blue → End
+                            const color = i < orderedWaypoints.length
+                                ? (orderedWaypoints[i].type === 'PICKUP' ? '#22c55e' : '#f97316')
+                                : '#3b82f6';
+                            const path = [];
+                            leg.steps.forEach(step => { if (step.path) step.path.forEach(pt => path.push(pt)); });
+                            if (path.length > 0) {
+                                new google.maps.Polyline({ path, strokeColor: color, strokeWeight: 5, strokeOpacity: 0.85, map });
+                            }
+                        });
+
+                        placeMarker(startLatLng, '#475569', 'S');
+                        orderedWaypoints.forEach(wp => {
+                            const isPickup = wp.type === 'PICKUP';
+                            placeMarker({ lat: wp.latitude, lng: wp.longitude }, isPickup ? '#22c55e' : '#f97316', isPickup ? 'P' : 'D');
+                        });
+                        placeMarker(endLatLng, '#3b82f6', 'E');
+
+                        map.fitBounds(route.bounds, { top: 40, right: 40, bottom: 40, left: 40 });
+                    });
+                });
         }
     </script>
 </div>

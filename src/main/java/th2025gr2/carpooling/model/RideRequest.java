@@ -35,5 +35,8 @@ public class RideRequest {
 
     @Column(name = "dropoff_longitude", nullable = false)
     private Double dropoffLongitude;
+
+    @Column(name = "is_paid")
+    private Boolean isPaid = false;
 }
 

@@ -7,6 +7,7 @@ import th2025gr2.carpooling.dto.*;
 import th2025gr2.carpooling.enums.WaypointType;
 import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.*;
+import th2025gr2.carpooling.service.PlannedRideService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RideService {
 
+    private final PlannedRideService plannedRideService;
     private final RideRepository rideRepository;
     private final RideStateRepository rideStateRepository;
     private final RoleRepository roleRepository;
@@ -72,6 +74,8 @@ public class RideService {
         ride.setParticipants(List.of(participant));
 
         ride = rideRepository.save(ride);
+
+        plannedRideService.checkAndNotifyUsers(ride);
 
         return ride;
     }
@@ -140,6 +144,7 @@ public class RideService {
         return rideRequestRepository.findByRide_IdAndIsAcceptedIsNull(rideId).stream()
                 .map(r -> new PendingRequestDTO(
                         r.getId(), rideId,
+                        r.getUser().getId(),
                         r.getUser().getName() + " " + r.getUser().getSurname(),
                         r.getPickupLatitude(), r.getPickupLongitude(),
                         r.getDropoffLatitude(), r.getDropoffLongitude(),
@@ -155,6 +160,8 @@ public class RideService {
                             : (r.getIsAccepted() ? "Accepted" : "Rejected");
                     return new MyApplicationDTO(
                             r.getId(), r.getRide().getId(), status,
+                            r.getIsPaid() != null && r.getIsPaid(),
+                            r.getRide().getCost(),
                             r.getPickupLatitude(), r.getPickupLongitude(),
                             r.getDropoffLatitude(), r.getDropoffLongitude(),
                             r.getRide().getStartLatitude(), r.getRide().getStartLongitude(),
@@ -167,6 +174,7 @@ public class RideService {
         return rideRequestRepository.findAllPendingForDriver(driver.getId()).stream()
                 .map(r -> new PendingRequestDTO(
                         r.getId(), r.getRide().getId(),
+                        r.getUser().getId(),
                         r.getUser().getName() + " " + r.getUser().getSurname(),
                         r.getPickupLatitude(), r.getPickupLongitude(),
                         r.getDropoffLatitude(), r.getDropoffLongitude(),
