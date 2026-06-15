@@ -7,7 +7,6 @@ import th2025gr2.carpooling.dto.*;
 import th2025gr2.carpooling.enums.WaypointType;
 import th2025gr2.carpooling.model.*;
 import th2025gr2.carpooling.repository.*;
-import th2025gr2.carpooling.service.PlannedRideService;
 
 import java.time.LocalDateTime;
 import java.util.List;
