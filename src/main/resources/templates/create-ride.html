@@ -242,14 +242,6 @@
                         </div>
 
                         <div class="cr-field">
-                            <label class="cr-label" for="cost">
-                                <i class="bi bi-cash"></i> Koszt na osobę (PLN)
-                            </label>
-                            <input type="number" id="cost" class="cr-input"
-                                   min="0" step="0.50" value="0" placeholder="np. 25.00"/>
-                        </div>
-
-                        <div class="cr-field">
                             <label class="cr-label" for="availableSeats">
                                 <i class="bi bi-people-fill"></i> Liczba wolnych miejsc
                             </label>
@@ -263,8 +255,13 @@
                                 <span><i class="bi bi-signpost-2"></i> <span id="distanceInfo">-</span></span>
                                 <span><i class="bi bi-clock"></i> <span id="durationInfo">-</span></span>
                             </div>
+                            <div class="route-info-row" style="margin-top:.4rem;">
+                                <span><i class="bi bi-fuel-pump"></i> Szacowany koszt paliwa</span>
+                                <span id="costInfo">-</span>
+                            </div>
                         </div>
 
+                        <input type="hidden" id="cost"/>
                         <input type="hidden" id="startLatitude"/>
                         <input type="hidden" id="startLongitude"/>
                         <input type="hidden" id="endLatitude"/>
@@ -511,6 +508,11 @@
                     document.getElementById('distanceKm').value = distKm;
                     document.getElementById('durationMinutes').value = durMin;
                     document.getElementById('encodedPolyline').value = polyline;
+
+                    const FUEL_RATE = 3.5;
+                    const estimatedCost = (parseFloat(distKm) * FUEL_RATE).toFixed(2);
+                    document.getElementById('cost').value = estimatedCost;
+                    document.getElementById('costInfo').textContent = estimatedCost + ' zł';
 
                     document.getElementById('submitRideBtn').disabled = false;
                 } else {
