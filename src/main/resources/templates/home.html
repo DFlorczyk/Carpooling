@@ -52,6 +52,12 @@
                     </div>
                     <button class="apply-reset-btn" onclick="resetApplyPoint('dropoff')">Change</button>
                 </div>
+                <div id="applyCostRow" class="apply-loc-row d-none" style="background:#f0f3ff;">
+                    <div style="flex:1">
+                        <div class="apply-loc-label">⛽ Szacowany koszt paliwa</div>
+                        <div id="applyCostValue" class="apply-loc-addr">—</div>
+                    </div>
+                </div>
                 <div id="applyFeedback" class="d-none"></div>
                 <button id="applySubmitBtn" class="btn-search" disabled onclick="submitApply()">
                     Send Application
@@ -260,6 +266,8 @@
         let directionsService;
 
         let applyRideId = null;
+        let applyRideStart = null;
+        let applyRideEnd = null;
         let applyPickup = null;
         let applyDropoff = null;
         let applyStep = null;
@@ -334,6 +342,7 @@
                         document.getElementById("applyDropoffAddr").textContent = addr;
                         applyStep = null;
                         map.setOptions({ draggableCursor: null });
+                        calculateApplyCost();
                     }
                     updateApplyHint();
                     document.getElementById("applySubmitBtn").disabled = !(applyPickup && applyDropoff);
@@ -368,8 +377,10 @@
             });
         }
 
-        function openApplyPanel(rideId) {
+        function openApplyPanel(rideId, startLat, startLng, endLat, endLng) {
             applyRideId = rideId;
+            applyRideStart = { lat: startLat, lng: startLng };
+            applyRideEnd   = { lat: endLat,   lng: endLng   };
             applyPickup = null;
             applyDropoff = null;
             applyStep = "pickup";
@@ -382,6 +393,8 @@
             document.getElementById("applyDropoffAddr").textContent = "—";
             document.getElementById("applySubmitBtn").disabled = true;
             document.getElementById("applyFeedback").className = "d-none";
+            document.getElementById("applyCostRow").classList.add("d-none");
+            document.getElementById("applyCostValue").textContent = "—";
             map.setOptions({ draggableCursor: "crosshair" });
             updateApplyHint();
         }
@@ -407,9 +420,72 @@
                 document.getElementById("applyDropoffAddr").textContent = "—";
                 applyStep = "dropoff";
             }
+            document.getElementById("applyCostRow").classList.add("d-none");
+            document.getElementById("applyCostValue").textContent = "—";
             map.setOptions({ draggableCursor: "crosshair" });
             document.getElementById("applySubmitBtn").disabled = true;
             updateApplyHint();
+        }
+
+        function calculateApplyCost() {
+            if (!applyPickup || !applyDropoff || !applyRideStart || !applyRideEnd) return;
+
+            const FUEL_RATE = 3.5;
+
+            // Call 1: driver's original route without this passenger
+            const basePromise = new Promise(resolve => {
+                directionsService.route({
+                    origin: applyRideStart,
+                    destination: applyRideEnd,
+                    travelMode: google.maps.TravelMode.DRIVING
+                }, (result, status) => {
+                    if (status === "OK") resolve(result.routes[0].legs[0].distance.value / 1000);
+                    else resolve(null);
+                });
+            });
+
+            // Call 2: full route with passenger's pickup and dropoff as waypoints
+            const fullPromise = new Promise(resolve => {
+                directionsService.route({
+                    origin: applyRideStart,
+                    destination: applyRideEnd,
+                    waypoints: [
+                        { location: { lat: applyPickup.lat,  lng: applyPickup.lng  }, stopover: true },
+                        { location: { lat: applyDropoff.lat, lng: applyDropoff.lng }, stopover: true }
+                    ],
+                    travelMode: google.maps.TravelMode.DRIVING
+                }, (result, status) => {
+                    if (status === "OK") {
+                        const legs = result.routes[0].legs;
+                        const totalDist    = legs.reduce((s, l) => s + l.distance.value, 0) / 1000;
+                        const passengerDist = legs[1].distance.value / 1000; // pickup → dropoff leg
+                        resolve({ totalDist, passengerDist });
+                    } else resolve(null);
+                });
+            });
+
+            Promise.all([basePromise, fullPromise]).then(([baseDist, full]) => {
+                const row = document.getElementById("applyCostRow");
+                const val = document.getElementById("applyCostValue");
+
+                if (baseDist === null || full === null) {
+                    val.textContent = "Nie udało się obliczyć";
+                    row.classList.remove("d-none");
+                    return;
+                }
+
+                // Extra km the driver travels because of this passenger
+                const detourDist = Math.max(0, full.totalDist - baseDist);
+
+                // Passenger pays half of the shared segment + half of the detour cost
+                // (detour is caused by the pickup but both parties benefit from the arrangement)
+                const passengerShare = (detourDist + full.passengerDist) * FUEL_RATE / 2;
+
+                val.textContent = passengerShare.toFixed(2) + " zł"
+                    + "  ·  " + full.passengerDist.toFixed(1) + " km odcinek"
+                    + "  +  +" + detourDist.toFixed(1) + " km detour";
+                row.classList.remove("d-none");
+            });
         }
 
         function updateApplyHint() {
@@ -525,7 +601,7 @@
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
                         <button class="details-btn" data-ride-id="${r.id}" onclick="event.stopPropagation(); toggleDetails(this)">Details</button>
-                        ${!isOwnRide ? `<button class="apply-btn" onclick="event.stopPropagation(); openApplyPanel(${r.id})">Apply</button>` : ''}
+                        ${!isOwnRide ? `<button class="apply-btn" onclick="event.stopPropagation(); openApplyPanel(${r.id}, ${r.startLatitude}, ${r.startLongitude}, ${r.endLatitude}, ${r.endLongitude})">Apply</button>` : ''}
                     </div>
                     <div class="ride-details" style="display:none">
                         <div>${r.carModel ?? 'Unknown'} - ${r.carColor ?? ''}</div>
