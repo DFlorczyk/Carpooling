@@ -46,6 +46,15 @@ public class RideRestController {
         return ResponseEntity.ok(rideService.getRidesDrivenBy(profile.getId()));
     }
 
+    @GetMapping("/my-passenger")
+    public ResponseEntity<List<RideDTO>> getMyPassengerRides(
+            @AuthenticationPrincipal UserDetailsWithId userDetails) {
+        UserProfile profile = userProfileRepository
+                .findByCredentialId(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return ResponseEntity.ok(rideService.getRidesAsPassenger(profile.getId()));
+    }
+
     @GetMapping("/active")
     public ResponseEntity<RideDTO> getActiveRide(
             @AuthenticationPrincipal UserDetailsWithId userDetails) {

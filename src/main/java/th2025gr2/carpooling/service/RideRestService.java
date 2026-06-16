@@ -36,6 +36,10 @@ public class RideRestService {
         return rideRepository.findDTOsByDriverId(driverProfileId);
     }
 
+    public List<RideDTO> getRidesAsPassenger(Long passengerProfileId) {
+        return rideRepository.findDTOsByPassengerId(passengerProfileId);
+    }
+
     public Optional<RideDTO> getActiveRideForDriver(Long driverProfileId) {
         List<RideDTO> actives = rideRepository.findActiveDTOsByDriverId(driverProfileId);
         if (actives.size() > 1) {
