@@ -7,7 +7,6 @@
     .pay-wrap { max-width: 520px; margin: 0 auto; padding: 1.5rem 1rem; }
     .pay-title { color: #667eea; font-size: 1.7rem; font-weight: 700; text-align: center; margin-bottom: 1.5rem; }
 
-    /* Summary */
     .summary-card { background: #fff; border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.4rem;
                     box-shadow: 0 2px 10px rgba(0,0,0,.08); }
     .summary-row { display: flex; justify-content: space-between; padding: .35rem 0;
@@ -16,7 +15,6 @@
     .summary-total { font-weight: 700; font-size: 1.1rem; color: #1e293b; }
     .summary-fee { color: #94a3b8; font-size: .82rem; margin-top: 2px; }
 
-    /* Card form */
     .form-card { background: #fff; border-radius: 14px; padding: 1.4rem 1.6rem;
                  box-shadow: 0 2px 10px rgba(0,0,0,.08); }
     .field-group { margin-bottom: 1rem; }
@@ -30,7 +28,6 @@
     .field-row .field-group { flex: 1; }
     .card-icons { display: flex; gap: .5rem; margin-bottom: .8rem; }
 
-    /* Tabs */
     .tab-bar { display: flex; margin-bottom: 1.2rem; border-radius: 10px; overflow: hidden;
                border: 1px solid #e2e8f0; }
     .tab-btn { flex: 1; padding: .7rem; background: #f8fafc; border: none; cursor: pointer;
@@ -38,7 +35,6 @@
                display: flex; align-items: center; justify-content: center; gap: .45rem; }
     .tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
 
-    /* Submit button */
     .pay-btn { width: 100%; padding: .8rem; margin-top: 1.2rem;
                background: linear-gradient(135deg, #667eea, #764ba2);
                color: #fff; border: none; border-radius: 10px; font-size: 1rem;
@@ -47,14 +43,12 @@
     .pay-btn:hover { opacity: .88; }
     .pay-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* Processing overlay */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.6);
                z-index: 500; align-items: center; justify-content: center; }
     .overlay.show { display: flex; }
     .overlay-box { background: #fff; border-radius: 20px; padding: 2.5rem 2rem;
                    max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
 
-    /* VbV */
     .vbv-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: .5px; margin-bottom: 1rem; }
     .vbv-visa { color: #1a1f71; }
     .vbv-check { color: #f7a600; }
@@ -65,12 +59,10 @@
     .overlay-sub { color: #64748b; font-size: .88rem; margin-bottom: .8rem; }
     .countdown { font-size: 2rem; font-weight: 800; color: #667eea; }
 
-    /* Success */
     .success-icon { font-size: 3.5rem; margin-bottom: .8rem; }
     .success-title { font-size: 1.2rem; font-weight: 700; color: #15803d; margin-bottom: .4rem; }
     .success-sub { color: #64748b; font-size: .88rem; }
 
-    /* BLIK */
     .blik-wrap  { text-align: center; padding: .5rem 0 1rem; }
     .blik-logo  { display: block; margin: 0 auto 1.1rem; height: 48px; width: auto; }
     .blik-intro { color: #475569; font-size: .9rem; margin-bottom: 1.2rem; }
@@ -87,7 +79,6 @@
     .blik-err  { color: #ef4444; font-size: .82rem; margin-top: .7rem; min-height: 1.1rem; }
     .blik-hint { color: #94a3b8; font-size: .8rem; margin-top: .5rem; }
 
-    /* Already paid */
     .paid-box { background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 14px;
                 padding: 1.5rem; text-align: center; }
     .paid-icon { font-size: 2.5rem; margin-bottom: .6rem; }
@@ -97,16 +88,13 @@
 <div class="pay-wrap">
     <h1 class="pay-title">Payment</h1>
 
-    <!-- Already paid state -->
     <div th:if="${alreadyPaid}" class="paid-box">
         <div class="paid-icon">✅</div>
         <div class="paid-title">This ride has already been paid for.</div>
         <a href="/profile" style="display:inline-block;margin-top:1rem;color:#667eea;font-weight:600;">← Back to Profile</a>
     </div>
 
-    <!-- Payment form -->
     <div th:unless="${alreadyPaid}">
-        <!-- Cost summary -->
         <div class="summary-card">
             <div class="summary-row">
                 <span>Ride cost</span>
@@ -122,7 +110,6 @@
             </div>
         </div>
 
-        <!-- Method tabs -->
         <div class="tab-bar">
             <button type="button" id="btn-card" class="tab-btn active" onclick="showTab('card')">
                 <svg width="20" height="15" viewBox="0 0 20 15" fill="none"><rect x="1" y="1" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1" y="4.5" width="18" height="2.5" fill="currentColor"/><rect x="2.5" y="9.5" width="5" height="1.8" rx=".6" fill="currentColor"/></svg>
@@ -133,18 +120,15 @@
             </button>
         </div>
 
-        <!-- Card form -->
         <div id="tab-card" class="form-card">
             <div class="card-icons">
                 <img th:src="@{/images/visa.png}" alt="Visa" style="height:28px;width:auto;border-radius:4px;" />
-                <!-- Mastercard -->
                 <svg width="44" height="28" viewBox="0 0 44 28" xmlns="http://www.w3.org/2000/svg">
                     <rect width="44" height="28" rx="4" fill="#252525"/>
                     <circle cx="18" cy="14" r="9" fill="#EB001B"/>
                     <circle cx="26" cy="14" r="9" fill="#F79E1B"/>
                     <path d="M22,6.2 C24.6,8.2 26,10.9 26,14 C26,17.1 24.6,19.8 22,21.8 C19.4,19.8 18,17.1 18,14 C18,10.9 19.4,8.2 22,6.2Z" fill="#FF5F00"/>
                 </svg>
-                <!-- Maestro -->
                 <svg width="44" height="28" viewBox="0 0 44 28" xmlns="http://www.w3.org/2000/svg">
                     <rect width="44" height="28" rx="4" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
                     <circle cx="17" cy="14" r="9" fill="#0099DF"/>
@@ -191,11 +175,10 @@
             </button>
         </div>
 
-        <!-- BLIK form -->
         <div id="tab-blik" class="form-card" style="display:none;">
             <div class="blik-wrap">
                 <img th:src="@{/images/blik.png}" alt="BLIK" class="blik-logo" />
-                <p class="blik-intro">Wpisz 6-cyfrowy kod z aplikacji bankowej.</p>
+                <p class="blik-intro">Enter the 6-digit code from your banking app.</p>
                 <div class="blik-boxes" id="blikBoxes">
                     <input class="blik-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
                     <input class="blik-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
@@ -206,10 +189,10 @@
                     <input class="blik-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
                 </div>
                 <div id="errBlik" class="blik-err"></div>
-                <div class="blik-hint">Kod jest ważny przez 2 minuty.</div>
+                <div class="blik-hint">Code is valid for 2 minutes.</div>
             </div>
             <button type="button" class="pay-btn" id="blikPayBtn" disabled>
-                Zapłać <span th:text="${#numbers.formatDecimal(total, 1, 2)} + ' PLN'"></span>
+                Pay <span th:text="${#numbers.formatDecimal(total, 1, 2)} + ' PLN'"></span>
             </button>
         </div>
     </div>
@@ -217,7 +200,6 @@
     <a href="/profile" style="display:block;text-align:center;margin-top:1.2rem;color:#667eea;font-weight:600;text-decoration:none;">← Back to Profile</a>
 </div>
 
-<!-- Verified by Visa overlay -->
 <div class="overlay" id="overlayVbV">
     <div class="overlay-box">
         <div class="vbv-logo">
@@ -233,18 +215,17 @@
     </div>
 </div>
 
-<!-- BLIK overlay -->
 <div class="overlay" id="overlayBlik">
     <div class="overlay-box">
         <img th:src="@{/images/blik.png}" alt="BLIK" style="height:36px;width:auto;margin-bottom:1.2rem;display:block;margin-left:auto;margin-right:auto;" />
-        <div class="overlay-title">Oczekiwanie na potwierdzenie</div>
-        <div class="overlay-sub" style="margin-bottom:1.4rem;">Otwórz aplikację bankową i zatwierdź płatność.</div>
+        <div class="overlay-title">Waiting for confirmation</div>
+        <div class="overlay-sub" style="margin-bottom:1.4rem;">Open your banking app and confirm the payment.</div>
         <button class="blik-confirm-btn" id="blikConfirmBtn" type="button">
             <span class="blik-confirm-ring"></span>
-            Potwierdź w aplikacji
+            Confirm in app
         </button>
         <div style="margin-top:1.2rem;color:#94a3b8;font-size:.82rem;">
-            Czas oczekiwania: <span id="blikCount" style="font-weight:700;color:#667eea;">10</span> s
+            Waiting time: <span id="blikCount" style="font-weight:700;color:#667eea;">10</span> s
         </div>
     </div>
 </div>
@@ -267,7 +248,6 @@
     }
 </style>
 
-<!-- Success overlay -->
 <div class="overlay" id="overlaySuccess">
     <div class="overlay-box">
         <div class="success-icon">✅</div>
@@ -400,7 +380,6 @@
             .catch(() => alert('Network error. Please try again.'));
     }
 
-    /* ── BLIK ── */
     var blikBoxes  = Array.prototype.slice.call(document.querySelectorAll('#blikBoxes .blik-box'));
     var blikPayBtn = document.getElementById('blikPayBtn');
 
@@ -449,7 +428,6 @@
             }
         });
 
-        /* mobile / virtual keyboard fallback */
         box.addEventListener('input', function() {
             var digits = box.value.replace(/\D/g, '');
             if (digits.length === 6) { blikFill(digits.split('')); return; }
@@ -472,7 +450,7 @@
         var errEl = document.getElementById('errBlik');
         if (code.length !== 6) {
             blikBoxes.forEach(function(b) { b.classList.add('blik-error'); });
-            errEl.textContent = 'Wpisz kompletny 6-cyfrowy kod BLIK.';
+            errEl.textContent = 'Please enter a complete 6-digit BLIK code.';
             blikBoxes[0].focus();
             return;
         }
@@ -499,7 +477,7 @@
                         b.classList.remove('blik-filled', 'blik-complete', 'blik-error');
                     });
                     blikPayBtn.disabled = true;
-                    errEl.textContent = 'Kod BLIK wygasł. Wpisz nowy kod z aplikacji bankowej.';
+                    errEl.textContent = 'BLIK code expired. Enter a new code from your banking app.';
                     blikBoxes[0].focus();
                 }
             }

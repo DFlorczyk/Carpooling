@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rejestracja</title>
+    <title>Sign Up</title>
     <style>
         body {
             margin: 0;
@@ -106,33 +106,33 @@
 <div class="topbar">Carpooling</div>
 
 <div class="container">
-    <h2>Utwórz konto</h2>
+    <h2>Create Account</h2>
 
     <form id="registrationForm">
         <div class="input-group">
-            <label>Imię</label>
-            <input id="name" type="text" placeholder="Wpisz imię" required>
+            <label>First Name</label>
+            <input id="name" type="text" placeholder="Enter first name" required>
         </div>
 
         <div class="input-group">
             <label>Email</label>
-            <input id="email" type="email" placeholder="Podaj email" required>
+            <input id="email" type="email" placeholder="Enter email" required>
         </div>
 
         <div class="input-group">
-            <label>Hasło</label>
-            <input id="password" type="password" placeholder="Wpisz hasło" required>
+            <label>Password</label>
+            <input id="password" type="password" placeholder="Enter password" required>
         </div>
 
         <div class="input-group">
-            <label>Powtórz hasło</label>
-            <input id="confirmPassword" type="password" placeholder="Powtórz hasło" required>
+            <label>Confirm Password</label>
+            <input id="confirmPassword" type="password" placeholder="Confirm password" required>
         </div>
 
-        <button class="btn" type="submit">Zarejestruj się</button>
+        <button class="btn" type="submit">Sign Up</button>
 
         <div class="login-link">
-            Masz już konto? <a href="#">Zaloguj się</a>
+            Already have an account? <a href="#">Log in</a>
         </div>
     </form>
 
@@ -149,7 +149,7 @@
         if (password !== confirm) {
             const message = document.getElementById("message");
             message.style.color = "red";
-            message.textContent = "Hasła nie są identyczne!";
+            message.textContent = "Passwords do not match!";
             return;
         }
 
@@ -168,7 +168,7 @@
         const message = document.getElementById("message");
         if (response.ok) {
             message.style.color = "green";
-            message.textContent = "Zarejestrowano! Przekierowanie do logowania...";
+            message.textContent = "Registered! Redirecting to login...";
             setTimeout(() => {
                 window.location.href = "/login";
             }, 2000);

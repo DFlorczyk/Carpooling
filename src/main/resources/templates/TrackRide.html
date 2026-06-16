@@ -16,31 +16,29 @@
         .range-container { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
         input[type=range] { width: 100%; accent-color: #667eea; }
 
-        /* Styl alertu zgodny ze zdjęciem */
         .alert-box {
             padding: 12px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 0.9rem;
-            display: none; /* Ukryty domyślnie */
+            display: none;
             border: 1px solid;
             width: 100%;
         }
         .alert-error {
-            background-color: #fee2e2; /* Jasnoczerwony */
-            color: #b91c1c; /* Ciemnoczerwony tekst */
+            background-color: #fee2e2;
+            color: #b91c1c;
             border-color: #fecaca;
         }
         .alert-success {
-            background-color: #dcfce7; /* Jasnozielony */
-            color: #15803d; /* Ciemnozielony tekst */
+            background-color: #dcfce7;
+            color: #15803d;
             border-color: #bbf7d0;
         }
     </style>
 
     <div class="container" style="max-width: 1100px; margin: 0 auto; padding: 20px;">
 
-        <!-- Sekcja powiadomień -->
         <div id="alertBox" class="alert-box"></div>
 
         <div style="display: flex; gap: 20px; align-items: flex-start;">
@@ -50,22 +48,22 @@
                     <h3 style="color: #1e293b; font-size: 1.1rem; margin-bottom: 1.2rem;">Track New Route</h3>
 
                     <div style="margin-bottom: 1rem;">
-                        <label class="field-label"><i class="bi bi-geo-alt-fill text-success"></i> Miejsce Startu (A)</label>
-                        <input type="text" id="startAddress" class="field-input" placeholder="Wybierz na mapie..." readonly>
+                        <label class="field-label"><i class="bi bi-geo-alt-fill text-success"></i> Start Location (A)</label>
+                        <input type="text" id="startAddress" class="field-input" placeholder="Select on map..." readonly>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
-                        <label class="field-label"><i class="bi bi-geo-alt-fill text-danger"></i> Miejsce Docelowe (B)</label>
-                        <input type="text" id="endAddress" class="field-input" placeholder="Wybierz na mapie..." readonly>
+                        <label class="field-label"><i class="bi bi-geo-alt-fill text-danger"></i> Destination (B)</label>
+                        <input type="text" id="endAddress" class="field-input" placeholder="Select on map..." readonly>
                     </div>
 
                     <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
                         <div style="flex: 1;">
-                            <label class="field-label"><i class="bi bi-calendar-event text-primary"></i> Data Od</label>
+                            <label class="field-label"><i class="bi bi-calendar-event text-primary"></i> Date From</label>
                             <input type="date" id="startDate" class="field-input">
                         </div>
                         <div style="flex: 1;">
-                            <label class="field-label"><i class="bi bi-calendar-check text-primary"></i> Data Do</label>
+                            <label class="field-label"><i class="bi bi-calendar-check text-primary"></i> Date To</label>
                             <input type="date" id="endDate" class="field-input">
                         </div>
                     </div>
@@ -130,14 +128,11 @@
             });
         }
 
-        // Funkcja do pokazywania powiadomień
         function showAlert(type, message) {
             const alertBox = document.getElementById('alertBox');
             alertBox.innerText = message;
             alertBox.className = 'alert-box ' + (type === 'error' ? 'alert-error' : 'alert-success');
             alertBox.style.display = 'block';
-
-            // Przewiń na górę, aby zobaczyć komunikat
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -147,17 +142,16 @@
             const startAddress = document.getElementById('startAddress').value;
             const endAddress = document.getElementById('endAddress').value;
 
-            // Walidacja przed wysyłką
             if (!markerA) {
-                showAlert('error', 'Wybierz punkt startowy na mapie (Punkt A).');
+                showAlert('error', 'Select a start point on the map (Point A).');
                 return;
             }
             if (!markerB) {
-                showAlert('error', 'Wybierz punkt docelowy na mapie (Punkt B).');
+                showAlert('error', 'Select a destination on the map (Point B).');
                 return;
             }
             if (!startDate || !endDate) {
-                showAlert('error', 'Podaj zakres dat dla śledzenia trasy.');
+                showAlert('error', 'Please provide a date range for route tracking.');
                 return;
             }
 
@@ -179,10 +173,10 @@
                 body: JSON.stringify(data)
             }).then(res => {
                 if(res.ok) {
-                    showAlert('success', 'Rozpoczęto śledzenie trasy! Poinformujemy Cię o dopasowaniach.');
+                    showAlert('success', 'Route tracking started! You will be notified of any matches.');
                     setTimeout(() => window.location.href='/profile', 2000);
                 } else {
-                    showAlert('error', 'Wystąpił błąd podczas zapisywania trasy. Spróbuj ponownie.');
+                    showAlert('error', 'An error occurred while saving the route. Please try again.');
                 }
             });
         }

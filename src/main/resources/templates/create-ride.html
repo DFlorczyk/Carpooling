@@ -14,7 +14,6 @@
             margin-bottom: 1.25rem;
         }
 
-        /* ── Alerts ── */
         .alert {
             padding: .7rem 1.1rem;
             border-radius: 8px;
@@ -25,7 +24,6 @@
         .alert-success { background: #dcfce7; color: #16a34a; }
         .alert-danger  { background: #fee2e2; color: #dc2626; }
 
-        /* ── Layout columns ── */
         .cr-columns {
             display: flex;
             gap: 1.5rem;
@@ -34,7 +32,6 @@
         .cr-form-panel { flex: 0 0 400px; }
         .cr-map-panel  { flex: 1; min-width: 0; }
 
-        /* ── Cards ── */
         .cr-card {
             border: 1px solid #e8ecf5;
             border-radius: 12px;
@@ -53,7 +50,6 @@
         }
         .cr-card-body { padding: 1.1rem 1.25rem; }
 
-        /* ── Fields ── */
         .cr-field { margin-bottom: 1.1rem; }
         .cr-field:last-of-type { margin-bottom: 0; }
 
@@ -86,7 +82,6 @@
             background: #fff;
         }
 
-        /* ── Route info ── */
         .route-info {
             border: 1px solid #e8ecf5;
             border-radius: 8px;
@@ -111,7 +106,6 @@
         }
         .route-info-row i { color: #667eea; }
 
-        /* ── Submit button ── */
         .cr-submit {
             display: inline-flex;
             align-items: center;
@@ -142,7 +136,6 @@
         .spinner-border-sm { width: 1rem; height: 1rem; border-width: .15em; }
         @keyframes cr-spin { to { transform: rotate(360deg); } }
 
-        /* ── Map card ── */
         .map-card {
             border: 1px solid #e8ecf5;
             border-radius: 12px;
@@ -163,7 +156,6 @@
             gap: .4rem;
         }
 
-        /* ── Map point selection toolbar ── */
         .map-toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -205,7 +197,7 @@
     </style>
 
     <div class="cr-wrap">
-        <div class="cr-title">Dodaj nowy przejazd</div>
+        <div class="cr-title">Add New Ride</div>
 
         <div id="alertSuccess" class="alert alert-success d-none" role="alert"></div>
         <div id="alertError" class="alert alert-danger d-none" role="alert"></div>
@@ -214,57 +206,54 @@
             <div class="cr-form-panel">
                 <div class="cr-card">
                     <div class="cr-card-header">
-                        <i class="bi bi-signpost-split-fill"></i> Szczegóły przejazdu
+                        <i class="bi bi-signpost-split-fill"></i> Ride Details
                     </div>
                     <div class="cr-card-body">
 
                         <div class="cr-field">
                             <label class="cr-label" for="startAddress">
-                                <i class="bi bi-geo-alt-fill text-success"></i> Miejsce startu
+                                <i class="bi bi-geo-alt-fill text-success"></i> Start Location
                             </label>
                             <input type="text" id="startAddress" class="cr-input"
-                                   placeholder="Wpisz adres startowy..." autocomplete="off"/>
+                                   placeholder="Enter start address..." autocomplete="off"/>
                         </div>
 
                         <div class="cr-field">
                             <label class="cr-label" for="endAddress">
-                                <i class="bi bi-geo-alt-fill text-danger"></i> Miejsce docelowe
+                                <i class="bi bi-geo-alt-fill text-danger"></i> Destination
                             </label>
                             <input type="text" id="endAddress" class="cr-input"
-                                   placeholder="Wpisz adres docelowy..." autocomplete="off"/>
+                                   placeholder="Enter destination address..." autocomplete="off"/>
                         </div>
 
                         <div class="cr-field">
                             <label class="cr-label" for="departureDate">
-                                <i class="bi bi-calendar-event"></i> Data i godzina wyjazdu
+                                <i class="bi bi-calendar-event"></i> Departure Date &amp; Time
                             </label>
                             <input type="datetime-local" id="departureDate" class="cr-input" required/>
                         </div>
 
                         <div class="cr-field">
-                            <label class="cr-label" for="cost">
-                                <i class="bi bi-cash"></i> Koszt na osobę (PLN)
-                            </label>
-                            <input type="number" id="cost" class="cr-input"
-                                   min="0" step="0.50" value="0" placeholder="np. 25.00"/>
-                        </div>
-
-                        <div class="cr-field">
                             <label class="cr-label" for="availableSeats">
-                                <i class="bi bi-people-fill"></i> Liczba wolnych miejsc
+                                <i class="bi bi-people-fill"></i> Available Seats
                             </label>
                             <input type="number" id="availableSeats" class="cr-input"
                                    min="1" max="8" value="3"/>
                         </div>
 
                         <div id="routeInfo" class="route-info d-none">
-                            <div class="route-info-label">Informacje o trasie</div>
+                            <div class="route-info-label">Route Info</div>
                             <div class="route-info-row">
                                 <span><i class="bi bi-signpost-2"></i> <span id="distanceInfo">-</span></span>
                                 <span><i class="bi bi-clock"></i> <span id="durationInfo">-</span></span>
                             </div>
+                            <div class="route-info-row" style="margin-top:.4rem;">
+                                <span><i class="bi bi-fuel-pump"></i> Estimated Fuel Cost</span>
+                                <span id="costInfo">-</span>
+                            </div>
                         </div>
 
+                        <input type="hidden" id="cost"/>
                         <input type="hidden" id="startLatitude"/>
                         <input type="hidden" id="startLongitude"/>
                         <input type="hidden" id="endLatitude"/>
@@ -274,7 +263,7 @@
                         <input type="hidden" id="durationMinutes"/>
 
                         <button id="submitRideBtn" class="cr-submit" onclick="submitRide()" disabled>
-                            <i class="bi bi-plus-circle"></i> Dodaj przejazd
+                            <i class="bi bi-plus-circle"></i> Add Ride
                         </button>
                     </div>
                 </div>
@@ -283,14 +272,14 @@
             <div class="cr-map-panel">
                 <div class="map-card">
                     <div class="map-header">
-                        <i class="bi bi-map"></i> Mapa trasy
+                        <i class="bi bi-map"></i> Route Map
                     </div>
                     <div class="map-toolbar">
                         <button type="button" id="selectStartBtn" class="map-select-btn start">
-                            <i class="bi bi-geo-alt-fill"></i> Wybierz start na mapie
+                            <i class="bi bi-geo-alt-fill"></i> Select start on map
                         </button>
                         <button type="button" id="selectEndBtn" class="map-select-btn end">
-                            <i class="bi bi-geo-alt-fill"></i> Wybierz cel na mapie
+                            <i class="bi bi-geo-alt-fill"></i> Select destination on map
                         </button>
                         <span id="mapSelectHint" class="map-select-hint d-none"></span>
                     </div>
@@ -403,10 +392,10 @@
 
             const hint = document.getElementById('mapSelectHint');
             if (mode === 'start') {
-                hint.textContent = 'Kliknij na mapie, aby ustawić miejsce startu';
+                hint.textContent = 'Click on the map to set the start point';
                 hint.classList.remove('d-none');
             } else if (mode === 'end') {
-                hint.textContent = 'Kliknij na mapie, aby ustawić miejsce docelowe';
+                hint.textContent = 'Click on the map to set the destination';
                 hint.classList.remove('d-none');
             } else {
                 hint.classList.add('d-none');
@@ -431,7 +420,7 @@
                     startMarker.setPosition(position);
                 } else {
                     startMarker = new google.maps.Marker({
-                        position: position, map: map, draggable: true, icon: icon, title: 'Miejsce startu'
+                        position: position, map: map, draggable: true, icon: icon, title: 'Start'
                     });
                     startMarker.addListener('dragend', function (e) { setPointFromLatLng('start', e.latLng); });
                 }
@@ -440,7 +429,7 @@
                     endMarker.setPosition(position);
                 } else {
                     endMarker = new google.maps.Marker({
-                        position: position, map: map, draggable: true, icon: icon, title: 'Miejsce docelowe'
+                        position: position, map: map, draggable: true, icon: icon, title: 'Destination'
                     });
                     endMarker.addListener('dragend', function (e) { setPointFromLatLng('end', e.latLng); });
                 }
@@ -512,9 +501,14 @@
                     document.getElementById('durationMinutes').value = durMin;
                     document.getElementById('encodedPolyline').value = polyline;
 
+                    const FUEL_RATE = 3.5;
+                    const estimatedCost = (parseFloat(distKm) * FUEL_RATE).toFixed(2);
+                    document.getElementById('cost').value = estimatedCost;
+                    document.getElementById('costInfo').textContent = estimatedCost + ' PLN';
+
                     document.getElementById('submitRideBtn').disabled = false;
                 } else {
-                    alert('Nie udało się obliczyć trasy: ' + status);
+                    alert('Failed to calculate route: ' + status);
                 }
             });
         }
@@ -522,7 +516,7 @@
         function submitRide() {
             const departureDate = document.getElementById('departureDate').value;
             if (!departureDate) {
-                showAlert('alertError', 'Podaj datę i godzinę wyjazdu.');
+                showAlert('alertError', 'Please provide a departure date and time.');
                 return;
             }
 
@@ -543,7 +537,7 @@
 
             document.getElementById('submitRideBtn').disabled = true;
             document.getElementById('submitRideBtn').innerHTML =
-                '<span class="spinner-border spinner-border-sm"></span> Dodawanie...';
+                '<span class="spinner-border spinner-border-sm"></span> Adding...';
 
             fetch('/api/rides', {
                 method: 'POST',
@@ -556,12 +550,12 @@
                     showAlert('alertError', data.error);
                     resetButton();
                 } else {
-                    showAlert('alertSuccess', 'Przejazd dodany pomyślnie! Przekierowanie...');
+                    showAlert('alertSuccess', 'Ride added successfully! Redirecting...');
                     setTimeout(() => window.location.href = '/rides/' + data.rideId, 1500);
                 }
             })
             .catch(err => {
-                showAlert('alertError', 'Wystąpił błąd: ' + err.message);
+                showAlert('alertError', 'An error occurred: ' + err.message);
                 resetButton();
             });
         }
@@ -569,7 +563,7 @@
         function resetButton() {
             const btn = document.getElementById('submitRideBtn');
             btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-plus-circle"></i> Dodaj przejazd';
+            btn.innerHTML = '<i class="bi bi-plus-circle"></i> Add Ride';
         }
 
         function showAlert(id, message) {

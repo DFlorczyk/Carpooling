@@ -39,6 +39,9 @@ public class Ride {
     @Column(name = "is_payed", nullable = false)
     private Boolean isPayed;
 
+    @Column(name = "available_seats", columnDefinition = "integer default 4 not null")
+    private Integer availableSeats;
+
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "rides"})
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "state_id", nullable = false)

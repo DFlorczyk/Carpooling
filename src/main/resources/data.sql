@@ -71,13 +71,13 @@ INSERT INTO car_details (model, seat_count, mileage, color, user_id) VALUES
     ('Skoda Octavia',  4, 31500, 'Gray',
      (SELECT id FROM user_profiles WHERE credential_id = (SELECT id FROM user_credentials WHERE email = 'tomasz.kos@gmail.com')));
 
-INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id)
+INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id, available_seats)
 VALUES (52.2297, 21.0122, 50.0647, 19.9450, '2026-08-01 08:00:00', 35.00, false,
-        (SELECT id FROM ride_states WHERE name = 'not started'));
+        (SELECT id FROM ride_states WHERE name = 'not started'), 4);
 
-INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id)
+INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id, available_seats)
 VALUES (51.1079, 17.0385, 52.4064, 16.9252, '2026-08-15 10:00:00', 25.00, false,
-        (SELECT id FROM ride_states WHERE name = 'not started'));
+        (SELECT id FROM ride_states WHERE name = 'not started'), 4);
 
 INSERT INTO ride_participants (user_id, ride_id, role_id)
 VALUES
@@ -176,9 +176,9 @@ VALUES
      (SELECT id FROM rides WHERE start_latitude = 51.1079),
      (SELECT id FROM user_profiles WHERE credential_id = (SELECT id FROM user_credentials WHERE email = 'marek.kow@gmail.com')));
 
-INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id)
+INSERT INTO rides (start_latitude, start_longitude, end_latitude, end_longitude, date, cost, is_payed, state_id, available_seats)
 VALUES (54.3520, 18.6466, 50.0647, 19.9450, '2026-09-10 07:00:00', 55.00, false,
-        (SELECT id FROM ride_states WHERE name = 'not started'));
+        (SELECT id FROM ride_states WHERE name = 'not started'), 4);
 
 INSERT INTO ride_participants (user_id, ride_id, role_id) VALUES
     ((SELECT id FROM user_profiles WHERE credential_id = (SELECT id FROM user_credentials WHERE email = 'tomasz.kos@gmail.com')),
