@@ -24,6 +24,7 @@ public class RideService {
     private final RideWaypointRepository rideWaypointRepository;
     private final RideRequestRepository rideRequestRepository;
     private final RideParticipantRepository rideParticipantRepository;
+    private final CarDetailRepository carDetailRepository;
 
     @Transactional
     public Ride createRide(CreateRideForm form, UserProfile driver) {
@@ -54,6 +55,15 @@ public class RideService {
                         .orElseThrow(() -> new RuntimeException(
                                 "Brak stanu 'active' w tabeli ride_states")));
 
+        CarDetail carDetail = carDetailRepository.findByUser(driver)
+                .orElseThrow(() -> new RuntimeException("Driver has no car registered"));
+
+        int requestedSeats = form.getAvailableSeats() != null ? form.getAvailableSeats() : 1;
+        if (requestedSeats < 1) throw new RuntimeException("Available seats must be at least 1");
+        if (requestedSeats > carDetail.getSeatCount()) {
+            throw new RuntimeException("Available seats cannot exceed car capacity (" + carDetail.getSeatCount() + ")");
+        }
+
         Ride ride = new Ride();
         ride.setStartLatitude(form.getStartLatitude());
         ride.setStartLongitude(form.getStartLongitude());
@@ -63,6 +73,7 @@ public class RideService {
         ride.setCost(form.getCost() != null ? form.getCost() : 0.0);
         ride.setIsPayed(false);
         ride.setState(activeState);
+        ride.setAvailableSeats(requestedSeats);
 
         RideParticipant participant = new RideParticipant();
         Optional<RideRole> role = roleRepository.findByNameIgnoreCase("driver");
@@ -193,6 +204,13 @@ public class RideService {
                             && p.getUser().getId().equals(driver.getId()));
         if (!isDriver) throw new RuntimeException("Not authorized");
 
+        long currentPassengers = ride.getParticipants().stream()
+                .filter(p -> "passenger".equalsIgnoreCase(p.getRole().getName()))
+                .count();
+        if (currentPassengers >= ride.getAvailableSeats()) {
+            throw new RuntimeException("No available seats left in this ride");
+        }
+
         request.setIsAccepted(true);
         rideRequestRepository.save(request);
 
@@ -262,6 +280,7 @@ public class RideService {
                 .endLongitude(ride.getEndLongitude())
                 .departureDate(ride.getDate())
                 .cost(ride.getCost())
+                .availableSeats(ride.getAvailableSeats())
                 .driverName(driverName)
                 .driverId(driverId)
                 .stateName(ride.getState().getName())

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dokumentacja – Google Maps API | Carpooling</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3350;
+            --accent: #667eea;
+            --accent2: #764ba2;
+            --green: #22c55e;
+            --orange: #f97316;
+            --blue: #3b82f6;
+            --slate: #475569;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --code-bg: #131623;
+            --code-border: #2a2f4a;
+            --tag-bg: #1e2235;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(135deg, #1a1d27 0%, #22263a 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 3rem;
+        }
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        header p { color: var(--muted); margin-top: .4rem; font-size: .95rem; }
+
+        /* ── LAYOUT ── */
+        .layout { display: flex; min-height: 100vh; }
+        nav {
+            width: 260px;
+            min-width: 260px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        nav h3 { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: .8rem; padding-left: .5rem; }
+        nav a {
+            display: block;
+            padding: .45rem .75rem;
+            border-radius: 6px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .875rem;
+            transition: all .15s;
+            margin-bottom: 2px;
+        }
+        nav a:hover { color: var(--text); background: var(--surface2); }
+        nav .nav-section { margin-top: 1.5rem; }
+        main { flex: 1; padding: 2.5rem 3rem; max-width: 1000px; }
+
+        /* ── SECTIONS ── */
+        section { margin-bottom: 4rem; }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            padding-bottom: .6rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+        h2 .icon { font-size: 1.2rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 1.8rem 0 .8rem; }
+        h4 { font-size: .95rem; font-weight: 600; color: var(--text); margin: 1.2rem 0 .5rem; }
+        p { color: var(--muted); margin-bottom: 1rem; }
+        strong { color: var(--text); }
+
+        /* ── CALLOUTS ── */
+        .callout {
+            border-left: 3px solid var(--accent);
+            background: var(--surface2);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.2rem 0;
+            font-size: .9rem;
+            color: var(--muted);
+        }
+        .callout.warning { border-color: var(--orange); }
+        .callout.success { border-color: var(--green); }
+        .callout strong { color: var(--text); display: block; margin-bottom: .3rem; }
+
+        /* ── CODE BLOCKS ── */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1.2rem 0;
+        }
+        .code-header {
+            background: var(--surface2);
+            padding: .5rem 1rem;
+            font-size: .75rem;
+            color: var(--muted);
+            font-family: 'Consolas', monospace;
+            border-bottom: 1px solid var(--code-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-header .lang-badge {
+            background: var(--accent);
+            color: white;
+            padding: .1rem .5rem;
+            border-radius: 4px;
+            font-size: .65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        pre {
+            padding: 1.2rem 1.4rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: .825rem;
+            line-height: 1.65;
+        }
+        code.inline {
+            background: var(--tag-bg);
+            border: 1px solid var(--code-border);
+            padding: .15em .45em;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: .85em;
+            color: #a5b4fc;
+        }
+
+        /* SYNTAX COLORS */
+        .kw  { color: #c792ea; }
+        .fn  { color: #82aaff; }
+        .str { color: #c3e88d; }
+        .num { color: #f78c6c; }
+        .cmt { color: #546e7a; font-style: italic; }
+        .ann { color: #ffcb6b; }
+        .typ { color: #ffcb6b; }
+        .obj { color: #89ddff; }
+
+        /* ── FLOW DIAGRAM ── */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 1.5rem 0;
+        }
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .flow-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .flow-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            font-weight: 700;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .flow-line {
+            width: 2px;
+            background: var(--border);
+            flex: 1;
+            min-height: 24px;
+            margin: 4px 0;
+        }
+        .flow-body {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .9rem 1.1rem;
+            flex: 1;
+            margin-bottom: 8px;
+        }
+        .flow-body strong { color: var(--text); font-size: .95rem; display: block; }
+        .flow-body span { color: var(--muted); font-size: .85rem; }
+        .flow-body .tag {
+            display: inline-block;
+            padding: .1rem .5rem;
+            border-radius: 4px;
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: .4rem;
+        }
+        .tag-fe { background: #1e3a5f; color: #60a5fa; }
+        .tag-be { background: #1e3a2f; color: #4ade80; }
+        .tag-api { background: #3a1e1e; color: #f87171; }
+
+        /* ── LEGEND ── */
+        .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .5rem .9rem;
+            font-size: .85rem;
+        }
+        .dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── TABLE ── */
+        table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: 1.2rem 0; }
+        th { background: var(--surface2); color: var(--text); padding: .65rem 1rem; text-align: left; border: 1px solid var(--border); font-weight: 600; }
+        td { padding: .6rem 1rem; border: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+        tr:hover td { background: var(--surface); }
+
+        /* ── MARKER PREVIEW ── */
+        .markers-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+        .marker-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 90px;
+        }
+        .marker-svg { width: 36px; height: 44px; margin: 0 auto .5rem; display: block; }
+        .marker-card p { color: var(--muted); font-size: .75rem; margin: 0; }
+        .marker-card strong { font-size: .85rem; }
+
+        /* ── API ENDPOINT CARDS ── */
+        .endpoint {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+        .endpoint-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .6rem; }
+        .method-badge {
+            padding: .25rem .6rem;
+            border-radius: 5px;
+            font-size: .75rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .get  { background: #1e3a5f; color: #60a5fa; }
+        .post { background: #1e3a2f; color: #4ade80; }
+        .endpoint-path { font-family: monospace; color: var(--text); font-size: .9rem; }
+        .endpoint p { margin: 0; font-size: .875rem; }
+
+        /* ── BREADCRUMB ── */
+        .file-path {
+            font-family: monospace;
+            font-size: .78rem;
+            color: var(--muted);
+            background: var(--tag-bg);
+            border: 1px solid var(--code-border);
+            padding: .3rem .7rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .file-path::before { content: "📄 "; }
+
+        /* responsive */
+        @media (max-width: 800px) {
+            nav { display: none; }
+            main { padding: 1.5rem; }
+            header { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Integracja Google Maps API</h1>
+    <p>Carpooling App · Dokumentacja techniczna · Komponent: wyświetlanie tras i logika strony głównej</p>
+</header>
+
+<div class="layout">
+
+<!-- ── NAVIGATION ── -->
+<nav>
+    <h3>Spis treści</h3>
+    <a href="#overview">Przegląd architektury</a>
+
+    <div class="nav-section">
+        <h3>Inicjalizacja</h3>
+        <a href="#init-map">initMap()</a>
+        <a href="#styles">Style mapy</a>
+    </div>
+
+    <div class="nav-section">
+        <h3>Available Rides</h3>
+        <a href="#load-rides">Pobieranie przejazdów</a>
+        <a href="#render-rides">Renderowanie kart</a>
+        <a href="#click-ride">Kliknięcie przejazdu ★</a>
+    </div>
+
+    <div class="nav-section">
+        <h3>Rysowanie trasy</h3>
+        <a href="#show-route">showRoute()</a>
+        <a href="#draw-route">drawRoute()</a>
+        <a href="#polylines">Polilinie i kolory</a>
+        <a href="#markers">Markery SVG</a>
+    </div>
+
+    <div class="nav-section">
+        <h3>Backend</h3>
+        <a href="#api-endpoints">Endpointy REST</a>
+        <a href="#ride-service">RideService</a>
+        <a href="#waypoints">Waypoints</a>
+    </div>
+
+    <div class="nav-section">
+        <h3>Aplikowanie</h3>
+        <a href="#apply-flow">Cały flow aplikowania</a>
+        <a href="#geocoding">Geocoding i RGC</a>
+    </div>
+</nav>
+
+<!-- ── MAIN CONTENT ── -->
+<main>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="overview">
+    <h2><span class="icon">🗺️</span> Przegląd architektury</h2>
+
+    <p>
+        Aplikacja carpooling używa <strong>Google Maps JavaScript API v3</strong> do interaktywnej wizualizacji tras
+        przejazdu na stronie głównej (<code class="inline">home.html</code>). Mapa jest inicjalizowana w przeglądarce
+        — cały kod rysowania tras działa po stronie klienta. Backend udostępnia dane przez REST API.
+    </p>
+
+    <div class="callout">
+        <strong>Trzy strony używają Google Maps:</strong>
+        <code class="inline">home.html</code> (Available Rides) ·
+        <code class="inline">create-ride.html</code> (tworzenie przejazdu) ·
+        <code class="inline">ride-details.html</code> (szczegóły)
+        <br/>Ta dokumentacja skupia się na <strong>home.html</strong> — jest to najważniejsza i najbardziej złożona implementacja.
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>Komponent Google Maps API</th><th>Gdzie używany</th><th>Do czego służy</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code class="inline">google.maps.Map</code></td><td>initMap()</td><td>Inicjalizacja obiektu mapy w DOM</td></tr>
+            <tr><td><code class="inline">google.maps.DirectionsService</code></td><td>showRoute()</td><td>Wyznaczenie optymalnej trasy drogowej</td></tr>
+            <tr><td><code class="inline">google.maps.Polyline</code></td><td>drawRoute()</td><td>Ręczne rysowanie kolorowych segmentów trasy</td></tr>
+            <tr><td><code class="inline">google.maps.Marker</code></td><td>placeMarker()</td><td>Markery start/koniec/pickup/dropoff</td></tr>
+            <tr><td><code class="inline">google.maps.Geocoder</code></td><td>reverseGeocodeLatLng()</td><td>Zamiana współrzędnych na czytelny adres</td></tr>
+        </tbody>
+    </table>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="init-map">
+    <h2><span class="icon">⚙️</span> Inicjalizacja mapy</h2>
+
+    <div class="file-path">src/main/resources/templates/home.html · linie 308–346</div>
+
+    <p>
+        Funkcja <code class="inline">initMap()</code> jest wywoływana automatycznie przez Google Maps API
+        po załadowaniu skryptu (parametr <code class="inline">callback=initMap</code> w URL skryptu).
+        Tworzy obiekt mapy, rejestruje listenery zdarzeń i inicjalizuje <code class="inline">DirectionsService</code>.
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · initMap() · linie 308–346</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">initMap</span>() {
+    <span class="cmt">// Domyślne centrum mapy: Warszawa (Centrum)</span>
+    <span class="kw">const</span> defaultLoc = { lat: <span class="num">52.2297</span>, lng: <span class="num">21.0122</span> };
+
+    <span class="cmt">// Tworzy obiekt mapy Google i osadza go w elemencie #map</span>
+    map = <span class="kw">new</span> google.maps.<span class="fn">Map</span>(document.<span class="fn">getElementById</span>(<span class="str">"map"</span>), {
+        center: defaultLoc,
+        zoom: <span class="num">12</span>,
+        styles: STYLES_3   <span class="cmt">// styl domyślny dla zoom 10–13</span>
+    });
+
+    <span class="cmt">// Dynamiczna zmiana stylu mapy w zależności od poziomu zoomu</span>
+    map.<span class="fn">addListener</span>(<span class="str">"zoom_changed"</span>, () =&gt; <span class="fn">applyStylesForZoom</span>(map.<span class="fn">getZoom</span>()));
+
+    <span class="cmt">// Listener kliknięć na mapie – aktywny TYLKO gdy użytkownik aplikuje
+    // (applyStep !== null). Obsługuje wybór punktów pickup i dropoff.</span>
+    map.<span class="fn">addListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>(event) {
+        <span class="kw">if</span> (!applyStep) <span class="kw">return</span>;  <span class="cmt">// ignoruj kliknięcia poza trybem aplikowania</span>
+        <span class="kw">const</span> lat = event.latLng.<span class="fn">lat</span>();
+        <span class="kw">const</span> lng = event.latLng.<span class="fn">lng</span>();
+        <span class="cmt">// ... (szczegóły w sekcji "Aplikowanie")</span>
+    });
+
+    <span class="cmt">// Serwis wyznaczania tras – jeden instancja na całą stronę</span>
+    directionsService = <span class="kw">new</span> google.maps.<span class="fn">DirectionsService</span>();
+
+    <span class="cmt">// Pobierz i wyrenderuj listę dostępnych przejazdów</span>
+    <span class="fn">loadRides</span>();
+}</pre>
+    </div>
+
+    <h3 id="styles">Dynamiczne style mapy</h3>
+    <p>
+        Funkcja <code class="inline">applyStylesForZoom()</code> zmienia wygląd mapy w zależności od poziomu zoomu,
+        upraszczając etykiety przy dużym oddaleniu i pokazując więcej szczegółów przy przybliżeniu.
+    </p>
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · applyStylesForZoom() · linie 301–306</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">applyStylesForZoom</span>(zoom) {
+    <span class="kw">if</span>      (zoom &lt;= <span class="num">5</span>)  map.<span class="fn">setOptions</span>({ styles: STYLES_1 }); <span class="cmt">// bardzo oddalony</span>
+    <span class="kw">else if</span> (zoom &lt;= <span class="num">9</span>)  map.<span class="fn">setOptions</span>({ styles: STYLES_2 });
+    <span class="kw">else if</span> (zoom &lt;= <span class="num">13</span>) map.<span class="fn">setOptions</span>({ styles: STYLES_3 }); <span class="cmt">// domyślny</span>
+    <span class="kw">else</span>               map.<span class="fn">setOptions</span>({ styles: STYLES_4 }); <span class="cmt">// maksymalne przybliżenie</span>
+}</pre>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="load-rides">
+    <h2><span class="icon">📋</span> Pobieranie dostępnych przejazdów</h2>
+
+    <div class="file-path">home.html · linie 460–474 &amp; RideController.java · linie 116–124</div>
+
+    <p>
+        Po inicjalizacji mapy, <code class="inline">initMap()</code> wywołuje <code class="inline">loadRides()</code>,
+        która pobiera z serwera listę przejazdów ze statusem <em>"not started"</em>.
+        Użytkownik może filtrować wyniki przez formularz z zakresem dat i maksymalną ceną.
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · loadRides() · linie 460–474</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">loadRides</span>() {
+    <span class="cmt">// Odczytaj wartości filtrów z formularza HTML</span>
+    <span class="kw">const</span> dateFrom = document.<span class="fn">getElementById</span>(<span class="str">"filterDateFrom"</span>).value;
+    <span class="kw">const</span> dateTo   = document.<span class="fn">getElementById</span>(<span class="str">"filterDateTo"</span>).value;
+    <span class="kw">const</span> price    = document.<span class="fn">getElementById</span>(<span class="str">"filterPrice"</span>).value;
+
+    <span class="cmt">// Zbuduj parametry zapytania – tylko te, które użytkownik wypełnił</span>
+    <span class="kw">const</span> params = <span class="kw">new</span> <span class="fn">URLSearchParams</span>();
+    <span class="kw">if</span> (dateFrom) params.<span class="fn">append</span>(<span class="str">"dateFrom"</span>, dateFrom + <span class="str">":00"</span>);
+    <span class="kw">if</span> (dateTo)   params.<span class="fn">append</span>(<span class="str">"dateTo"</span>,   dateTo   + <span class="str">":00"</span>);
+    <span class="kw">if</span> (price)    params.<span class="fn">append</span>(<span class="str">"maxPrice"</span>, price);
+
+    <span class="cmt">// GET /api/r/rides/not-started?dateFrom=...&dateTo=...&maxPrice=...</span>
+    <span class="fn">fetch</span>(<span class="str">"/api/r/rides/not-started?"</span> + params.<span class="fn">toString</span>())
+        .<span class="fn">then</span>(res =&gt; res.<span class="fn">json</span>())
+        .<span class="fn">then</span>(data =&gt; <span class="fn">renderRides</span>(data))   <span class="cmt">// przekaż tablicę RideDTO do renderowania</span>
+        .<span class="fn">catch</span>(err =&gt; console.<span class="fn">error</span>(<span class="str">"ERROR:"</span>, err));
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/r/rides/not-started</span>
+        </div>
+        <p>Zwraca listę przejazdów ze statusem "not started". Przyjmuje opcjonalne parametry filtrowania.</p>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>RideController.java · linie 116–124</span>
+            <span class="lang-badge">Java</span>
+        </div>
+        <pre><span class="ann">@GetMapping</span>(<span class="str">"/api/r/rides/not-started"</span>)
+<span class="ann">@ResponseBody</span>
+<span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">RideDTO</span>&gt; <span class="fn">getNotStartedRides</span>(
+        <span class="ann">@RequestParam</span>(required = <span class="kw">false</span>)
+        <span class="ann">@DateTimeFormat</span>(iso = DateTimeFormat.ISO.DATE_TIME) <span class="typ">LocalDateTime</span> dateFrom,
+        <span class="ann">@RequestParam</span>(required = <span class="kw">false</span>)
+        <span class="ann">@DateTimeFormat</span>(iso = DateTimeFormat.ISO.DATE_TIME) <span class="typ">LocalDateTime</span> dateTo,
+        <span class="ann">@RequestParam</span>(required = <span class="kw">false</span>) <span class="typ">Double</span> maxPrice
+) {
+    <span class="kw">return</span> rideService.<span class="fn">getFilteredRides</span>(dateFrom, dateTo, maxPrice);
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>RideService.java · getFilteredRides() · linie 101–109</span>
+            <span class="lang-badge">Java</span>
+        </div>
+        <pre><span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">RideDTO</span>&gt; <span class="fn">getFilteredRides</span>(
+        <span class="typ">LocalDateTime</span> dateFrom, <span class="typ">LocalDateTime</span> dateTo, <span class="typ">Double</span> maxPrice) {
+
+    <span class="cmt">// Jeśli żaden filtr nie jest podany → zwróć wszystkie nierozpoczęte</span>
+    <span class="kw">if</span> (dateFrom == <span class="kw">null</span> &amp;&amp; dateTo == <span class="kw">null</span> &amp;&amp; maxPrice == <span class="kw">null</span>) {
+        <span class="kw">return</span> rideRepository.<span class="fn">findDTOsByStateName</span>(<span class="str">"not started"</span>);
+    }
+    <span class="cmt">// Ustaw wartości domyślne dla brakujących filtrów</span>
+    <span class="kw">if</span> (dateFrom == <span class="kw">null</span>) dateFrom = LocalDateTime.<span class="fn">of</span>(<span class="num">2000</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>);
+    <span class="kw">if</span> (dateTo   == <span class="kw">null</span>) dateTo   = LocalDateTime.<span class="fn">of</span>(<span class="num">2100</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>);
+    <span class="kw">if</span> (maxPrice == <span class="kw">null</span>) maxPrice = Double.MAX_VALUE;
+    <span class="kw">return</span> rideRepository.<span class="fn">findFilteredRidesWithAllParams</span>(dateFrom, dateTo, maxPrice);
+}</pre>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="render-rides">
+    <h2><span class="icon">🃏</span> Renderowanie kart przejazdów</h2>
+
+    <div class="file-path">home.html · renderRides() · linie 501–556</div>
+
+    <p>
+        Funkcja <code class="inline">renderRides()</code> tworzy dynamicznie karty HTML dla każdego przejazdu.
+        Kluczowe: adresy wyświetlane na kartach są uzyskiwane przez <strong>reverse geocoding</strong> —
+        współrzędne GPS (lat, lng) są zamieniane na czytelne nazwy dzielnic.
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · renderRides() · linie 501–556 (skrócone)</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">renderRides</span>(rides) {
+    <span class="kw">const</span> container = document.<span class="fn">getElementById</span>(<span class="str">"ridesList"</span>);
+    container.innerHTML = <span class="str">""</span>;
+
+    rides.<span class="fn">forEach</span>(<span class="kw">async</span> r =&gt; {
+        <span class="kw">const</span> el = document.<span class="fn">createElement</span>(<span class="str">"div"</span>);
+        el.className = <span class="str">"ride-card"</span>;
+
+        <span class="cmt">// Tworzy kartę z placeholderem "Loading..." dla adresu</span>
+        el.innerHTML = `
+            &lt;div class="ride-route"&gt;Loading...&lt;/div&gt;
+            &lt;div class="ride-meta"&gt;
+                &lt;span&gt;${r.driverName}&lt;/span&gt;
+                &lt;span&gt;${r.cost} zł&lt;/span&gt;
+                &lt;span&gt;${formattedDate}&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;button class="details-btn" ...&gt;Details&lt;/button&gt;
+            ${!isOwnRide ? `&lt;button class="apply-btn" onclick="openApplyPanel(${r.id})"&gt;Apply&lt;/button&gt;` : ''}
+        `;
+
+        <span class="cmt">// ★ KLUCZOWE: listener kliknięcia całej karty → rysuje trasę na mapie</span>
+        el.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, () =&gt; {
+            <span class="fn">showRoute</span>(
+                r.id,
+                { lat: r.startLatitude,  lng: r.startLongitude },
+                { lat: r.endLatitude,    lng: r.endLongitude }
+            );
+        });
+
+        container.<span class="fn">appendChild</span>(el);
+
+        <span class="cmt">// ASYNC: pobierz czytelne nazwy dla start i koniec równolegle</span>
+        <span class="kw">const</span> [startName, endName] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+            <span class="fn">reverseGeocodeLatLng</span>(r.startLatitude,  r.startLongitude),
+            <span class="fn">reverseGeocodeLatLng</span>(r.endLatitude,    r.endLongitude)
+        ]);
+
+        <span class="cmt">// Zastąp "Loading..." prawdziwym adresem</span>
+        el.<span class="fn">querySelector</span>(<span class="str">".ride-route"</span>).textContent = `${startName} → ${endName}`;
+    });
+}</pre>
+    </div>
+
+    <div class="callout success">
+        <strong>Asynchroniczne ładowanie adresów</strong>
+        Karty są dodawane do DOM natychmiast (z "Loading..."), a adresy wypełniają się asynchronicznie po powrocie
+        odpowiedzi z Geocoder API. Dzięki temu interfejs nie blokuje się na czekanie.
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="click-ride">
+    <h2><span class="icon">★</span> Kliknięcie przejazdu — pełny flow</h2>
+
+    <p>
+        To jest najważniejszy element całej funkcjonalności. Po kliknięciu karty przejazdu uruchamia się
+        łańcuch operacji: odczyt waypointów z serwera → zapytanie do DirectionsService → rysowanie
+        kolorowych polilinii i markerów.
+    </p>
+
+    <div class="flow">
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">1</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-fe">Frontend</span>
+                <strong>Kliknięcie karty przejazdu</strong>
+                <span>Event listener na elemencie <code class="inline">.ride-card</code> wywołuje
+                <code class="inline">showRoute(r.id, startLatLng, endLatLng)</code>.
+                Przekazuje ID przejazdu oraz współrzędne punktu startowego i końcowego.</span>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">2</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-fe">Frontend</span>
+                <strong>showRoute() — wyzerowanie i token</strong>
+                <span>Inkrementuje <code class="inline">_routeToken</code> (zabezpieczenie przed race condition),
+                wywołuje <code class="inline">clearRoute()</code> usuwając poprzednią trasę z mapy,
+                a następnie robi fetch do backendu po waypointy przejazdu.</span>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">3</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-be">Backend</span>
+                <strong>GET /api/r/rides/{id}/waypoints</strong>
+                <span>Serwer zwraca tablicę obiektów <code class="inline">WaypointDTO</code> — punkty pośrednie
+                (przystanki) przypisane do tego przejazdu, posortowane według kolejności
+                (<code class="inline">sequenceOrder</code>). Każdy waypoint ma typ: PICKUP lub DROPOFF.</span>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">4</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-api">Google API</span>
+                <strong>DirectionsService.route() — wyznaczanie trasy</strong>
+                <span>Waypointy są przekazywane do <code class="inline">DirectionsService</code> z flagą
+                <code class="inline">optimizeWaypoints: true</code>. Google API oblicza optymalną kolejność
+                przystanków i zwraca trasę podzieloną na legs (odcinki), każdy z listą kroków i ścieżką GPS.</span>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">5</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-fe">Frontend</span>
+                <strong>drawRoute() — rysowanie kolorowych segmentów</strong>
+                <span>Dla każdego odcinka (leg) tworzona jest osobna <code class="inline">google.maps.Polyline</code>
+                z kolorem zależnym od tego, dokąd jedzie ten odcinek: zielony → PICKUP,
+                pomarańczowy → DROPOFF, niebieski → koniec trasy.</span>
+            </div>
+        </div>
+
+        <div class="flow-step">
+            <div class="flow-left">
+                <div class="flow-num">6</div>
+                <div class="flow-line"></div>
+            </div>
+            <div class="flow-body">
+                <span class="tag tag-fe">Frontend</span>
+                <strong>placeMarker() — markery na mapie</strong>
+                <span>Ustawiane są markery SVG: szary S (start), zielone P (pickup), pomarańczowe D (dropoff),
+                niebieski E (end). Mapa automatycznie dopasowuje zoom i przesunięcie do granic trasy
+                (<code class="inline">map.fitBounds</code>).</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="show-route">
+    <h2><span class="icon">🔄</span> showRoute() — szczegółowy opis</h2>
+
+    <div class="file-path">home.html · linie 643–675</div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · showRoute() · linie 643–675</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="cmt">// Zmienne stanu trasy na poziomie modułu</span>
+<span class="kw">let</span> _legPolylines = [];   <span class="cmt">// tablica aktywnych Polyline na mapie</span>
+<span class="kw">let</span> _customMarkers = [];  <span class="cmt">// tablica aktywnych Marker na mapie</span>
+<span class="kw">let</span> _routeToken = <span class="num">0</span>;       <span class="cmt">// licznik zapobiegający race condition</span>
+
+<span class="kw">function</span> <span class="fn">showRoute</span>(rideId, startLatLng, endLatLng) {
+    <span class="kw">if</span> (!map || !directionsService) <span class="kw">return</span>;
+
+    <span class="cmt">// ① Race-condition guard: każde kliknięcie dostaje unikalny token.
+    //    Jeśli użytkownik kliknie szybko inny przejazd przed odpowiedzią
+    //    serwera, stary callback sprawdzi token i zrezygnuje z rysowania.</span>
+    <span class="kw">const</span> token = ++_routeToken;
+
+    <span class="cmt">// ② Usuń poprzednią trasę z mapy natychmiast</span>
+    <span class="fn">clearRoute</span>();
+
+    <span class="cmt">// ③ Pobierz punkty pośrednie (waypoints) z backendu</span>
+    <span class="fn">fetch</span>(`/api/r/rides/${rideId}/waypoints`)
+        .<span class="fn">then</span>(res =&gt; res.<span class="fn">json</span>())
+        .<span class="fn">then</span>(waypoints =&gt; {
+            <span class="cmt">// Sprawdź token – czy to nadal aktualne kliknięcie?</span>
+            <span class="kw">if</span> (token !== _routeToken) <span class="kw">return</span>;
+
+            <span class="cmt">// ④ Mapuj WaypointDTO na format wymagany przez DirectionsService</span>
+            <span class="kw">const</span> stops = waypoints.<span class="fn">map</span>(wp =&gt; ({
+                location: { lat: wp.latitude, lng: wp.longitude },
+                stopover: <span class="kw">true</span>  <span class="cmt">// stopover:true = liczy jako odrębny odcinek trasy</span>
+            }));
+
+            <span class="cmt">// ⑤ Zapytaj Google DirectionsService o trasę drogową</span>
+            directionsService.<span class="fn">route</span>(
+                {
+                    origin:            startLatLng,      <span class="cmt">// punkt startowy przejazdu</span>
+                    destination:       endLatLng,        <span class="cmt">// punkt końcowy przejazdu</span>
+                    waypoints:         stops,            <span class="cmt">// przystanki pośrednie</span>
+                    optimizeWaypoints: <span class="kw">true</span>,           <span class="cmt">// Google optymalizuje kolejność</span>
+                    travelMode: google.maps.TravelMode.DRIVING
+                },
+                (result, status) =&gt; {
+                    <span class="kw">if</span> (token !== _routeToken) <span class="kw">return</span>; <span class="cmt">// kolejne sprawdzenie tokenu</span>
+                    <span class="kw">if</span> (status === <span class="str">'OK'</span>) {
+                        <span class="fn">drawRoute</span>(result, waypoints, startLatLng, endLatLng);
+                    } <span class="kw">else</span> {
+                        console.<span class="fn">error</span>(<span class="str">'Directions request failed:'</span>, status);
+                    }
+                }
+            );
+        })
+        .<span class="fn">catch</span>(err =&gt; console.<span class="fn">error</span>(<span class="str">'Failed to load waypoints:'</span>, err));
+}</pre>
+    </div>
+
+    <div class="callout warning">
+        <strong>Dlaczego _routeToken?</strong>
+        Jeśli użytkownik kliknie szybko dwa różne przejazdy, oba wywołają fetch i DirectionsService.route().
+        Bez tokenu — whichever request zwróci się ostatni, ta trasa zostanie narysowana — co może być stara.
+        Token gwarantuje, że na mapie zawsze widać trasę ostatniego klikniętego przejazdu.
+    </div>
+
+    <div class="callout">
+        <strong>optimizeWaypoints: true</strong>
+        Gdy przejazd ma wiele przystanków, Google Maps może zmienić ich kolejność na optymalną trasę.
+        Zwraca pole <code class="inline">waypoint_order</code> w odpowiedzi — tablica indeksów wskazująca
+        nową kolejność. <code class="inline">drawRoute()</code> używa jej do prawidłowego przypisania kolorów segmentów.
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="draw-route">
+    <h2><span class="icon">🎨</span> drawRoute() — rysowanie trasy</h2>
+
+    <div class="file-path">home.html · linie 596–641</div>
+
+    <p>
+        <code class="inline">drawRoute()</code> otrzymuje obiekt <code class="inline">DirectionsResult</code>
+        z Google Maps API i rysuje każdy odcinek trasy jako osobną kolorową polilinię.
+        Dzięki temu ta sama trasa może mieć segmenty w różnych kolorach (zielony do pickupu,
+        pomarańczowy do dropoffu, niebieski do celu).
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · drawRoute() · linie 596–641</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">drawRoute</span>(result, originalWaypoints, startLatLng, endLatLng) {
+    <span class="kw">const</span> route = result.routes[<span class="num">0</span>];
+
+    <span class="cmt">// ① Obsługa optimizeWaypoints – wyznacz rzeczywistą kolejność waypointów
+    //    waypoint_order to np. [2,0,1] gdy Google zoptymalizował trasę.
+    //    Jeśli brak waypointów, utwórz identyczne mapowanie [0,1,2,...]</span>
+    <span class="kw">const</span> order = (route.waypoint_order &amp;&amp; route.waypoint_order.length &gt; <span class="num">0</span>)
+        ? route.waypoint_order
+        : originalWaypoints.<span class="fn">map</span>((_, i) =&gt; i);
+
+    <span class="cmt">// Przeindeksuj oryginalne waypointy zgodnie z kolejnością zoptymalizowaną</span>
+    <span class="kw">const</span> orderedWaypoints = order.<span class="fn">map</span>(idx =&gt; originalWaypoints[idx]);
+
+    <span class="cmt">// ② Iteruj przez legs – każdy leg to odcinek między dwoma punktami trasy</span>
+    route.legs.<span class="fn">forEach</span>((leg, i) =&gt; {
+
+        <span class="cmt">// ③ Dobierz kolor segmentu na podstawie celu tego odcinka:
+        //    - i &lt; orderedWaypoints.length → jedzie do waypointa pośredniego
+        //      · PICKUP  → zielony  (#22c55e)
+        //      · DROPOFF → pomarańczowy (#f97316)
+        //    - i === orderedWaypoints.length → jedzie do końca → niebieski</span>
+        <span class="kw">const</span> color = i &lt; orderedWaypoints.length
+            ? (orderedWaypoints[i].type === <span class="str">'PICKUP'</span> ? <span class="str">'#22c55e'</span> : <span class="str">'#f97316'</span>)
+            : <span class="str">'#3b82f6'</span>;
+
+        <span class="cmt">// ④ Złóż pełną ścieżkę GPS z kroków (steps) danego odcinka</span>
+        <span class="kw">const</span> path = [];
+        leg.steps.<span class="fn">forEach</span>(step =&gt; {
+            <span class="kw">if</span> (step.path) step.path.<span class="fn">forEach</span>(pt =&gt; path.<span class="fn">push</span>(pt));
+        });
+
+        <span class="cmt">// ⑤ Utwórz Polyline i dodaj ją do mapy</span>
+        <span class="kw">if</span> (path.length &gt; <span class="num">0</span>) {
+            _legPolylines.<span class="fn">push</span>(<span class="kw">new</span> google.maps.<span class="fn">Polyline</span>({
+                path,
+                strokeColor:   color,
+                strokeWeight:  <span class="num">5</span>,      <span class="cmt">// grubość linii w pikselach</span>
+                strokeOpacity: <span class="num">0.85</span>,   <span class="cmt">// lekka przezroczystość</span>
+                map                    <span class="cmt">// przypisanie do aktywnej mapy</span>
+            }));
+        }
+    });
+
+    <span class="cmt">// ⑥ Postaw markery na kluczowych punktach trasy</span>
+    <span class="fn">placeMarker</span>(startLatLng, <span class="str">'#475569'</span>, <span class="str">'S'</span>, <span class="str">'Start'</span>);
+    orderedWaypoints.<span class="fn">forEach</span>(wp =&gt; {
+        <span class="kw">const</span> isPickup = wp.type === <span class="str">'PICKUP'</span>;
+        <span class="fn">placeMarker</span>(
+            { lat: wp.latitude, lng: wp.longitude },
+            isPickup ? <span class="str">'#22c55e'</span> : <span class="str">'#f97316'</span>,
+            isPickup ? <span class="str">'P'</span> : <span class="str">'D'</span>,
+            isPickup ? <span class="str">'Pickup'</span> : <span class="str">'Dropoff'</span>
+        );
+    });
+    <span class="fn">placeMarker</span>(endLatLng, <span class="str">'#3b82f6'</span>, <span class="str">'E'</span>, <span class="str">'End'</span>);
+
+    <span class="cmt">// ⑦ Dopasuj widok mapy do granic całej trasy (z marginesem 40px)</span>
+    map.<span class="fn">fitBounds</span>(route.bounds, { top: <span class="num">40</span>, right: <span class="num">40</span>, bottom: <span class="num">40</span>, left: <span class="num">40</span> });
+}</pre>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="polylines">
+    <h2><span class="icon">〰️</span> Polilinie — schemat kolorowania</h2>
+
+    <p>
+        Każdy segment trasy (odcinek między dwoma punktami) otrzymuje kolor wskazujący,
+        <em>do jakiego rodzaju punktu ten odcinek prowadzi</em>. To pozwala użytkownikowi
+        jednym spojrzeniem zobaczyć, który fragment to droga do odbioru pasażera,
+        a który to droga do wysadzenia.
+    </p>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="dot" style="background:#22c55e"></div>
+            <div>
+                <strong style="color:#22c55e">Zielony #22c55e</strong><br/>
+                <span style="color:#94a3b8;font-size:.8rem">Odcinek do punktu PICKUP</span>
+            </div>
+        </div>
+        <div class="legend-item">
+            <div class="dot" style="background:#f97316"></div>
+            <div>
+                <strong style="color:#f97316">Pomarańczowy #f97316</strong><br/>
+                <span style="color:#94a3b8;font-size:.8rem">Odcinek do punktu DROPOFF</span>
+            </div>
+        </div>
+        <div class="legend-item">
+            <div class="dot" style="background:#3b82f6"></div>
+            <div>
+                <strong style="color:#3b82f6">Niebieski #3b82f6</strong><br/>
+                <span style="color:#94a3b8;font-size:.8rem">Ostatni odcinek do mety</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Jak działają legs i waypoint_order</h3>
+    <p>
+        Google DirectionsService dzieli trasę na <strong>legs</strong>:
+    </p>
+    <ul style="color:var(--muted);margin-left:1.5rem;margin-bottom:1rem">
+        <li>leg[0] → od startu do pierwszego waypointa</li>
+        <li>leg[1] → od pierwszego waypointa do drugiego</li>
+        <li>leg[n] → od ostatniego waypointa do końca</li>
+    </ul>
+    <p>
+        Gdy <code class="inline">optimizeWaypoints: true</code>, Google może zmienić kolejność waypointów.
+        Pole <code class="inline">route.waypoint_order</code> to tablica np. <code class="inline">[2, 0, 1]</code>
+        — oznacza, że w zoptymalizowanej trasie: leg[0] jedzie do oryginalnego waypointa nr 2,
+        leg[1] do nr 0, leg[2] do nr 1. Kod używa tego do prawidłowego przypisania kolorów.
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Logika przypisania koloru do odcinka</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="cmt">// orderedWaypoints[i] to waypoint, DO KTÓREGO prowadzi leg[i]
+// Ostatni leg (indeks === orderedWaypoints.length) prowadzi do celu końcowego</span>
+
+<span class="kw">const</span> color = i &lt; orderedWaypoints.length
+    ? (orderedWaypoints[i].type === <span class="str">'PICKUP'</span>  ? <span class="str">'#22c55e'</span>   <span class="cmt">// zielony</span>
+                                              : <span class="str">'#f97316'</span>)  <span class="cmt">// pomarańczowy</span>
+    : <span class="str">'#3b82f6'</span>;                                           <span class="cmt">// niebieski (koniec)</span></pre>
+    </div>
+
+    <h3>Czyszczenie trasy</h3>
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · clearRoute() · linie 562–567</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">clearRoute</span>() {
+    <span class="cmt">// Usuń wszystkie polilinie z mapy (setMap(null) = ukryj bez usuwania)</span>
+    _legPolylines.<span class="fn">forEach</span>(p =&gt; p.<span class="fn">setMap</span>(<span class="kw">null</span>));
+    _legPolylines = [];
+
+    <span class="cmt">// Usuń wszystkie markery trasy z mapy</span>
+    _customMarkers.<span class="fn">forEach</span>(m =&gt; m.<span class="fn">setMap</span>(<span class="kw">null</span>));
+    _customMarkers = [];
+}</pre>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="markers">
+    <h2><span class="icon">📍</span> Markery SVG</h2>
+
+    <div class="file-path">home.html · makeMarkerIcon() i placeMarker() · linie 569–594</div>
+
+    <p>
+        Zamiast standardowych czerwonych pinezek Google Maps, aplikacja używa własnych markerów
+        generowanych dynamicznie jako <strong>SVG inline</strong>. Każdy marker to prostokąt
+        z zaokrąglonymi rogami, trójkątnym wskaźnikiem na dole i etykietą tekstową.
+    </p>
+
+    <div class="markers-row">
+        <div class="marker-card">
+            <svg class="marker-svg" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="26" height="26" rx="6" fill="#475569"/>
+                <polygon points="8,26 18,26 13,34" fill="#475569"/>
+                <text x="13" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">S</text>
+            </svg>
+            <strong>Start</strong>
+            <p>#475569 (szary)</p>
+        </div>
+        <div class="marker-card">
+            <svg class="marker-svg" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="26" height="26" rx="6" fill="#22c55e"/>
+                <polygon points="8,26 18,26 13,34" fill="#22c55e"/>
+                <text x="13" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">P</text>
+            </svg>
+            <strong>Pickup</strong>
+            <p>#22c55e (zielony)</p>
+        </div>
+        <div class="marker-card">
+            <svg class="marker-svg" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="26" height="26" rx="6" fill="#f97316"/>
+                <polygon points="8,26 18,26 13,34" fill="#f97316"/>
+                <text x="13" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">D</text>
+            </svg>
+            <strong>Dropoff</strong>
+            <p>#f97316 (pomarańczowy)</p>
+        </div>
+        <div class="marker-card">
+            <svg class="marker-svg" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="26" height="26" rx="6" fill="#3b82f6"/>
+                <polygon points="8,26 18,26 13,34" fill="#3b82f6"/>
+                <text x="13" y="18" text-anchor="middle" fill="white" font-size="13" font-family="Arial" font-weight="bold">E</text>
+            </svg>
+            <strong>End</strong>
+            <p>#3b82f6 (niebieski)</p>
+        </div>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · makeMarkerIcon() · linie 569–586</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">makeMarkerIcon</span>(color, label) {
+    <span class="cmt">// Dopasuj rozmiar czcionki i szerokość w zależności od długości etykiety</span>
+    <span class="kw">const</span> fontSize = label.length &lt;= <span class="num">2</span> ? <span class="num">12</span> : <span class="num">9</span>;
+    <span class="kw">const</span> charW    = label.length &lt;= <span class="num">2</span> ? <span class="num">8</span>  : <span class="num">6</span>;
+    <span class="kw">const</span> w  = Math.<span class="fn">max</span>(<span class="num">26</span>, label.length * charW + <span class="num">16</span>); <span class="cmt">// min. szerokość 26px</span>
+    <span class="kw">const</span> h  = <span class="num">26</span>;
+    <span class="kw">const</span> cx = w / <span class="num">2</span>; <span class="cmt">// środek poziomy</span>
+
+    <span class="kw">const</span> svg = `&lt;svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h + 8}"&gt;
+        &lt;rect x="0" y="0" width="${w}" height="${h}" rx="6" fill="${color}"/&gt;
+        &lt;polygon points="${cx-5},${h} ${cx+5},${h} ${cx},${h+8}" fill="${color}"/&gt;
+        &lt;text x="${cx}" y="${h/2 + fontSize/3 + 1}" text-anchor="middle"
+              fill="white" font-size="${fontSize}"
+              font-family="Arial,sans-serif" font-weight="bold"&gt;${label}&lt;/text&gt;
+    &lt;/svg&gt;`;
+
+    <span class="kw">return</span> {
+        url: <span class="str">'data:image/svg+xml;charset=UTF-8,'</span> + <span class="fn">encodeURIComponent</span>(svg),
+        scaledSize: <span class="kw">new</span> google.maps.<span class="fn">Size</span>(w, h + <span class="num">8</span>),
+        anchor: <span class="kw">new</span> google.maps.<span class="fn">Point</span>(cx, h + <span class="num">8</span>)  <span class="cmt">// punkt zakotwiczenia = koniec wskaźnika</span>
+    };
+}
+
+<span class="kw">function</span> <span class="fn">placeMarker</span>(position, color, label, title) {
+    _customMarkers.<span class="fn">push</span>(<span class="kw">new</span> google.maps.<span class="fn">Marker</span>({
+        position, map,
+        icon: <span class="fn">makeMarkerIcon</span>(color, label),
+        title  <span class="cmt">// tooltip przy najechaniu</span>
+    }));
+}</pre>
+    </div>
+
+    <div class="callout">
+        <strong>Dlaczego anchor: Point(cx, h+8)?</strong>
+        Google Maps musi wiedzieć, który piksel ikony odpowiada dokładnej lokalizacji geograficznej.
+        Ustawiamy go na koniec trójkątnego wskaźnika (dolny wierzchołek), żeby marker precyzyjnie
+        wskazywał na mapę — nie na środek prostokąta.
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="api-endpoints">
+    <h2><span class="icon">🔌</span> Endpointy REST związane z mapą</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/r/rides/not-started</span>
+        </div>
+        <p><strong>Parametry:</strong> <code class="inline">dateFrom</code>, <code class="inline">dateTo</code> (ISO LocalDateTime), <code class="inline">maxPrice</code> (Double) — wszystkie opcjonalne.</p>
+        <p><strong>Zwraca:</strong> <code class="inline">List&lt;RideDTO&gt;</code> — lista przejazdów ze statusem "not started" z filtrami.</p>
+        <p><strong>Używane przez:</strong> <code class="inline">loadRides()</code> w home.html.</p>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method-badge get">GET</span>
+            <span class="endpoint-path">/api/r/rides/{id}/waypoints</span>
+        </div>
+        <p><strong>Parametry:</strong> <code class="inline">id</code> — ID przejazdu (path variable).</p>
+        <p><strong>Zwraca:</strong> <code class="inline">List&lt;WaypointDTO&gt;</code> — punkty pośrednie przejazdu posortowane według <code class="inline">sequenceOrder</code>.</p>
+        <p><strong>Używane przez:</strong> <code class="inline">showRoute()</code> i <code class="inline">toggleDetails()</code> w home.html.</p>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method-badge post">POST</span>
+            <span class="endpoint-path">/api/rides/{rideId}/apply</span>
+        </div>
+        <p><strong>Body:</strong> JSON z polami <code class="inline">pickupLatitude</code>, <code class="inline">pickupLongitude</code>, <code class="inline">dropoffLatitude</code>, <code class="inline">dropoffLongitude</code>.</p>
+        <p><strong>Zwraca:</strong> <code class="inline">{"message": "Application sent"}</code> lub <code class="inline">{"error": "..."}</code>.</p>
+        <p><strong>Używane przez:</strong> <code class="inline">submitApply()</code> w home.html.</p>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="ride-service">
+    <h2><span class="icon">⚙️</span> Backend — RideService i WaypointDTO</h2>
+
+    <div class="file-path">RideController.java · linie 110–124 &amp; RideService.java · linie 94–109</div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>RideController.java · linie 110–124</span>
+            <span class="lang-badge">Java</span>
+        </div>
+        <pre><span class="cmt">// Endpoint zwracający waypoints (przystanki) dla konkretnego przejazdu</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/api/r/rides/{id}/waypoints"</span>)
+<span class="ann">@ResponseBody</span>
+<span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">WaypointDTO</span>&gt; <span class="fn">getRideWaypoints</span>(<span class="ann">@PathVariable</span> <span class="typ">Long</span> id) {
+    <span class="kw">return</span> rideService.<span class="fn">getWaypointsForRide</span>(id);
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>RideService.java · getWaypointsForRide() · linie 94–99</span>
+            <span class="lang-badge">Java</span>
+        </div>
+        <pre><span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">WaypointDTO</span>&gt; <span class="fn">getWaypointsForRide</span>(<span class="typ">Long</span> rideId) {
+    <span class="kw">return</span> rideWaypointRepository
+        <span class="cmt">// Pobierz z bazy, posortowane po sequenceOrder rosnąco</span>
+        .<span class="fn">findByRideIdOrderBySequenceOrderAsc</span>(rideId)
+        .stream()
+        .<span class="fn">map</span>(w -&gt; <span class="kw">new</span> <span class="typ">WaypointDTO</span>(
+            w.<span class="fn">getLatitude</span>(),
+            w.<span class="fn">getLongitude</span>(),
+            w.<span class="fn">getType</span>().<span class="fn">name</span>(),       <span class="cmt">// "PICKUP" lub "DROPOFF"</span>
+            w.<span class="fn">getSequenceOrder</span>()
+        ))
+        .<span class="fn">toList</span>();
+}</pre>
+    </div>
+
+    <div class="callout">
+        <strong>WaypointDTO — struktura danych</strong>
+        Obiekt transferowy zawiera: <code class="inline">latitude</code> (double), <code class="inline">longitude</code> (double),
+        <code class="inline">type</code> (String: "PICKUP" lub "DROPOFF"), <code class="inline">sequenceOrder</code> (int).
+        Frontend używa pola <code class="inline">type</code> do decydowania o kolorze markera i polilinii.
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="apply-flow">
+    <h2><span class="icon">✋</span> Flow aplikowania na przejazd</h2>
+
+    <div class="file-path">home.html · openApplyPanel(), submitApply() · linie 371–458</div>
+
+    <p>
+        Po kliknięciu przycisku <strong>Apply</strong> na karcie przejazdu, interfejs przechodzi w tryb
+        interaktywnego wyboru punktów na mapie. Cursor zmienia się na celownik (<code class="inline">crosshair</code>).
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · openApplyPanel() · linie 371–387</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">openApplyPanel</span>(rideId) {
+    applyRideId  = rideId;
+    applyPickup  = <span class="kw">null</span>;
+    applyDropoff = <span class="kw">null</span>;
+    applyStep    = <span class="str">"pickup"</span>;  <span class="cmt">// stan maszyny: "pickup" → "dropoff" → null</span>
+
+    <span class="cmt">// Wyczyść stare markery aplikowania (z poprzedniego podejścia)</span>
+    applyMarkers.<span class="fn">forEach</span>(m =&gt; m.marker.<span class="fn">setMap</span>(<span class="kw">null</span>));
+    applyMarkers = [];
+
+    <span class="cmt">// Przełącz widok panelu bocznego</span>
+    document.<span class="fn">getElementById</span>(<span class="str">"ridesList"</span>).<span class="fn">classList</span>.<span class="fn">add</span>(<span class="str">"d-none"</span>);
+    document.<span class="fn">getElementById</span>(<span class="str">"applyPanel"</span>).<span class="fn">classList</span>.<span class="fn">remove</span>(<span class="str">"d-none"</span>);
+
+    <span class="cmt">// Zmień kursor na celownik – sygnalizuje tryb wyboru punktów</span>
+    map.<span class="fn">setOptions</span>({ draggableCursor: <span class="str">"crosshair"</span> });
+    <span class="fn">updateApplyHint</span>(); <span class="cmt">// "Click on the map to set your pickup point"</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · map click listener w trybie apply · linie 318–341</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="cmt">// Ten listener aktywuje się PRZY KAŻDYM kliknięciu mapy,
+// ale działa tylko gdy applyStep !== null</span>
+map.<span class="fn">addListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>(event) {
+    <span class="kw">if</span> (!applyStep) <span class="kw">return</span>;
+    <span class="kw">const</span> lat = event.latLng.<span class="fn">lat</span>();
+    <span class="kw">const</span> lng = event.latLng.<span class="fn">lng</span>();
+
+    <span class="cmt">// Reverse geocoding – zamień współrzędne kliknięcia na czytelny adres</span>
+    <span class="kw">new</span> google.maps.<span class="fn">Geocoder</span>().<span class="fn">geocode</span>({ location: event.latLng }, <span class="kw">function</span>(results, status) {
+        <span class="kw">const</span> addr = (status === <span class="str">"OK"</span> &amp;&amp; results[<span class="num">0</span>])
+            ? results[<span class="num">0</span>].formatted_address
+            : lat.<span class="fn">toFixed</span>(<span class="num">5</span>) + <span class="str">", "</span> + lng.<span class="fn">toFixed</span>(<span class="num">5</span>);  <span class="cmt">// fallback: "52.23456, 21.01234"</span>
+
+        <span class="kw">if</span> (applyStep === <span class="str">"pickup"</span>) {
+            <span class="cmt">// Pierwsze kliknięcie → ustaw punkt odbioru</span>
+            applyPickup = { lat, lng, addr };
+            <span class="fn">placeApplyMarker</span>(event.latLng, <span class="str">"#22c55e"</span>, <span class="str">"P"</span>);
+            document.<span class="fn">getElementById</span>(<span class="str">"applyPickupAddr"</span>).textContent = addr;
+            applyStep = <span class="str">"dropoff"</span>;  <span class="cmt">// przejdź do następnego kroku</span>
+
+        } <span class="kw">else</span> {
+            <span class="cmt">// Drugie kliknięcie → ustaw punkt wysadzenia</span>
+            applyDropoff = { lat, lng, addr };
+            <span class="fn">placeApplyMarker</span>(event.latLng, <span class="str">"#f97316"</span>, <span class="str">"D"</span>);
+            document.<span class="fn">getElementById</span>(<span class="str">"applyDropoffAddr"</span>).textContent = addr;
+            applyStep = <span class="kw">null</span>;                              <span class="cmt">// zakończ tryb wyboru</span>
+            map.<span class="fn">setOptions</span>({ draggableCursor: <span class="kw">null</span> });    <span class="cmt">// przywróć normalny kursor</span>
+        }
+
+        <span class="fn">updateApplyHint</span>();
+        <span class="cmt">// Odblokuj przycisk wysyłki dopiero gdy oba punkty są ustawione</span>
+        document.<span class="fn">getElementById</span>(<span class="str">"applySubmitBtn"</span>).disabled = !(applyPickup &amp;&amp; applyDropoff);
+    });
+});</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · submitApply() · linie 422–458</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">submitApply</span>() {
+    <span class="kw">if</span> (!applyPickup || !applyDropoff) <span class="kw">return</span>;
+
+    <span class="fn">fetch</span>(`/api/rides/${applyRideId}/apply`, {
+        method: <span class="str">"POST"</span>,
+        headers: { <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span> },
+        body: <span class="obj">JSON</span>.<span class="fn">stringify</span>({
+            pickupLatitude:   applyPickup.lat,
+            pickupLongitude:  applyPickup.lng,
+            dropoffLatitude:  applyDropoff.lat,
+            dropoffLongitude: applyDropoff.lng
+        })
+    })
+    .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+    .<span class="fn">then</span>(data =&gt; {
+        <span class="kw">if</span> (data.error) {
+            <span class="cmt">// Pokaż błąd (np. "You have already applied for this ride")</span>
+            fb.className = <span class="str">"apply-feedback error"</span>;
+        } <span class="kw">else</span> {
+            fb.textContent = <span class="str">"Application sent successfully!"</span>;
+            fb.className = <span class="str">"apply-feedback success"</span>;
+            <span class="fn">setTimeout</span>(closeApplyPanel, <span class="num">1800</span>); <span class="cmt">// zamknij panel po 1.8s</span>
+        }
+    });
+}</pre>
+    </div>
+
+    <h3>Backend — RideService.applyForRide()</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>RideService.java · applyForRide() · linie 111–133</span>
+            <span class="lang-badge">Java</span>
+        </div>
+        <pre><span class="ann">@Transactional</span>
+<span class="kw">public void</span> <span class="fn">applyForRide</span>(<span class="typ">Long</span> rideId, <span class="typ">ApplyRideForm</span> form, <span class="typ">UserProfile</span> passenger) {
+    <span class="typ">Ride</span> ride = rideRepository.<span class="fn">findById</span>(rideId)
+        .<span class="fn">orElseThrow</span>(() -&gt; <span class="kw">new</span> <span class="typ">RuntimeException</span>(<span class="str">"Ride not found"</span>));
+
+    <span class="cmt">// Walidacja 1: Kierowca nie może aplikować na własny przejazd</span>
+    <span class="kw">boolean</span> isDriver = ride.<span class="fn">getParticipants</span>().stream()
+        .<span class="fn">anyMatch</span>(p -&gt; <span class="str">"driver"</span>.<span class="fn">equalsIgnoreCase</span>(p.<span class="fn">getRole</span>().<span class="fn">getName</span>())
+                    &amp;&amp; p.<span class="fn">getUser</span>().<span class="fn">getId</span>().<span class="fn">equals</span>(passenger.<span class="fn">getId</span>()));
+    <span class="kw">if</span> (isDriver) <span class="kw">throw new</span> <span class="typ">RuntimeException</span>(<span class="str">"You cannot apply for your own ride"</span>);
+
+    <span class="cmt">// Walidacja 2: Użytkownik nie może aplikować dwa razy</span>
+    rideRequestRepository.<span class="fn">findByUser_IdAndRide_Id</span>(passenger.<span class="fn">getId</span>(), rideId)
+        .<span class="fn">ifPresent</span>(r -&gt; { <span class="kw">throw new</span> <span class="typ">RuntimeException</span>(<span class="str">"You have already applied for this ride"</span>); });
+
+    <span class="cmt">// Zapisz zgłoszenie z współrzędnymi pickup/dropoff wybranymi na mapie</span>
+    <span class="typ">RideRequest</span> request = <span class="kw">new</span> <span class="typ">RideRequest</span>();
+    request.<span class="fn">setRide</span>(ride);
+    request.<span class="fn">setUser</span>(passenger);
+    request.<span class="fn">setIsAccepted</span>(<span class="kw">null</span>);  <span class="cmt">// null = oczekuje na decyzję kierowcy</span>
+    request.<span class="fn">setPickupLatitude</span>(form.<span class="fn">getPickupLatitude</span>());
+    request.<span class="fn">setPickupLongitude</span>(form.<span class="fn">getPickupLongitude</span>());
+    request.<span class="fn">setDropoffLatitude</span>(form.<span class="fn">getDropoffLatitude</span>());
+    request.<span class="fn">setDropoffLongitude</span>(form.<span class="fn">getDropoffLongitude</span>());
+    rideRequestRepository.<span class="fn">save</span>(request);
+}</pre>
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="geocoding">
+    <h2><span class="icon">📍</span> Reverse Geocoding</h2>
+
+    <div class="file-path">home.html · reverseGeocodeLatLng() · linie 484–499</div>
+
+    <p>
+        <strong>Reverse geocoding</strong> zamienia współrzędne GPS (lat, lng) na czytelną dla człowieka
+        nazwę miejsca. Używany w dwóch miejscach: do wyświetlania adresów na kartach przejazdów
+        i do potwierdzania klikniętych punktów w trybie aplikowania.
+    </p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>home.html · reverseGeocodeLatLng() · linie 484–499</span>
+            <span class="lang-badge">JavaScript</span>
+        </div>
+        <pre><span class="kw">function</span> <span class="fn">reverseGeocodeLatLng</span>(lat, lng) {
+    <span class="kw">return new</span> <span class="typ">Promise</span>((resolve) =&gt; {
+        <span class="kw">const</span> geocoder = <span class="kw">new</span> google.maps.<span class="fn">Geocoder</span>();
+        geocoder.<span class="fn">geocode</span>({ location: { lat, lng } }, (results, status) =&gt; {
+            <span class="kw">if</span> (status === <span class="str">"OK"</span> &amp;&amp; results[<span class="num">0</span>]) {
+                <span class="kw">const</span> components = results[<span class="num">0</span>].address_components;
+
+                <span class="cmt">// Priorytet: dzielnica > powiat > miasto > pełny adres
+                // Zwracamy najbardziej lokalną nazwę, nie cały adres ulicy</span>
+                <span class="kw">const</span> neighbourhood = components.<span class="fn">find</span>(c =&gt;
+                    c.types.<span class="fn">includes</span>(<span class="str">"neighbourhood"</span>) ||
+                    c.types.<span class="fn">includes</span>(<span class="str">"sublocality"</span>));
+                <span class="kw">const</span> district = components.<span class="fn">find</span>(c =&gt;
+                    c.types.<span class="fn">includes</span>(<span class="str">"administrative_area_level_2"</span>));
+                <span class="kw">const</span> city = components.<span class="fn">find</span>(c =&gt;
+                    c.types.<span class="fn">includes</span>(<span class="str">"locality"</span>));
+
+                resolve(
+                    neighbourhood?.long_name ||
+                    district?.long_name     ||
+                    city?.long_name         ||
+                    results[<span class="num">0</span>].formatted_address  <span class="cmt">// fallback: pełny adres</span>
+                );
+            } <span class="kw">else</span> {
+                resolve(`${lat}, ${lng}`);  <span class="cmt">// fallback: surowe współrzędne</span>
+            }
+        });
+    });
+}</pre>
+    </div>
+
+    <div class="callout">
+        <strong>Priorytet nazwy miejsca</strong>
+        Funkcja zwraca jak najbardziej lokalną i krótką nazwę: najpierw szuka nazwy dzielnicy (neighbourhood),
+        potem powiatu (administrative_area_level_2), potem nazwy miasta (locality), a dopiero
+        na końcu używa pełnego adresu formatowanego.
+        Dzięki temu karta przejazdu pokazuje np. "Mokotów → Wola" zamiast pełnych adresów ulic.
+    </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<section>
+    <h2><span class="icon">📁</span> Podsumowanie kluczowych plików</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Plik</th>
+                <th>Rola</th>
+                <th>Kluczowe funkcje / klasy</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code class="inline">templates/home.html</code></td>
+                <td>Strona główna z listą przejazdów i mapą</td>
+                <td>initMap, showRoute, drawRoute, loadRides, renderRides, openApplyPanel, submitApply</td>
+            </tr>
+            <tr>
+                <td><code class="inline">controller/RideController.java</code></td>
+                <td>Kontroler REST dla przejazdów</td>
+                <td>getNotStartedRides(), getRideWaypoints()</td>
+            </tr>
+            <tr>
+                <td><code class="inline">controller/RideRequestController.java</code></td>
+                <td>Kontroler REST dla zgłoszeń</td>
+                <td>apply() POST</td>
+            </tr>
+            <tr>
+                <td><code class="inline">service/RideService.java</code></td>
+                <td>Logika biznesowa przejazdów</td>
+                <td>getFilteredRides(), getWaypointsForRide(), applyForRide()</td>
+            </tr>
+            <tr>
+                <td><code class="inline">templates/create-ride.html</code></td>
+                <td>Tworzenie przejazdu z mapą</td>
+                <td>DirectionsRenderer, Places Autocomplete</td>
+            </tr>
+            <tr>
+                <td><code class="inline">templates/ride-details.html</code></td>
+                <td>Szczegóły przejazdu z mapą</td>
+                <td>initDetailMap(), rysowanie trasy jednego przejazdu</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+</main>
+</div>
+
+</body>
+</html>
