@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import th2025gr2.carpooling.dto.RideDTO;
+import th2025gr2.carpooling.dto.RideStopDTO;
 import th2025gr2.carpooling.model.UserProfile;
 import th2025gr2.carpooling.repository.UserProfileRepository;
 import th2025gr2.carpooling.security.UserDetailsWithId;
@@ -53,6 +54,16 @@ public class RideRestController {
                 .findByCredentialId(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
         return ResponseEntity.ok(rideService.getRidesAsPassenger(profile.getId()));
+    }
+
+    @GetMapping("/{rideId}/stops")
+    public ResponseEntity<List<RideStopDTO>> getRideStops(
+            @PathVariable Long rideId,
+            @AuthenticationPrincipal UserDetailsWithId userDetails) {
+        UserProfile profile = userProfileRepository
+                .findByCredentialId(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return ResponseEntity.ok(rideService.getStopsForRide(rideId, profile.getId()));
     }
 
     @GetMapping("/active")

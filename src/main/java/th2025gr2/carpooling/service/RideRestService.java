@@ -6,10 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import th2025gr2.carpooling.dto.RideDTO;
+import th2025gr2.carpooling.dto.RideStopDTO;
 import th2025gr2.carpooling.model.Ride;
 import th2025gr2.carpooling.model.RideState;
+import th2025gr2.carpooling.repository.RideParticipantRepository;
 import th2025gr2.carpooling.repository.RideRepository;
 import th2025gr2.carpooling.repository.RideStateRepository;
+import th2025gr2.carpooling.repository.RideWaypointRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +24,17 @@ public class RideRestService {
 
     private final RideRepository rideRepository;
     private final RideStateRepository rideStateRepository;
+    private final RideWaypointRepository rideWaypointRepository;
+    private final RideParticipantRepository rideParticipantRepository;
 
     public RideRestService(RideRepository rideRepository,
-                           RideStateRepository rideStateRepository) {
+                           RideStateRepository rideStateRepository,
+                           RideWaypointRepository rideWaypointRepository,
+                           RideParticipantRepository rideParticipantRepository) {
         this.rideRepository = rideRepository;
         this.rideStateRepository = rideStateRepository;
+        this.rideWaypointRepository = rideWaypointRepository;
+        this.rideParticipantRepository = rideParticipantRepository;
     }
 
     public List<RideDTO> getRidesDTOByState(String stateName) {
@@ -38,6 +47,22 @@ public class RideRestService {
 
     public List<RideDTO> getRidesAsPassenger(Long passengerProfileId) {
         return rideRepository.findDTOsByPassengerId(passengerProfileId);
+    }
+
+    public List<RideStopDTO> getStopsForRide(Long rideId, Long profileId) {
+        if (!rideRepository.existsById(rideId)) {
+            throw new RideStateException(HttpStatus.NOT_FOUND, "Przejazd nie istnieje");
+        }
+        rideParticipantRepository.findByUser_IdAndRide_Id(profileId, rideId)
+                .orElseThrow(() -> new RideStateException(
+                        HttpStatus.FORBIDDEN, "Nie jesteś uczestnikiem tego przejazdu"));
+        return rideWaypointRepository.findStopsByRideId(rideId).stream()
+                .map(w -> new RideStopDTO(
+                        w.getPassenger().getId(),
+                        w.getPassenger().getName() + " " + w.getPassenger().getSurname(),
+                        w.getType().name().toLowerCase(),
+                        w.getLatitude(), w.getLongitude()))
+                .toList();
     }
 
     public Optional<RideDTO> getActiveRideForDriver(Long driverProfileId) {

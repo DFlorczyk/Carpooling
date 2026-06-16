@@ -14,4 +14,12 @@ public interface RideWaypointRepository extends JpaRepository<RideWaypoint, Long
 
     @Query("SELECT COALESCE(MAX(w.sequenceOrder), 0) FROM RideWaypoint w WHERE w.ride.id = :rideId")
     int findMaxSequenceOrderByRideId(@Param("rideId") Long rideId);
+
+    @Query("""
+            SELECT w FROM RideWaypoint w
+            JOIN FETCH w.passenger
+            WHERE w.ride.id = :rideId
+            ORDER BY w.sequenceOrder ASC
+            """)
+    List<RideWaypoint> findStopsByRideId(@Param("rideId") Long rideId);
 }
