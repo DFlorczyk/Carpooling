@@ -85,18 +85,18 @@
     </style>
 
     <div class="tp-wrap">
-        <div class="tp-title">Zaplanuj swój przejazd</div>
+        <div class="tp-title">Plan Your Trip</div>
 
         <div class="tp-card">
             <div class="tp-card-header">
-                <i class="bi bi-calendar-range"></i> Termin przejazdu
+                <i class="bi bi-calendar-range"></i> Trip Schedule
             </div>
             <div class="tp-card-body">
                 <form action="#" th:action="@{/travelPlanner}" th:object="${ev}" method="post">
 
                     <div class="tp-field">
                         <label class="tp-label" for="dateStartTime">
-                            <i class="bi bi-calendar-event"></i> Data i godzina rozpoczęcia
+                            <i class="bi bi-calendar-event"></i> Start Date &amp; Time
                         </label>
                         <input type="datetime-local" id="dateStartTime" class="tp-input"
                                th:field="*{dateStartTime}"/>
@@ -104,14 +104,14 @@
 
                     <div class="tp-field">
                         <label class="tp-label" for="dateStartEnd">
-                            <i class="bi bi-calendar-check"></i> Data i godzina zakończenia
+                            <i class="bi bi-calendar-check"></i> End Date &amp; Time
                         </label>
                         <input type="datetime-local" id="dateStartEnd" class="tp-input"
                                th:field="*{dateStartEnd}"/>
                     </div>
 
                     <button type="submit" class="tp-submit">
-                        <i class="bi bi-save"></i> Zapisz
+                        <i class="bi bi-save"></i> Save
                     </button>
                 </form>
             </div>
