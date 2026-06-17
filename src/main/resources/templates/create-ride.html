@@ -501,8 +501,9 @@
                     document.getElementById('durationMinutes').value = durMin;
                     document.getElementById('encodedPolyline').value = polyline;
 
-                    const FUEL_RATE = 3.5;
-                    const estimatedCost = (parseFloat(distKm) * FUEL_RATE).toFixed(2);
+                    const FUEL_RATE = 5.92;
+                    const AVG_BURNRATE = 9;
+                    const estimatedCost = (parseFloat(distKm) / 100 * AVG_BURNRATE *FUEL_RATE).toFixed(2);
                     document.getElementById('cost').value = estimatedCost;
                     document.getElementById('costInfo').textContent = estimatedCost + ' PLN';
 
